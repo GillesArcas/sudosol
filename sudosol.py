@@ -1,3 +1,7 @@
+import argparse
+import re
+
+import clipboard
 
 
 # Data structures
@@ -12,6 +16,10 @@ class Cell:
         self.colnum = cellnum % 9
         self.boxnum = (self.rownum // 3) * 3 + self.colnum // 3
         # possible ajouter row (liste des cells), col, box et liste des voisins
+
+    def doset(self, value):
+        self.value = value
+        self.candidates = set()
 
     def reset(self):
         self.value = None
@@ -55,6 +63,38 @@ class Grid:
             self.boxes.append(rows[0][3:6] + rows[1][3:6] + rows[2][3:6])
             self.boxes.append(rows[0][6:9] + rows[1][6:9] + rows[2][6:9])
 
+        # make the list of horizontal triplets
+        self.horizontal_triplets = [self.cells[i:i + 3] for i in range(0, 81, 3)]
+
+        # make the list of vertical triplets
+        self.vertical_triplets = []
+        for col in self.cols:
+            self.vertical_triplets.extend([col[i:i + 3] for i in range(0, 9, 3)])
+
+        # make the list of complements of triplets in rows:
+        self.rows_less_triplet = []
+        for triplet in self.horizontal_triplets:
+            row_less_triplet = [cell for cell in self.rows[triplet[0].rownum] if cell not in triplet]
+            self.rows_less_triplet.append(row_less_triplet)
+
+        # make the list of complements of triplets in cols:
+        self.cols_less_triplet = []
+        for triplet in self.vertical_triplets:
+            col_less_triplet = [cell for cell in self.cols[triplet[0].colnum] if cell not in triplet]
+            self.cols_less_triplet.append(col_less_triplet)
+
+        # make the list of complements of horizontal triplets in boxes:
+        self.boxes_less_hortriplet = []
+        for triplet in self.horizontal_triplets:
+            box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
+            self.boxes_less_hortriplet.append(box_less_triplet)
+
+        # make the list of complements of vertical triplets in boxes:
+        self.boxes_less_vertriplet = []
+        for triplet in self.vertical_triplets:
+            box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
+            self.boxes_less_vertriplet.append(box_less_triplet)
+
     def reset(self):
         for cell in self.cells:
             cell.reset()
@@ -63,6 +103,8 @@ class Grid:
     #     pass
 
     def input(self, str81):
+        """load a 81 character string
+        """
         self.reset()
         for index, char in enumerate(str81):
             if char not in '.0':
@@ -96,23 +138,78 @@ class Grid:
         print()
 
 
+def candidate_in_cells(digit, cells):
+    for cell in cells:
+        if digit in cell.candidates:
+            return True
+    else:
+        return False
+
+
+# Loading
+
+
+def load_ss_clipboard(grid, content):
+    grid.reset()
+    content = content.splitlines()
+
+    if len(content) == 28:      # when starting
+        assert False
+        lines = content[16:19] + content[20:23] + content[24:27]
+
+    elif len(content) == 43:    # after first move
+        # values
+        lines = ''.join(content[16:19] + content[20:23] + content[24:27])
+        print(lines)
+        values = lines.replace('|', '')
+        values = values.replace(' ', '')
+        print(values)
+        grid.input(values)
+        # candidates
+        lines = content[31:34] + content[35:38] + content[39:42]
+        lines = [re.findall(r'\b\d+\b', line) for line in lines]
+        if any([len(x) != 9 for x in lines]):
+            print('bad clipboard (2)')
+            exit(1)
+        cells = sum(lines, [])
+        print(cells)
+        for cell, cand in zip(grid.cells, cells):
+            cell.candidates = set(int(_) for _ in cand)
+
+    else:
+        print(content)
+        print('bad clipboard (1)')
+        exit(1)
+
+
+
+    return lines
+
+
+
 # Singles
 
 
-def solve_single_candidate(grid):
+def solve_single_candidate(grid, history):
     # naked singles
-    grid_modified = False
-    for cell in grid.cells:
-        if len(cell.candidates) == 1:
-            grid.set_value_rc(cell.rownum, cell.colnum, list(cell.candidates)[0])
-            grid_modified = True
+    grid_modified = True
+    while True:
+        grid_modified = False
+        for cell in grid.cells:
+            if len(cell.candidates) == 1:
+                value = list(cell.candidates)[0]
+                grid.set_value_rc(cell.rownum, cell.colnum, value)
+                grid_modified = True
+                history.append(('naked single', cell.rownum, cell.colnum, 'value', value))
+                break
+        break
     return grid_modified
 
 
 # Single digit techniques
 
 
-def solve_hidden_candidate(grid):
+def solve_hidden_candidate(grid, history):
     # hidden singles
     grid_modified = False
     for cell in grid.cells:
@@ -124,78 +221,153 @@ def solve_hidden_candidate(grid):
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
                 grid.set_value_rc(cell.rownum, cell.colnum, cand)
                 grid_modified = True
+                history.append(('hidden single', cell.rownum, cell.colnum, 'value', cand))
                 # avoid to loop on candidates from initial cell state
                 break
+    return grid_modified
+
+
+# Pointing
+
+
+def solve_pointing(grid, history):
+
+    grid_modified = False
+    for digit in range(1, 10):
+
+        for trinum, triplet in enumerate(grid.horizontal_triplets):
+            if not candidate_in_cells(digit, triplet):
+                continue
+            if not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum]):
+                for cell in grid.rows_less_triplet[trinum]:
+                    if digit in cell.candidates:
+                        cell.discard(digit)
+                        grid_modified = True
+                if grid_modified:
+                    history.append(('pointing h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
+                    return True
+
+        for trinum, triplet in enumerate(grid.vertical_triplets):
+            if not candidate_in_cells(digit, triplet):
+                continue
+            if not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum]):
+                for cell in grid.cols_less_triplet[trinum]:
+                    if digit in cell.candidates:
+                        cell.discard(digit)
+                        grid_modified = True
+                if grid_modified:
+                    history.append(('pointing v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
+                    return True
+
     return grid_modified
 
 
 # solving engine
 
 
-def solve(grid):
+def solve(grid, trace_history=False):
+    history = []
     grid_modified = True
     while grid_modified:
         grid_modified = (
-            solve_single_candidate(grid) or
-            solve_hidden_candidate(grid) or
+            solve_single_candidate(grid, history) or
+            solve_hidden_candidate(grid, history) or
+            solve_pointing(grid, history) or
             False
         )
+    if trace_history:
+        for _ in history:
+            print(_)
 
 
-def solve_pointing(grid):
-    for digit in range(1, 9 + 1):
-        solve_pointing_digit(grid, digit)
+#
 
 
-def solve_pointing_digit(grid, digit):
-
-    # row triplets
-    solve_row_pointing_digit(grid, digit)
-
-    # col triplets
-    transpose(grid)
-    solve_row_pointing_digit(grid, digit)
-    transpose(grid)
-
-
-def solve_row_pointing_digit(grid, digit):
-    for triplet in range(1, 27 + 1):
-        if is_locked_in_row(grid, digit, triplet):
-            for shared_triplet in shared_box_horizontal_triplets(triplet):
-                remove_cand_in_horizontal_triplet(grid, digit, shared_triplet)
-
-
-def solve_row_claiming_digit(grid, digit):
-    for triplet in range(1, 27 + 1):
-        if is_locked_in_box(grid, digit, triplet):
-            for shared_triplet in shared_row_horizontal_triplets(triplet):
-                remove_cand_row(grid, digit, shared_triplet)
-
-
-
-def test():
-    fname = r"D:\Gilles\Sudoku\.Applications\HoDoKu\singles.txt"
+def test(fname):
     grid = Grid()
+    success = True
     with open(fname) as f:
         for line in f:
             input, output = line.strip().split()
             grid.input(input)
             solve(grid)
-            print(output == grid.output(), output, grid.output())
+            # print('>', output)
+            # print('<', grid.output())
+            if output != grid.output():
+                print(output, grid.output())
+                success = False
+    print('success:', success)
 
 
-# grid = Grid()
-# grid.input('.7..6..45.96..........4.1...13..97.46..7.......43...5.5.....82184................')
-# grid.dump()
-# grid.discard_rc(5, 8, 4)
-# grid.discard_rc(5, 8, 6)
-# grid.set_value_rc(5, 2, 1)
-# grid.set_value_rc(0, 8, 9)
+def parse_command_line(argstring=None):
+    usage = "usage: sudosol ..."
+    parser = argparse.ArgumentParser(description=usage, usage=argparse.SUPPRESS)
+    parser.add_argument('-s', '--solve', help='solve str81 argument',
+                        action='store', default=None)
+    parser.add_argument('-c', '--clipboard', help='init grid from clipboard',
+                        action='store_true', default=False)
+    parser.add_argument('-f', '--format', help='format',
+                        action='store', default='ss')
+    parser.add_argument('-t', '--test', help='test file',
+                        action='store', default=None)
+    parser.add_argument('-H', '--history', help='trace history',
+                        action='store_true', default=False)
 
-#solve_single_candidate(grid)
-#solve_hidden_candidate(grid)
-# solve(grid)
-# grid.dump()
-# print(grid.output())
-# print()
-test()
+    if argstring is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(argstring.split())
+    return args
+
+
+def main(argstring=None):
+    options = parse_command_line(argstring)
+
+    if options.solve:
+        grid = Grid()
+        grid.input(options.solve)
+        grid.dump()
+        solve(grid, options.history)
+        grid.dump()
+
+    elif options.test:
+        test(options.test)
+
+    elif options.clipboard:
+        if options.format == 'ss':
+            grid = Grid()
+            content = clipboard.paste()
+            load_ss_clipboard(grid, content)
+            grid.dump()
+            # test
+            history = []
+            solve_pointing(grid, history)
+            grid.dump()
+
+    else:
+        grid = Grid()
+        grid.input('........2..6....39..9.7..463....672..5..........4.1.....235....9.1.8...5.3...9...')
+        print(grid.horizontal_triplets)
+        print(grid.vertical_triplets)
+        grid.dump()
+        solve(grid)
+        grid.dump()
+        print(grid.output())
+        print()
+        exit
+        # grid.discard_rc(5, 8, 4)
+        # grid.discard_rc(5, 8, 6)
+        # grid.set_value_rc(5, 2, 1)
+        # grid.set_value_rc(0, 8, 9)
+
+        #solve_single_candidate(grid)
+        #solve_hidden_candidate(grid)
+        # solve(grid)
+        # grid.dump()
+        # print(grid.output())
+        # print()
+        #test()
+
+
+if __name__ == '__main__':
+    main()
