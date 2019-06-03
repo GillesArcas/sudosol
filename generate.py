@@ -1,0 +1,81 @@
+import sys
+import time
+import subprocess
+
+
+def tailf(fname):
+    f = open(fname)
+    while True:
+        line = f.readline().strip()
+
+        if not line:
+            time.sleep(0.1)
+            continue
+
+        yield line
+
+
+NAME_GENERATED = 'generated.txt'
+NAME_TOBESOLVED = 'tobesolved.txt'
+NAME_SOLVED = 'solved.txt'
+
+
+def main():
+    tech = sys.argv[1]
+    name_out = sys.argv[2]
+    numwanted = int(sys.argv[3])
+
+    name_generated = '%s-%s' % (tech, NAME_GENERATED)
+
+    # start hodoku in generate mode (hodoku must be in path)
+    comm = f'hodoku.exe /s /sc {tech}:3 /o {name_generated}'
+    p = subprocess.Popen(comm.split())
+    time.sleep(2)
+
+    try:
+        numobtained = 0
+        for line in tailf(name_generated):
+            if 'ssts' not in line:
+                # even with tech:3 some grids are generated requiring ssts techniques
+                # these lines have to be filtered
+                numobtained += 1
+                print(numobtained)
+                if numobtained == numwanted:
+                    p.terminate()
+                    break
+
+    except KeyboardInterrupt as e:
+        p.terminate()
+        print("Program stopped by user !")
+
+    except Exception as e:
+        p.terminate()
+        print("Unknown error during execution !")
+        print(e)
+        sys.exit(1)
+
+    # no way to close hodoku console
+    print('Close hodoku console')
+
+    # make file of grids to be solved
+    with open(name_generated) as f, open(NAME_TOBESOLVED, 'wt') as g:
+        for line in f:
+                grid = line.split(None, 1)[0]
+                print(grid, file=g)
+
+    # start hodoku in solving mode (hodoku must be in path)
+    comm = f'hodoku.exe /bs {NAME_TOBESOLVED} /vs /o {NAME_SOLVED}'
+    subprocess.check_output(comm, shell=True)
+
+    # merge
+    with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'wt') as g:
+        numobtained = 0
+        for line1, line2 in zip(f1, f2):
+            if 'ssts' not in line1:
+                line = line1[0:81] + '  ' + line2[0:81] + line1[81:]
+                print(line, end='', file=g)
+                numobtained += 1
+                if numobtained == numwanted:
+                    break
+
+main()
