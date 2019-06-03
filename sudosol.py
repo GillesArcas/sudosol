@@ -1,5 +1,6 @@
 import argparse
 import re
+import itertools
 
 import clipboard
 
@@ -94,6 +95,9 @@ class Grid:
         for triplet in self.vertical_triplets:
             box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
             self.boxes_less_vertriplet.append(box_less_triplet)
+
+        # init history
+        self.history = []
 
     def reset(self):
         for cell in self.cells:
@@ -190,7 +194,7 @@ def load_ss_clipboard(grid, content):
 # Singles
 
 
-def solve_single_candidate(grid, history):
+def solve_single_candidate(grid):
     # naked singles
     grid_modified = True
     while True:
@@ -200,7 +204,7 @@ def solve_single_candidate(grid, history):
                 value = list(cell.candidates)[0]
                 grid.set_value_rc(cell.rownum, cell.colnum, value)
                 grid_modified = True
-                history.append(('naked single', cell.rownum, cell.colnum, 'value', value))
+                grid.history.append(('naked single', cell.rownum, cell.colnum, 'value', value))
                 break
         break
     return grid_modified
@@ -209,7 +213,7 @@ def solve_single_candidate(grid, history):
 # Single digit techniques
 
 
-def solve_hidden_candidate(grid, history):
+def solve_hidden_candidate(grid):
     # hidden singles
     grid_modified = False
     for cell in grid.cells:
@@ -221,7 +225,7 @@ def solve_hidden_candidate(grid, history):
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
                 grid.set_value_rc(cell.rownum, cell.colnum, cand)
                 grid_modified = True
-                history.append(('hidden single', cell.rownum, cell.colnum, 'value', cand))
+                grid.history.append(('hidden single', cell.rownum, cell.colnum, 'value', cand))
                 # avoid to loop on candidates from initial cell state
                 break
     return grid_modified
@@ -230,7 +234,7 @@ def solve_hidden_candidate(grid, history):
 # Pointing
 
 
-def solve_pointing(grid, history):
+def solve_pointing(grid):
 
     grid_modified = False
     for digit in range(1, 10):
@@ -244,7 +248,7 @@ def solve_pointing(grid, history):
                         cell.discard(digit)
                         grid_modified = True
                 if grid_modified:
-                    history.append(('pointing h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
+                    grid.history.append(('pointing h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -256,27 +260,131 @@ def solve_pointing(grid, history):
                         cell.discard(digit)
                         grid_modified = True
                 if grid_modified:
-                    history.append(('pointing v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
+                    grid.history.append(('pointing v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
                     return True
 
     return grid_modified
+
+
+def solve_claiming(grid):
+
+    grid_modified = False
+    for digit in range(1, 10):
+
+        for trinum, triplet in enumerate(grid.horizontal_triplets):
+            if not candidate_in_cells(digit, triplet):
+                continue
+            if not candidate_in_cells(digit, grid.rows_less_triplet[trinum]):
+                for cell in grid.boxes_less_hortriplet[trinum]:
+                    if digit in cell.candidates:
+                        cell.discard(digit)
+                        grid_modified = True
+                if grid_modified:
+                    grid.history.append(('claiming h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
+                    return True
+
+        for trinum, triplet in enumerate(grid.vertical_triplets):
+            if not candidate_in_cells(digit, triplet):
+                continue
+            if not candidate_in_cells(digit, grid.cols_less_triplet[trinum]):
+                for cell in grid.boxes_less_vertriplet[trinum]:
+                    if digit in cell.candidates:
+                        cell.discard(digit)
+                        grid_modified = True
+                if grid_modified:
+                    grid.history.append(('claiming v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
+                    return True
+
+    return grid_modified
+
+
+# Locked sets
+
+
+def locked_sets_n(grid, cells, length, legend):
+    grid_modified = False
+    for subset in itertools.combinations(cells, length):
+        u = set().union(*(cell.candidates for cell in subset))
+        if length == len(u):
+            cells_less_subset = (cell for cell in cells if cell not in subset)
+            discarded = []
+            for cell in cells_less_subset:
+                for c in u:
+                    if c in sorted(cell.candidates):
+                        cell.discard(c)
+                        grid_modified = True
+                        if c not in discarded:
+                            discarded.append(c)
+        if grid_modified:
+            grid.history.append(('subset', legend, cells, subset, 'discard', discarded))
+            return True
+    return False
+
+
+def locked_pair(grid, cells, legend):
+    cells = [cell for cell in cells if len(cell.candidates) > 1]
+    return locked_sets_n(grid, cells, 2, legend)
+
+
+def solve_nacked_pairs(grid):
+    for row in grid.rows:
+        if locked_pair(grid, row, 'row'):
+            return True
+    for col in grid.cols:
+        if locked_pair(grid, col, 'col'):
+            return True
+    for box in grid.boxes:
+        if locked_pair(grid, box, 'box'):
+            return True
+    return False
+
+
+def necked_triple(grid, cells, legend):
+    cells = [cell for cell in cells if len(cell.candidates) > 1]
+    return locked_sets_n(grid, cells, 3, legend)
+
+
+def solve_nacked_triples(grid):
+    return (
+        any(necked_triple(grid, row, 'row') for row in grid.rows) or
+        any(necked_triple(grid, col, 'col') for col in grid.cols) or
+        any(necked_triple(grid, box, 'box') for box in grid.boxes)
+    )
+
+
+def locked_sets(cells):
+    cells = [cell for cell in cells if len(cell.candidates) > 1]
+    result = list()
+    for length in range(2, len(cells)):
+        for x in itertools.combinations(cells, length):
+            u = set().union(*x)
+            if length == len(u):
+                result.append((x, u, length, len(u)))
+
+    # if sum(lenset for _, _, _, lenset in result) == len(cells):
+    #     result = list()
+
+    return result
+
 
 
 # solving engine
 
 
 def solve(grid, trace_history=False):
-    history = []
     grid_modified = True
     while grid_modified:
         grid_modified = (
-            solve_single_candidate(grid, history) or
-            solve_hidden_candidate(grid, history) or
-            solve_pointing(grid, history) or
+            solve_single_candidate(grid) or
+            solve_hidden_candidate(grid) or
+            solve_pointing(grid) or
+            solve_claiming(grid) or
+            solve_nacked_pairs(grid) or
+            solve_nacked_triples(grid) or
             False
         )
     if trace_history:
-        for _ in history:
+        for _ in grid.history:
             print(_)
 
 
@@ -286,9 +394,12 @@ def solve(grid, trace_history=False):
 def test(fname):
     grid = Grid()
     success = True
+    ngrids = 0
+    solved = 0
     with open(fname) as f:
         for line in f:
-            input, output = line.strip().split()
+            input, output, _ = line.strip().split(None, 2)
+            ngrids += 1
             grid.input(input)
             solve(grid)
             # print('>', output)
@@ -296,7 +407,9 @@ def test(fname):
             if output != grid.output():
                 print(output, grid.output())
                 success = False
-    print('success:', success)
+            else:
+                solved += 1
+    print(f'success: {success} solved {solved}/{ngrids}')
 
 
 def parse_command_line(argstring=None):
