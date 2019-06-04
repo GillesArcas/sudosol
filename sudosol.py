@@ -301,12 +301,14 @@ def solve_claiming(grid):
 # Locked sets
 
 
-def locked_sets_n(grid, cells, length, legend):
+def nacked_sets_n(grid, cells, subcells, length, legend):
+    if subcells is None:
+        subcells = [cell for cell in cells if len(cell.candidates) > 1]
     grid_modified = False
-    for subset in itertools.combinations(cells, length):
+    for subset in itertools.combinations(subcells, length):
         u = set().union(*(cell.candidates for cell in subset))
         if length == len(u):
-            cells_less_subset = (cell for cell in cells if cell not in subset)
+            cells_less_subset = (cell for cell in subcells if cell not in subset)
             discarded = []
             for cell in cells_less_subset:
                 for c in u:
@@ -316,56 +318,111 @@ def locked_sets_n(grid, cells, length, legend):
                         if c not in discarded:
                             discarded.append(c)
         if grid_modified:
-            grid.history.append(('subset', legend, cells, subset, 'discard', discarded))
+            grid.history.append((legend, subcells, subset, 'discard', discarded))
             return True
     return False
-
-
-def locked_pair(grid, cells, legend):
-    cells = [cell for cell in cells if len(cell.candidates) > 1]
-    return locked_sets_n(grid, cells, 2, legend)
 
 
 def solve_nacked_pairs(grid):
-    for row in grid.rows:
-        if locked_pair(grid, row, 'row'):
-            return True
-    for col in grid.cols:
-        if locked_pair(grid, col, 'col'):
-            return True
-    for box in grid.boxes:
-        if locked_pair(grid, box, 'box'):
-            return True
-    return False
-
-
-def necked_triple(grid, cells, legend):
-    cells = [cell for cell in cells if len(cell.candidates) > 1]
-    return locked_sets_n(grid, cells, 3, legend)
+    return (
+        any(nacked_sets_n(grid, row, None, 2, 'Naked pair in row') for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 2, 'Naked pair in col') for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 2, 'Naked pair in box') for box in grid.boxes)
+    )
 
 
 def solve_nacked_triples(grid):
     return (
-        any(necked_triple(grid, row, 'row') for row in grid.rows) or
-        any(necked_triple(grid, col, 'col') for col in grid.cols) or
-        any(necked_triple(grid, box, 'box') for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 3, 'Naked triple in row') for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 3, 'Naked triple in col') for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 3, 'Naked triple in box') for box in grid.boxes)
     )
 
 
-def locked_sets(cells):
-    cells = [cell for cell in cells if len(cell.candidates) > 1]
-    result = list()
-    for length in range(2, len(cells)):
-        for x in itertools.combinations(cells, length):
-            u = set().union(*x)
-            if length == len(u):
-                result.append((x, u, length, len(u)))
+def solve_nacked_quads(grid):
+    return (
+        any(nacked_sets_n(grid, row, None, 4, 'Naked quad in row') for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 4, 'Naked quad in col') for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 4, 'Naked quad in box') for box in grid.boxes)
+    )
 
-    # if sum(lenset for _, _, _, lenset in result) == len(cells):
-    #     result = list()
 
-    return result
+def solve_hidden_set(grid, cells, length, legend):
+    subcells = [cell for cell in cells if len(cell.candidates) > 1]
+    for len_naked_set in range(5, 10 - length):
+        len_hidden_set = len(subcells) - len_naked_set
+        if len_hidden_set == length:
+            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend):
+                return True
+    return False
 
+
+def solve_hidden_pair(grid):
+    return (
+        any(solve_hidden_set(grid, row, 2, 'Hidden pair in row') for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 2, 'Hidden pair in col') for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 2, 'Hidden pair in box') for box in grid.boxes)
+    )
+
+
+def solve_hidden_triple(grid):
+    return (
+        any(solve_hidden_set(grid, row, 3, 'Hidden triple in row') for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 3, 'Hidden triple in col') for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 3, 'Hidden triple in box') for box in grid.boxes)
+    )
+
+
+def solve_hidden_quad(grid):
+    return (
+        any(solve_hidden_set(grid, row, 4, 'Hidden quad in row') for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 4, 'Hidden quad in col') for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 4, 'Hidden quad in box') for box in grid.boxes)
+    )
+
+
+
+# Fishes
+
+
+def solve_X_wing(grid):
+    grid_modified = False
+    for digit in range(1, 10):
+        for index, house in enumerate(grid.rows):
+            dig_house = [cell for cell in house if digit in cell.candidates]
+            if len(dig_house) == 2:
+                for index2, house2 in enumerate(grid.rows[index + 1:], index + 1):
+                    dig_house2 = [cell for cell in house2 if digit in cell.candidates]
+                    if len(dig_house2) == 2:
+                        if dig_house[0].colnum == dig_house2[0].colnum and dig_house[1].colnum == dig_house2[1].colnum:
+                            discarded = []
+                            for cell in grid.cols[dig_house[0].colnum] + grid.cols[dig_house[1].colnum]:
+                                if digit in cell.candidates and cell.rownum not in (index, index2):
+                                    cell.discard(digit)
+                                    grid_modified = True
+                                    if cell not in discarded:
+                                        discarded.append(cell)
+                            if grid_modified:
+                                grid.history.append(('X-wing', discarded, 'discard', digit))
+                                return True
+        for index, house in enumerate(grid.cols):
+            dig_house = [cell for cell in house if digit in cell.candidates]
+            if len(dig_house) == 2:
+                for index2, house2 in enumerate(grid.cols[index + 1:], index + 1):
+                    dig_house2 = [cell for cell in house2 if digit in cell.candidates]
+                    if len(dig_house2) == 2:
+                        if dig_house[0].rownum == dig_house2[0].rownum and dig_house[1].rownum == dig_house2[1].rownum:
+                            discarded = []
+                            for cell in grid.rows[dig_house[0].rownum] + grid.rows[dig_house[1].rownum]:
+                                if digit in cell.candidates and cell.colnum not in (index, index2):
+                                    cell.discard(digit)
+                                    grid_modified = True
+                                    if cell not in discarded:
+                                        discarded.append(cell)
+            if grid_modified:
+                grid.history.append(('X-wing', discarded, 'discard', digit))
+                return True
+    return False
 
 
 # solving engine
@@ -381,6 +438,11 @@ def solve(grid, trace_history=False):
             solve_claiming(grid) or
             solve_nacked_pairs(grid) or
             solve_nacked_triples(grid) or
+            solve_nacked_quads(grid) or
+            solve_hidden_pair(grid) or
+            solve_hidden_triple(grid) or
+            solve_hidden_quad(grid) or
+            #solve_X_wing(grid) or
             False
         )
     if trace_history:
@@ -402,10 +464,9 @@ def test(fname):
             ngrids += 1
             grid.input(input)
             solve(grid)
-            # print('>', output)
-            # print('<', grid.output())
             if output != grid.output():
-                print(output, grid.output())
+                print('-' * 20)
+                print('\n'.join((input, output, grid.output())))
                 success = False
             else:
                 solved += 1
