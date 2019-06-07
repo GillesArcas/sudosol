@@ -3,6 +3,8 @@ import re
 import itertools
 
 import clipboard
+import colorama
+from colorama import Fore
 
 
 # Data structures
@@ -16,7 +18,12 @@ class Cell:
         self.rownum = cellnum // 9
         self.colnum = cellnum % 9
         self.boxnum = (self.rownum // 3) * 3 + self.colnum // 3
-        # possible ajouter row (liste des cells), col, box et liste des voisins
+
+        # to be completed in grid.__init__
+        self.row = None
+        self.col = None
+        self.box = None
+        self.peers = None
 
     def doset(self, value):
         self.value = value
@@ -96,6 +103,14 @@ class Grid:
             box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
             self.boxes_less_vertriplet.append(box_less_triplet)
 
+        # init cell data
+        for cell in self.cells:
+            cell.row = self.rows[cell.rownum]
+            cell.col = self.cols[cell.colnum]
+            cell.box = self.boxes[cell.boxnum]
+            cell.peers = cellunion(cell.row, cellunion(cell.col, cell.box))
+            cell.peers.remove(cell)
+
         # init history
         self.history = []
 
@@ -136,10 +151,37 @@ class Grid:
     def discard_rc(self, irow, icol, digit):
         self.cell_rc(irow, icol).discard(digit)
 
-    def dump(self):
+    def dump(self, decor=None):
         for i in range(9):
-            print(' '.join('%-9s' % _ for _ in self.rows[i]))
+            print(' '.join('%-9s' % colorize_cell(_, decor) for _ in self.rows[i]))
         print()
+
+
+ALLCAND = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+
+def colorize_cell(cell, spec_color):
+    # ((cell, '*', Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED))
+    if spec_color is None or not cell.candidates:
+        return str(cell)
+
+    for target, *spec_col in spec_color:
+        #print('--', target)
+        if isinstance(target, Cell):
+            target = (target,)
+        for targ in target:
+            if targ == cell:
+                res = ''
+                for cand in sorted(targ.candidates):
+                    for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
+                        if cand == spec_cand or cand in spec_cand:
+                            res += speccol + str(cand) + Fore.RESET
+                            break
+                # manual padding as colorama information fools format padding
+                res += ' ' * (9 - len(targ.candidates))
+                return res
+    else:
+        return str(cell)
 
 
 def candidate_in_cells(digit, cells):
@@ -148,6 +190,14 @@ def candidate_in_cells(digit, cells):
             return True
     else:
         return False
+
+
+def cellinter(cells1, cells2):
+    return [cell for cell in cells1 if cell in cells2]
+
+
+def cellunion(cells1, cells2):
+    return set.union(set(cells1), set(cells2))
 
 
 # Loading
@@ -381,7 +431,6 @@ def solve_hidden_quad(grid):
     )
 
 
-
 # Fishes
 
 
@@ -425,6 +474,40 @@ def solve_X_wing(grid):
     return False
 
 
+# xy-wings
+
+
+def solve_XY_wing(grid):
+    for cell in grid.cells:
+        if len(cell.candidates) == 2:
+            cand1, cand2 = list(cell.candidates)
+            pairpeers = (peer for peer in cell.peers if len(peer.candidates) == 2)
+            for wing1, wing2 in itertools.combinations(pairpeers, 2):
+                wings_inter = wing1.candidates.intersection(wing2.candidates)
+                if len(wings_inter) != 1 or list(wings_inter)[0] in cell.candidates:
+                    continue
+                if (cand1 in wing1.candidates and cand2 in wing2.candidates or
+                    cand1 in wing2.candidates and cand2 in wing1.candidates):
+                    #print('---', cand1, cand2, wing1.candidates, wing2.candidates)
+                    #print(grid.output())
+                    #grid.dump(((cell, ALLCAND, Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED)))
+                    digit = list(wings_inter)[0]
+                    grid_modified = False
+                    discarded = []
+                    for cell2 in cellinter(wing1.peers, wing2.peers):
+                        if digit in cell2.candidates:
+                            #print('>', cell2.rownum, cell2.colnum, cell2)
+                            cell2.discard(digit)
+                            grid_modified = True
+                            if cell2 not in discarded:
+                                discarded.append(cell2)
+                    if grid_modified:
+                        grid.history.append(('XY-wing', discarded, 'discard', digit))
+                        return True
+    else:
+        return False
+
+
 # solving engine
 
 
@@ -442,7 +525,8 @@ def solve(grid, trace_history=False):
             solve_hidden_pair(grid) or
             solve_hidden_triple(grid) or
             solve_hidden_quad(grid) or
-            #solve_X_wing(grid) or
+            solve_X_wing(grid) or
+            solve_XY_wing(grid) or
             False
         )
     if trace_history:
@@ -514,8 +598,7 @@ def main(argstring=None):
             load_ss_clipboard(grid, content)
             grid.dump()
             # test
-            history = []
-            solve_pointing(grid, history)
+            solve_pointing(grid)
             grid.dump()
 
     else:
@@ -544,4 +627,5 @@ def main(argstring=None):
 
 
 if __name__ == '__main__':
+    colorama.init()
     main()
