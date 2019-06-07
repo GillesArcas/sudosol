@@ -474,6 +474,60 @@ def solve_X_wing(grid):
     return False
 
 
+def solve_swordfish(grid):
+    grid_modified = False
+    for digit in range(1, 10):
+        rows = []
+        for row in grid.rows:
+            rowcells = [cell for cell in row if digit in cell.candidates]
+            if 0 < len(rowcells) <= 3:
+                rows.append(rowcells)
+        for rowtriple in itertools.combinations(rows, 3):
+            rowsnum = [row[0].rownum for row in rowtriple]
+            colsnum = set()
+            for row in rowtriple:
+                for cell in row:
+                    colsnum.add(cell.colnum)
+            if len(colsnum) == 3:
+                # 3 rows with candidates in 3 cols
+                discarded = []
+                for colnum in colsnum:
+                    for cell in grid.cols[colnum]:
+                        if digit in cell.candidates and cell.rownum not in rowsnum:
+                            cell.discard(digit)
+                            grid_modified = True
+                            if cell not in discarded:
+                                discarded.append(cell)
+                if grid_modified:
+                    grid.history.append(('swordfish', discarded, 'discard', digit))
+                    return True
+        cols = []
+        for col in grid.cols:
+            colcells = [cell for cell in col if digit in cell.candidates]
+            if 0 < len(colcells) <= 3:
+                cols.append(colcells)
+        for coltriple in itertools.combinations(cols, 3):
+            colsnum = [col[0].colnum for col in coltriple]
+            rowsnum = set()
+            for col in coltriple:
+                for cell in col:
+                    rowsnum.add(cell.rownum)
+            if len(rowsnum) == 3:
+                # 3 cols with candidates in 3 rows
+                discarded = []
+                for rownum in rowsnum:
+                    for cell in grid.rows[rownum]:
+                        if digit in cell.candidates and cell.colnum not in colsnum:
+                            cell.discard(digit)
+                            grid_modified = True
+                            if cell not in discarded:
+                                discarded.append(cell)
+                if grid_modified:
+                    grid.history.append(('swordfish', discarded, 'discard', digit))
+                    return True
+    return False
+
+
 # xy-wings
 
 
@@ -527,6 +581,7 @@ def solve(grid, trace_history=False):
             solve_hidden_quad(grid) or
             solve_X_wing(grid) or
             solve_XY_wing(grid) or
+            solve_swordfish(grid) or
             False
         )
     if trace_history:
