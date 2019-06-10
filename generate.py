@@ -1,4 +1,5 @@
 import sys
+import os
 import time
 import subprocess
 
@@ -18,6 +19,7 @@ def tailf(fname):
 NAME_GENERATED = 'generated.txt'
 NAME_TOBESOLVED = 'tobesolved.txt'
 NAME_SOLVED = 'solved.txt'
+HODOKU_JAR = 'hodoku.jar'
 
 
 def main():
@@ -25,12 +27,17 @@ def main():
     name_out = sys.argv[2]
     numwanted = int(sys.argv[3])
 
-    name_generated = '%s-%s' % (tech, NAME_GENERATED)
+    name_generated = f'{tech}-{NAME_GENERATED}'
 
-    # start hodoku in generate mode (hodoku must be in path)
-    comm = f'hodoku.exe /s /sc {tech}:3 /o {name_generated}'
+    # check hodoku presence
+    if not os.path.isfile(HODOKU_JAR):
+        print('Error: hodoku.jar not found')
+        exit(1)
+
+    # start hodoku in generate mode
+    comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:3 /o {name_generated}'
     p = subprocess.Popen(comm.split())
-    time.sleep(2)
+    time.sleep(1)
 
     try:
         numobtained = 0
@@ -54,9 +61,6 @@ def main():
         print(e)
         sys.exit(1)
 
-    # no way to close hodoku console
-    print('Close hodoku console')
-
     # make file of grids to be solved
     with open(name_generated) as f, open(NAME_TOBESOLVED, 'wt') as g:
         for line in f:
@@ -64,8 +68,8 @@ def main():
                 print(grid, file=g)
 
     # start hodoku in solving mode (hodoku must be in path)
-    comm = f'hodoku.exe /bs {NAME_TOBESOLVED} /vs /o {NAME_SOLVED}'
-    subprocess.check_output(comm, shell=True)
+    comm = f'java -jar {HODOKU_JAR} /bs {NAME_TOBESOLVED} /vs /o {NAME_SOLVED}'
+    subprocess.check_output(comm)
 
     # merge
     with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'wt') as g:
