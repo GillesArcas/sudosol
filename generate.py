@@ -34,13 +34,20 @@ def main():
         print('Error: hodoku.jar not found')
         exit(1)
 
+    # calculate number of existing solutions if any
+    try:
+        with open(name_out) as f:
+            num_existing = len(f.readlines())
+    except IOError:
+        num_existing = 0
+
     # start hodoku in generate mode
     comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:3 /o {name_generated}'
     p = subprocess.Popen(comm.split())
     time.sleep(1)
 
     try:
-        numobtained = 0
+        numobtained = num_existing
         for line in tailf(name_generated):
             if 'ssts' not in line:
                 # even with tech:3 some grids are generated requiring ssts techniques
@@ -64,15 +71,15 @@ def main():
     # make file of grids to be solved
     with open(name_generated) as f, open(NAME_TOBESOLVED, 'wt') as g:
         for line in f:
-                grid = line.split(None, 1)[0]
-                print(grid, file=g)
+            grid = line.split(None, 1)[0]
+            print(grid, file=g)
 
     # start hodoku in solving mode (hodoku must be in path)
     comm = f'java -jar {HODOKU_JAR} /bs {NAME_TOBESOLVED} /vs /o {NAME_SOLVED}'
     subprocess.check_output(comm)
 
     # merge
-    with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'wt') as g:
+    with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'at') as g:
         numobtained = 0
         for line1, line2 in zip(f1, f2):
             if 'ssts' not in line1:
@@ -82,4 +89,12 @@ def main():
                 if numobtained == numwanted:
                     break
 
-main()
+    # clean
+
+    os.remove(name_generated)
+    os.remove(NAME_TOBESOLVED)
+    os.remove(NAME_SOLVED)
+
+
+if __name__ == '__main__':
+    main()
