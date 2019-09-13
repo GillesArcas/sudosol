@@ -20,12 +20,13 @@ class Cell:
         self.boxnum = (self.rownum // 3) * 3 + self.colnum // 3
 
         # to be completed in grid.__init__
-        self.row = None
-        self.col = None
-        self.box = None
-        self.peers = None
+        self.row = set()
+        self.col = set()
+        self.box = set()
+        self.peers = set()
 
     def doset(self, value):
+        # not used, double with set_value
         self.value = value
         self.candidates = set()
 
@@ -47,7 +48,29 @@ class Cell:
         self.candidates = set()
 
     def discard(self, digit):
+        """remove a candidate from cell
+        """
         self.candidates.discard(digit)
+
+    def same_digit_in_row(self, digit):
+        """return all cells in self row with digit as candidate (possibly
+        including self)
+        """
+        return set(peer for peer in self.row if digit in peer.candidates)
+
+
+    def same_digit_in_col(self, digit):
+        """return all cells in self col with digit as candidate (possibly
+        including self)
+        """
+        return set(peer for peer in self.col if digit in peer.candidates)
+
+
+    def same_digit_in_box(self, digit):
+        """return all cells in self box with digit as candidate (possibly
+        including self)
+        """
+        return set(peer for peer in self.box if digit in peer.candidates)
 
 
 class Grid:
@@ -151,6 +174,18 @@ class Grid:
     def discard_rc(self, irow, icol, digit):
         self.cell_rc(irow, icol).discard(digit)
 
+    def conjugates(self, cell, digit):
+        rowpeers = cell.same_digit_in_row(digit)
+        colpeers = cell.same_digit_in_col(digit)
+        boxpeers = cell.same_digit_in_box(digit)
+        conj = set()
+        conj = conj.union(rowpeers if len(rowpeers) == 2 else set())
+        conj = conj.union(colpeers if len(colpeers) == 2 else set())
+        conj = conj.union(boxpeers if len(boxpeers) == 2 else set())
+        conj.discard(cell)
+        #print('conj', cell, digit, conj)
+        return conj
+
     def dump(self, decor=None):
         for i in range(9):
             print(' '.join('%-9s' % colorize_cell(_, decor) for _ in self.rows[i]))
@@ -158,6 +193,7 @@ class Grid:
 
 
 ALLCAND = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+ALLDIGITS = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
 def colorize_cell(cell, spec_color):
@@ -235,10 +271,7 @@ def load_ss_clipboard(grid, content):
         print('bad clipboard (1)')
         exit(1)
 
-
-
     return lines
-
 
 
 # Singles
@@ -269,9 +302,9 @@ def solve_hidden_candidate(grid):
     for cell in grid.cells:
         cands = cell.candidates
         for cand in cands:
-            rowcells = [c for c in grid.rows[cell.rownum] if cand in c.candidates]
-            colcells = [c for c in grid.cols[cell.colnum] if cand in c.candidates]
-            boxcells = [c for c in grid.boxes[cell.boxnum] if cand in c.candidates]
+            rowcells = cell.same_digit_in_row(cand)
+            colcells = cell.same_digit_in_col(cand)
+            boxcells = cell.same_digit_in_box(cand)
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
                 grid.set_value_rc(cell.rownum, cell.colnum, cand)
                 grid_modified = True
@@ -528,6 +561,132 @@ def solve_swordfish(grid):
     return False
 
 
+# coloring
+
+
+def solve_coloring(grid):
+    for digit in ALLDIGITS:
+        clusters = make_clusters(grid, digit)
+        for cluster in clusters:
+            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+
+            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) - cluster_blue
+            peers_cluster_green = multi_peers(grid, digit, cluster_green) - cluster_green
+            common = cellinter(peers_cluster_blue, peers_cluster_green)
+
+            if common:
+                discard_color(grid, digit, common, 'color trap')
+                return True
+
+    return False
+
+
+def solve_coloring_wrap(grid):
+    for digit in ALLDIGITS:
+        clusters = make_clusters(grid, digit)
+        for cluster in clusters:
+            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+
+            if color_contradiction(cluster_blue):
+                discard_color(grid, digit, cluster_blue, 'color wrap')
+                return True
+
+            if color_contradiction(cluster_green):
+                discard_color(grid, digit, cluster_green, 'color wrap')
+                return True
+
+    return False
+
+
+def color_contradiction(same_color):
+    """all cells in same_color must have the same status; if two cells of the
+    same color are in the same unit, the associated candidate cannot be the
+    value.
+    """
+    rows = [0] * 9
+    cols = [0] * 9
+    boxs = [0] * 9
+    for cell in same_color:
+        rows[cell.rownum] += 1
+        cols[cell.colnum] += 1
+        boxs[cell.boxnum] += 1
+    return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
+
+
+def discard_color(grid, digit, to_be_removed, caption):
+    discarded = []
+    for cell in to_be_removed:
+        cell.discard(digit)
+        grid_modified = True
+        if cell not in discarded:
+            discarded.append(cell)
+    if grid_modified:
+        grid.history.append((caption, discarded, 'discard', digit))
+        return True
+
+
+# clusters
+
+
+def make_clusters(grid, digit):
+    clusters = []
+    for cell in grid.cells:
+        check_cluster(grid, clusters, cell, digit)
+    return clusters
+
+
+def check_cluster(grid, clusters, cell, digit):
+    if digit not in cell.candidates:
+        pass
+    elif is_cell_in_clusters(cell, clusters):
+        pass
+    else:
+        new_cluster = set()
+        new_cluster.add(cell)
+        clusters.append(new_cluster)
+        conjs = grid.conjugates(cell, digit)
+        #print(1, cell, conjs)
+        for conj in conjs:
+            check_cluster_conj(grid, new_cluster, conj, digit)
+
+
+def is_cell_in_clusters(cell, clusters):
+    return clusters and any(cell in cluster for cluster in clusters)
+
+
+def check_cluster_conj(grid, cluster, conj, digit):
+    if conj in cluster:
+        pass
+    else:
+        cluster.add(conj)
+        conjs = grid.conjugates(conj, digit)
+        #print(2, conj, conjs)
+        for conj in conjs:
+            check_cluster_conj(grid, cluster, conj, digit)
+
+
+def colorize(grid, digit, cluster):
+
+    def colorize_cell(cell, colorset, conjcolorset):
+        if cell not in colorset and cell not in conjcolorset:
+            colorset.add(cell)
+            for conj in grid.conjugates(cell, digit):
+                colorize_cell(conj, conjcolorset, colorset)
+
+    cluster_blue, cluster_green = set(), set()
+    first_cell = list(cluster)[0]
+    colorize_cell(first_cell, cluster_blue, cluster_green)
+
+    return cluster_blue, cluster_green
+
+
+def multi_peers(grid, digit, cluster):
+    digit_peers = set()
+    for cell in cluster:
+        digit_peers = cellunion(digit_peers, set(c for c in cell.peers if digit in c.candidates))
+    return digit_peers
+
+
 # xy-wings
 
 
@@ -565,25 +724,41 @@ def solve_XY_wing(grid):
 # solving engine
 
 
+# source: http://sudopedia.enjoysudoku.com/SSTS.html
+STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc,mc,h3,xy,h4'
+STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc,sc2,h3,xy,h4'
+
+SOLVER = {
+    'n1': solve_single_candidate,
+    'n2': solve_nacked_pairs,
+    'n3': solve_nacked_triples,
+    'n4': solve_nacked_quads,
+    'h1': solve_hidden_candidate,
+    'h2': solve_hidden_pair,
+    'h3': solve_hidden_triple,
+    'h4': solve_hidden_quad,
+    'lc1': solve_pointing,
+    'lc2': solve_claiming,
+    'bf2': solve_X_wing,
+    'bf3': solve_swordfish,
+    'sc': solve_coloring,
+    'sc2': solve_coloring_wrap,
+    # 'mc' : ,
+    'xy' : solve_XY_wing,
+}
+
+
+def apply_strategy(grid, strategy):
+    for solver in strategy.split(','):
+        if SOLVER[solver](grid):
+            return True
+    else:
+        return False
+
+
 def solve(grid, trace_history=False):
-    grid_modified = True
-    while grid_modified:
-        grid_modified = (
-            solve_single_candidate(grid) or
-            solve_hidden_candidate(grid) or
-            solve_pointing(grid) or
-            solve_claiming(grid) or
-            solve_nacked_pairs(grid) or
-            solve_nacked_triples(grid) or
-            solve_nacked_quads(grid) or
-            solve_hidden_pair(grid) or
-            solve_hidden_triple(grid) or
-            solve_hidden_quad(grid) or
-            solve_X_wing(grid) or
-            solve_XY_wing(grid) or
-            solve_swordfish(grid) or
-            False
-        )
+    while apply_strategy(grid, STRATEGY_SSTS):
+        pass
     if trace_history:
         for _ in grid.history:
             print(_)
@@ -593,6 +768,7 @@ def solve(grid, trace_history=False):
 
 
 def test(fname):
+    verbose = False
     grid = Grid()
     success = True
     ngrids = 0
@@ -604,8 +780,9 @@ def test(fname):
             grid.input(input)
             solve(grid)
             if output != grid.output():
-                print('-' * 20)
-                print('\n'.join((input, output, grid.output())))
+                if verbose:
+                    print('-' * 20)
+                    print('\n'.join((input, output, grid.output())))
                 success = False
             else:
                 solved += 1
