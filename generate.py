@@ -54,7 +54,7 @@ def main():
                 # these lines have to be filtered
                 numobtained += 1
                 print(numobtained)
-                if numobtained == numwanted:
+                if numobtained >= numwanted:
                     p.terminate()
                     break
 
@@ -90,11 +90,39 @@ def main():
                     break
 
     # clean
-
     os.remove(name_generated)
     os.remove(NAME_TOBESOLVED)
     os.remove(NAME_SOLVED)
 
 
+def main2():
+    assert sys.argv[1] == 'solve'
+    name_in = sys.argv[2]
+    name_out = sys.argv[3]
+
+    # check hodoku presence
+    if not os.path.isfile(HODOKU_JAR):
+        print('Error: hodoku.jar not found')
+        exit(1)
+
+    # start hodoku in solving mode (hodoku must be in path)
+    comm = f'java -jar {HODOKU_JAR} /bs {name_in} /vs /o {NAME_SOLVED}'
+    subprocess.check_output(comm)
+
+    # merge
+    with open(name_in) as f1, open(NAME_SOLVED) as f2, open(name_out, 'wt') as g:
+        numobtained = 0
+        for line1, line2 in zip(f1, f2):
+            line = line1[0:81] + '  ' + line2[0:81] + '  #\n'
+            print(line, end='', file=g)
+            numobtained += 1
+
+    # clean
+    os.remove(NAME_SOLVED)
+
+
 if __name__ == '__main__':
-    main()
+    if sys.argv[1] == 'solve':
+        main2()
+    else:
+        main()
