@@ -244,8 +244,10 @@ def load_ss_clipboard(grid, content):
     content = content.splitlines()
 
     if len(content) == 28:      # when starting
-        assert False
-        lines = content[16:19] + content[20:23] + content[24:27]
+        lines = ''.join(content[1:4] + content[5:8] + content[9:12])
+        values = lines.replace('|', '')
+        values = values.replace(' ', '')
+        grid.input(values)
 
     elif len(content) == 43:    # after first move
         # values
@@ -945,8 +947,7 @@ def main(argstring=None):
             content = clipboard.paste()
             load_ss_clipboard(grid, content)
             grid.dump()
-            # test
-            solve_pointing(grid)
+            solve(grid, options.history)
             grid.dump()
 
     else:
