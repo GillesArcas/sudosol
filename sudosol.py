@@ -564,7 +564,10 @@ def solve_swordfish(grid):
 # coloring
 
 
-def solve_coloring(grid):
+def solve_coloring_trap(grid):
+    """a candidate sees both colors of a cluster.Whatever the color coding, the
+    candidate can be eliminated.
+    """
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         for cluster in clusters:
@@ -582,6 +585,9 @@ def solve_coloring(grid):
 
 
 def solve_coloring_wrap(grid):
+    """two candidates in the same unit have the same color. All candidates with
+    this color can be eliminated.
+    """
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         for cluster in clusters:
@@ -614,6 +620,7 @@ def color_contradiction(same_color):
 
 
 def discard_color(grid, digit, to_be_removed, caption):
+    grid_modified = False
     discarded = []
     for cell in to_be_removed:
         cell.discard(digit)
@@ -623,6 +630,102 @@ def discard_color(grid, digit, to_be_removed, caption):
     if grid_modified:
         grid.history.append((caption, discarded, 'discard', digit))
         return True
+
+
+def solve_multi_coloring_type_1(grid):
+    """Consider two clusters. If a unit contains a color of each cluster, all
+    cells seing the opposite colors can be eliminated.
+    """
+    for digit in ALLDIGITS:
+        clusters = make_clusters(grid, digit)
+        clusters_data = []
+        for cluster in clusters:
+            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+
+            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) #- cluster_blue
+            peers_cluster_green = multi_peers(grid, digit, cluster_green) #- cluster_green
+            common = cellinter(peers_cluster_blue, peers_cluster_green)
+
+            clusters_data.append((cluster, cluster_blue, cluster_green,
+                                  peers_cluster_blue, peers_cluster_green, common))
+
+            if common:
+                print(cluster)
+
+        for clusters_data1, clusters_data2 in itertools.combinations(clusters_data, 2):
+            _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, _ = clusters_data1
+            _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, _ = clusters_data2
+
+            if any(cell in peers_cluster_blue2 for cell in cluster_blue1):
+                to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
+                if to_be_removed:
+                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    return True
+
+            if any(cell in peers_cluster_green2 for cell in cluster_blue1):
+                to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
+                if to_be_removed:
+                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    return True
+
+            if any(cell in peers_cluster_blue2 for cell in cluster_green1):
+                to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
+                if to_be_removed:
+                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    return True
+
+            if any(cell in peers_cluster_green2 for cell in cluster_green1):
+                to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
+                if to_be_removed:
+                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    return True
+
+
+def solve_multi_coloring_type_2(grid):
+    """Consider two clusters. If a color of one cluster sees both colors of the
+    second cluster, all candidates from first color can be eliminated.
+    """
+    for digit in ALLDIGITS:
+        clusters = make_clusters(grid, digit)
+        clusters_data = []
+        for cluster in clusters:
+            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+
+            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) #- cluster_blue
+            peers_cluster_green = multi_peers(grid, digit, cluster_green) #- cluster_green
+            common = cellinter(peers_cluster_blue, peers_cluster_green)
+
+            clusters_data.append((cluster, cluster_blue, cluster_green,
+                                  peers_cluster_blue, peers_cluster_green, common))
+
+            if common:
+                print(cluster)
+
+        for clusters_data1, clusters_data2 in itertools.combinations(clusters_data, 2):
+            _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, common1 = clusters_data1
+            _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, common2 = clusters_data2
+
+            if (any(cell in peers_cluster_blue2 for cell in cluster_blue1) and
+                any(cell in peers_cluster_green2 for cell in cluster_blue1)):
+                discard_color(grid, digit, cluster_blue1, 'multi color type 2')
+                return True
+
+            if (any(cell in peers_cluster_blue2 for cell in cluster_green1) and
+                any(cell in peers_cluster_green2 for cell in cluster_green1)):
+                discard_color(grid, digit, cluster_green1, 'multi color type 2')
+                return True
+
+            if (any(cell in peers_cluster_blue1 for cell in cluster_blue2) and
+                any(cell in peers_cluster_green1 for cell in cluster_blue2)):
+                discard_color(grid, digit, cluster_blue2, 'multi color type 2')
+                return True
+
+            if (any(cell in peers_cluster_blue1 for cell in cluster_green2) and
+                any(cell in peers_cluster_green1 for cell in cluster_green2)):
+                discard_color(grid, digit, cluster_green2, 'multi color type 2')
+                return True
+
+    return False
 
 
 # clusters
@@ -725,8 +828,20 @@ def solve_XY_wing(grid):
 
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
-STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc,mc,h3,xy,h4'
-STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc,sc2,h3,xy,h4'
+STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
+STRATEGY = STRATEGY_SSTS
+#STRATEGY = f'{STRATEGY_SSTS}-mc1,mc2'
+
+
+def list_techniques(strategy):
+    if '-' not in strategy:
+        return strategy.split(',')
+    else:
+        x,y = strategy.split('-')
+        x = x.split(',')
+        y = y.split(',')
+        return [z for z in x if z not in y]
+
 
 SOLVER = {
     'n1': solve_single_candidate,
@@ -741,15 +856,16 @@ SOLVER = {
     'lc2': solve_claiming,
     'bf2': solve_X_wing,
     'bf3': solve_swordfish,
-    'sc': solve_coloring,
+    'sc1': solve_coloring_trap,
     'sc2': solve_coloring_wrap,
-    # 'mc' : ,
+    'mc1' : solve_multi_coloring_type_1,
+    'mc2' : solve_multi_coloring_type_2,
     'xy' : solve_XY_wing,
 }
 
 
 def apply_strategy(grid, strategy):
-    for solver in strategy.split(','):
+    for solver in list_techniques(strategy):
         if SOLVER[solver](grid):
             return True
     else:
@@ -757,7 +873,7 @@ def apply_strategy(grid, strategy):
 
 
 def solve(grid, trace_history=False):
-    while apply_strategy(grid, STRATEGY_SSTS):
+    while apply_strategy(grid, STRATEGY):
         pass
     if trace_history:
         for _ in grid.history:
