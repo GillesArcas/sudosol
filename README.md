@@ -10,4 +10,4 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 
 Tests make sure each technique is handled correctly.
 
-
+sudosol requires python >= 3.6.
