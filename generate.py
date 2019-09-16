@@ -26,6 +26,7 @@ def main():
     tech = sys.argv[1]
     name_out = sys.argv[2]
     numwanted = int(sys.argv[3])
+    enable_ssts = len(sys.argv) == 5 and sys.argv[4] == 'ssts'
 
     name_generated = f'{tech}-{NAME_GENERATED}'
 
@@ -42,14 +43,15 @@ def main():
         num_existing = 0
 
     # start hodoku in generate mode
-    comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:3 /o {name_generated}'
+    mode = 1 if enable_ssts else 3
+    comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:{mode} /o {name_generated}'
     p = subprocess.Popen(comm.split())
     time.sleep(1)
 
     try:
         numobtained = num_existing
         for line in tailf(name_generated):
-            if 'ssts' not in line:
+            if enable_ssts or 'ssts' not in line:
                 # even with tech:3 some grids are generated requiring ssts techniques
                 # these lines have to be filtered
                 numobtained += 1
@@ -82,7 +84,7 @@ def main():
     with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'at') as g:
         numobtained = 0
         for line1, line2 in zip(f1, f2):
-            if 'ssts' not in line1:
+            if enable_ssts or 'ssts' not in line1:
                 line = line1[0:81] + '  ' + line2[0:81] + line1[81:]
                 print(line, end='', file=g)
                 numobtained += 1
