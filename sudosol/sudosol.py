@@ -7,6 +7,9 @@ import colorama
 from colorama import Fore
 
 
+VERSION = '0.1'
+
+
 # Data structures
 
 
