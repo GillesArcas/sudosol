@@ -570,7 +570,7 @@ def solve_swordfish(grid):
 
 
 def solve_coloring_trap(grid):
-    """a candidate sees both colors of a cluster.Whatever the color coding, the
+    """a candidate sees both colors of a cluster. Whatever the color coding, the
     candidate can be eliminated.
     """
     for digit in ALLDIGITS:
