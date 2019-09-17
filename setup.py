@@ -34,6 +34,7 @@ if __name__ == "__main__":
         author='Gilles Arcas',
         author_email='gilles.arcas@gmail.com',
         description='Sudoku solver with human techniques\n',
+        install_requires=['colorama', 'clipboard'],
         packages=find_packages(),
         entry_points={
             'console_scripts': ['sudosol = sudosol.sudosol:main']
