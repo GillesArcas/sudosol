@@ -193,7 +193,7 @@ class Grid:
 
     def dump(self, decor=None):
         for i in range(9):
-            print(' '.join('%-9s' % colorize_cell(_, decor) for _ in self.rows[i]))
+            print(' '.join('%-9s' % colorize_candidates(_, decor) for _ in self.rows[i]))
         print()
 
 
@@ -201,7 +201,7 @@ ALLCAND = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 ALLDIGITS = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
-def colorize_cell(cell, spec_color):
+def colorize_candidates(cell, spec_color):
     # ((cell, '*', Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED))
     if spec_color is None or not cell.candidates:
         return str(cell)
@@ -218,6 +218,8 @@ def colorize_cell(cell, spec_color):
                         if cand == spec_cand or cand in spec_cand:
                             res += speccol + str(cand) + Fore.RESET
                             break
+                    else:
+                        res += str(cand)
                 # manual padding as colorama information fools format padding
                 res += ' ' * (9 - len(targ.candidates))
                 return res
@@ -812,15 +814,14 @@ def solve_XY_wing(grid):
                     continue
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
-                    #print('---', cand1, cand2, wing1.candidates, wing2.candidates)
-                    #print(grid.output())
-                    #grid.dump(((cell, ALLCAND, Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED)))
                     digit = list(wings_inter)[0]
                     grid_modified = False
                     discarded = []
                     for cell2 in cellinter(wing1.peers, wing2.peers):
                         if digit in cell2.candidates:
-                            #print('>', cell2.rownum, cell2.colnum, cell2)
+                            # grid.dump(((cell, ALLCAND, Fore.GREEN),
+                            #         ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED),
+                            #         (cell2, {digit}, Fore.BLUE)))
                             cell2.discard(digit)
                             grid_modified = True
                             if cell2 not in discarded:
