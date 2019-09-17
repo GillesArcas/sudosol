@@ -1,0 +1,22 @@
+# Config file for automatic testing at travis-ci.org
+
+language: python
+
+matrix:
+  include:
+    - python: 3.6
+      dist: trusty
+      sudo: false
+    - python: 3.7
+      dist: xenial
+      sudo: true
+
+
+install:
+  - pip install coveralls
+
+script:
+  - coverage run sudosol/sudosol.py --testd tests
+
+after_success:
+  - coveralls
