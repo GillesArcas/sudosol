@@ -1,6 +1,8 @@
 import argparse
 import re
 import itertools
+import glob
+import random
 
 import clipboard
 import colorama
@@ -704,6 +706,7 @@ def solve_multi_coloring_type_2(grid):
                                   peers_cluster_blue, peers_cluster_green, common))
 
             if common:
+                # TODO: check why always empty
                 print(cluster)
 
         for clusters_data1, clusters_data2 in itertools.combinations(clusters_data, 2):
@@ -842,7 +845,7 @@ def list_techniques(strategy):
     if '-' not in strategy:
         return strategy.split(',')
     else:
-        x,y = strategy.split('-')
+        x, y = strategy.split('-')
         x = x.split(',')
         y = y.split(',')
         return [z for z in x if z not in y]
@@ -888,26 +891,45 @@ def solve(grid, trace_history=False):
 #
 
 
-def test(fname):
+def testfile(filename, randnum):
     verbose = False
     grid = Grid()
     success = True
     ngrids = 0
     solved = 0
-    with open(fname) as f:
-        for line in f:
-            input, output, _ = line.strip().split(None, 2)
-            ngrids += 1
-            grid.input(input)
-            solve(grid)
-            if output != grid.output():
-                if verbose:
-                    print('-' * 20)
-                    print('\n'.join((input, output, grid.output())))
-                success = False
-            else:
-                solved += 1
-    print(f'success: {success} solved {solved}/{ngrids}')
+    with open(filename) as f:
+        grids = f.readlines()
+
+    if randnum and randnum < len(grids):
+        grids = random.sample(grids, randnum)
+
+    for line in grids:
+        input, output, _ = line.strip().split(None, 2)
+        ngrids += 1
+        grid.input(input)
+        solve(grid)
+        if output != grid.output():
+            if verbose:
+                print('-' * 20)
+                print('\n'.join((input, output, grid.output())))
+            success = False
+        else:
+            solved += 1
+
+    print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids}')
+    return success
+
+
+def testdir(dirname, randnum):
+    tested = 0
+    succeeded = 0
+    for filename in glob.glob(f'{dirname}/*.txt'):
+        if not filename.startswith('.'):
+            tested += 1
+            if testfile(filename, randnum):
+                succeeded += 1
+
+    print(f'Test dir : {dirname:20} Result: {succeeded == tested} Succeeded: {succeeded}/{tested}')
 
 
 def parse_command_line(argstring=None):
@@ -919,7 +941,12 @@ def parse_command_line(argstring=None):
                         action='store_true', default=False)
     parser.add_argument('-f', '--format', help='format',
                         action='store', default='ss')
-    parser.add_argument('-t', '--test', help='test file',
+    parser.add_argument('-t', '--testfile', help='test file',
+                        action='store', default=None)
+    parser.add_argument('-T', '--testdir', help='test directory',
+                        action='store', default=None)
+    parser.add_argument('-r', '--random', help='test N random grids from file',
+                        type=int,
                         action='store', default=None)
     parser.add_argument('-H', '--history', help='trace history',
                         action='store_true', default=False)
@@ -941,8 +968,11 @@ def main(argstring=None):
         solve(grid, options.history)
         grid.dump()
 
-    elif options.test:
-        test(options.test)
+    elif options.testfile:
+        testfile(options.testfile, options.random)
+
+    elif options.testdir:
+        testdir(options.testdir, options.random)
 
     elif options.clipboard:
         if options.format == 'ss':
