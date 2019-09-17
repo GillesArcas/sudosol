@@ -13,6 +13,7 @@ matrix:
 
 
 install:
+  - pip install clipboard
   - pip install coveralls
 
 script:
