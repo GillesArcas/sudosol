@@ -923,7 +923,7 @@ def testfile(filename, randnum):
 def testdir(dirname, randnum):
     tested = 0
     succeeded = 0
-    for filename in glob.glob(f'{dirname}/*.txt'):
+    for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
             if testfile(filename, randnum):
