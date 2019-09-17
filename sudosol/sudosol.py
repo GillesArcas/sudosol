@@ -327,7 +327,7 @@ def solve_hidden_candidate(grid):
 def solve_pointing(grid):
 
     grid_modified = False
-    for digit in range(1, 10):
+    for digit in ALLDIGITS:
 
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if not candidate_in_cells(digit, triplet):
@@ -359,7 +359,7 @@ def solve_pointing(grid):
 def solve_claiming(grid):
 
     grid_modified = False
-    for digit in range(1, 10):
+    for digit in ALLDIGITS:
 
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if not candidate_in_cells(digit, triplet):
@@ -476,7 +476,7 @@ def solve_hidden_quad(grid):
 
 def solve_X_wing(grid):
     grid_modified = False
-    for digit in range(1, 10):
+    for digit in ALLDIGITS:
         for index, house in enumerate(grid.rows):
             dig_house = [cell for cell in house if digit in cell.candidates]
             if len(dig_house) == 2:
@@ -516,7 +516,7 @@ def solve_X_wing(grid):
 
 def solve_swordfish(grid):
     grid_modified = False
-    for digit in range(1, 10):
+    for digit in ALLDIGITS:
         rows = []
         for row in grid.rows:
             rowcells = [cell for cell in row if digit in cell.candidates]
