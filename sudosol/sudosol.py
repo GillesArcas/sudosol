@@ -929,7 +929,9 @@ def testdir(dirname, randnum):
             if testfile(filename, randnum):
                 succeeded += 1
 
-    print(f'Test dir : {dirname:20} Result: {succeeded == tested} Succeeded: {succeeded}/{tested}')
+    success = succeeded == tested
+    print(f'Test dir : {dirname:20} Result: {success} Succeeded: {succeeded}/{tested}')
+    return success
 
 
 def parse_command_line(argstring=None):
@@ -969,10 +971,16 @@ def main(argstring=None):
         grid.dump()
 
     elif options.testfile:
-        testfile(options.testfile, options.random)
+        if testfile(options.testfile, options.random):
+            exit(0)
+        else:
+            exit(1)
 
     elif options.testdir:
-        testdir(options.testdir, options.random)
+        if testdir(options.testdir, options.random):
+            exit(0)
+        else:
+            exit(1)
 
     elif options.clipboard:
         if options.format == 'ss':
