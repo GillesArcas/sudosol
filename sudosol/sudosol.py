@@ -37,10 +37,17 @@ class Cell:
         self.peers = set()
 
     def __str__(self):
+        """format cell as value or candidates
+        """
         if self.value:
             return str(self.value) + '.'
         else:
             return ''.join(str(_) for _ in sorted(list(self.candidates)))
+
+    def strcoord(self):
+        """format cell as coordinates
+        """
+        return f'r{self.rownum}c{self.colnum}'
 
     def __repr__(self):
         return self.__str__()
@@ -850,36 +857,16 @@ def solve_XY_wing(grid):
 
 
 def solve_XY_chain_v1(grid):
-    #print(grid.output())
-    pairs = [cell for cell in grid.cells if cell.is_pair()]
-    pairs = sorted(pairs)
+    all_solutions = False
+    pairs, links = xy_links(grid)
 
-    # adjaceny matrix: two pairs are connected if they are in the same house
-    # and they share a single candidate
+    # initialize adjacency matrix
     adjacency = [None] * len(pairs)
     for i in range(len(pairs)):
         adjacency[i] = [[] for _ in pairs]
-
-    for i, pair1 in enumerate(pairs):
-        for j, pair2 in enumerate(pairs):
-            if i == j:
-                continue
-            elif pair1 not in pair2.peers:
-                continue
-            elif pair1.candidates == pair2.candidates:
-                # remote pair
-                first = set(sorted(list(pair1.candidates))[:1])
-                second = set(sorted(list(pair1.candidates))[1:])
-                chain1 = list(pair1.candidates - first) + list(first) + list(pair2.candidates - first)
-                chain2 = list(pair1.candidates - second) + list(second) + list(pair2.candidates - second)
-                adjacency[i][j].append([[pair1, pair2], chain1])
-                adjacency[i][j].append([[pair1, pair2], chain2])
-            else:
-                chain = chain_candidates(pair1.candidates, pair2.candidates)
-                if chain is None:
-                    continue
-                else:
-                    adjacency[i][j].append([[pair1, pair2], chain])
+    for link in links:
+        (pair1, pair2), _ = link
+        adjacency[pairs.index(pair1)][pairs.index(pair2)].append(link)
 
     # transitive closure
     for k in range(len(pairs)):
@@ -887,105 +874,36 @@ def solve_XY_chain_v1(grid):
             for j in range(len(pairs)):
                 for adjacency1 in adjacency[i][k]:
                     for adjacency2 in adjacency[k][j]:
-                        if test_adjacency(grid, adjacency[i][j], adjacency1, adjacency2):
+                        if test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions):
                             return True
 
-    # for i in range(len(pairs)):
-    #     for j in range(len(pairs)):
-    #         if len(adjacency[i][j]) == 4:
-    #             cand1 = sorted(list(pairs[i].candidates))
-    #             cand2 = sorted(list(pairs[j].candidates))
-    #             for index, (x, candchain) in enumerate(adjacency[i][j]):
-    #                 if candchain[:2] == cand1:
-    #                     print('D', end='')
-    #                 else:
-    #                     print('R', end='')
-    #                 if candchain[-2:] == cand2:
-    #                     print('D', end='')
-    #                 else:
-    #                     print('R', end='')
-    #                 print(' ', end='')
-    #             print()
-
-    #         for adj in adjacency[i][j]:
-    #             if adj[1][0] == adj[1][-1]:
-    #                 digit = adj[1][0]
-    #                 to_be_removed = cellinter(adj[0][0].peers, adj[0][-1].peers)
-    #                 to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
-    #                 if to_be_removed:
-    #                     discard_color(grid, digit, to_be_removed, 'XY-chain')
-    #                     return True
+    if all_solutions:
+        for i in range(len(pairs)):
+            for j in range(len(pairs)):
+                for chain in adjacency[i][j]:
+                    if test_xy_remove(grid, *chain):
+                        return True
 
     return False
-
-
-def test_adjacency(grid, adjacency, adjacency1, adjacency2):
-    cellchain1, candchain1 = adjacency1
-    cellchain2, candchain2 = adjacency2
-    if candchain1[-2:] != candchain2[:2]:
-        # chains of candidates cannot be concatenated
-        return False
-    if any((x[0] == candchain1[0] and x[-1] == candchain2[-1]) for _, x in adjacency):
-        # already a chain of candidates with same start and end
-        return False
-    if any(x in cellchain2[1:] for x in cellchain1):
-        # concatenantion would make a loop
-        return False
-    cellchain = cellchain1 + cellchain2[1:]
-    candchain = candchain1 + candchain2[2:]
-    adjacency.append([cellchain, candchain])
-    if len(adjacency) == 4:
-        for index, x in enumerate(adjacency):
-            print(index, x)
-    if candchain[0] == candchain[-1]:
-        digit = candchain[0]
-        to_be_removed = cellinter(cellchain[0].peers, cellchain[-1].peers)
-        to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
-        if to_be_removed:
-            discard_color(grid, digit, to_be_removed, 'XY-chain')
-            return True
-    return False
-
-
-def chain_candidates(candidates1, candidates2):
-    inter = candidates1.intersection(candidates2)
-    if len(inter) == 0:
-        return None
-    elif len(inter) == 1:
-        return list(candidates1 - inter) + list(inter) + list(candidates2 - inter)
-    else:
-        # make chaine in natural order
-        first = set(sorted(list(candidates1))[:1])
-        return list(candidates1 - first) + list(first) + list(candidates2 - first)
-
-
-def print_adjacency(adjacency, pairs):
-    #return
-    print()
-    for i, pair1 in enumerate(pairs):
-        for j, pair2 in enumerate(pairs):
-            if adjacency[i][j] is None:
-                print('%21s' % ' - ', end= ' ')
-            else:
-                print('%21s' % str(adjacency[i][j]), end= ' ')
-        print()
 
 
 def xy_links(grid):
+    """make list of pairs and list of links; each link is made of the list
+    of pairs and the list of candidates
+    """
     pairs = [cell for cell in grid.cells if cell.is_pair()]
     pairs = sorted(pairs)
-
     links = []
 
     for pair1 in pairs:
         for pair2 in pairs:
             if pair1 == pair2:
-                continue
+                pass
             elif pair1 not in pair2.peers:
-                continue
+                pass
             elif pair1.candidates == pair2.candidates:
                 # remote pair
-                cand1, cand2 = sorted(list(pair1.candidates))
+                cand1, cand2 = list(pair1.candidates)
                 links.append([[pair1, pair2], [cand1, cand2, cand1]])
                 links.append([[pair1, pair2], [cand2, cand1, cand2]])
             else:
@@ -997,24 +915,51 @@ def xy_links(grid):
                     links.append([[pair1, pair2], candlink])
                 else:
                     pass
-    return links
+    return pairs, links
 
 
-def eqlist(x, y):
-    for a, b in zip(x, y):
-        if a != b:
-            return False
-    return True
+def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
+    cellchain1, candchain1 = adjacency1
+    cellchain2, candchain2 = adjacency2
+    if candchain1[-2:] != candchain2[:2]:
+        # chains of candidates cannot be concatenated
+        return False
+    if any(x in cellchain2[1:] for x in cellchain1):
+        # concatenation would make a loop
+        return False
+    if any((x[0] == candchain1[0] and x[-1] == candchain2[-1]) for _, x in adjacency):
+        # already a chain of candidates with same start and end
+        return False
+
+    cellchain = cellchain1 + cellchain2[1:]
+    candchain = candchain1 + candchain2[2:]
+    adjacency.append([cellchain, candchain])
+
+    if len(adjacency) == 4:
+        for index, x in enumerate(adjacency):
+            print(index, x)
+
+    if all_solutions:
+        return False
+    else:
+        return test_xy_remove(grid, cellchain, candchain)
+
+
+def test_xy_remove(grid, cellchain, candchain):
+    if candchain[0] == candchain[-1]:
+        digit = candchain[0]
+        to_be_removed = cellinter(cellchain[0].peers, cellchain[-1].peers)
+        to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
+        to_be_removed = [cell for cell in to_be_removed if cell not in cellchain]
+        if to_be_removed:
+            discard_color(grid, digit, to_be_removed, 'XY-chain')
+            return True
+    return False
 
 
 def solve_XY_chain_v2(grid):
-    #print(grid.output())
-    # print(1)
-    # grid.dump()
-    pairs = [cell for cell in grid.cells if cell.is_pair()]
-    pairs = sorted(pairs)
-
-    links = xy_links(grid)
+    all_solutions = False
+    _, links = xy_links(grid)
 
     starting_links = defaultdict(list)
     for link in links:
@@ -1022,11 +967,7 @@ def solve_XY_chain_v2(grid):
         starting_links[cell1.cellnum].append(link)
 
     # init paths of length 1
-    paths = []
-    paths.append(None)
-    paths.append([])
-    for link in links:
-        paths[1].append([link[0][:], link[1][:]])
+    paths = [None, links]
 
     modified = True
     numpath = defaultdict(set)
@@ -1043,58 +984,30 @@ def solve_XY_chain_v2(grid):
                 if celllink[1] in cellchain:
                     pass
                 elif candchain[-2:] == candlink[:2]:
-                    newpath = [cellchain[:] + [celllink[1]], candchain[:] + candlink[2:]]
+                    newpath = [cellchain + celllink[1:], candchain + candlink[2:]]
 
                     cellchain2 = newpath[0]
                     candchain2 = newpath[1]
-                    link = (cellchain2[0].cellnum, cellchain2[-1].cellnum)
-                    if True or (candchain2[0], candchain2[-1]) not in numpath[link]:
-                        numpath[link].add((candchain2[0], candchain2[-1]))
+                    cellextr = cellchain2[0].cellnum, cellchain2[-1].cellnum
+                    candextr = candchain2[0], candchain2[-1]
+
+                    if candextr not in numpath[cellextr]:
+                        numpath[cellextr].add(candextr)
+                        if len(numpath[cellextr]) == 4:
+                            print(cellextr, numpath[cellextr])
 
                         paths[length + 1].append(newpath)
                         modified = True
 
-                        # cellchain2, candchain2 = newpath
-                        # if candchain2[0] == candchain2[-1]:
-                        #     digit = candchain2[0]
-                        #     to_be_removed = cellinter(cellchain2[0].peers, cellchain2[-1].peers)
-                        #     to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
-                        #     to_be_removed = [cell for cell in to_be_removed if cell not in cellchain2]
-                        #     if to_be_removed:
-                        #         #print(path)
-                        #         # print(2, digit, newpath,
-                        #         #       ' '.join('r%dc%d' % (cell.rownum, cell.colnum) for cell in cellchain2),
-                        #         #       ' '.join('r%dc%d' % (cell.rownum, cell.colnum) for cell in to_be_removed))
-                        #         discard_color(grid, digit, to_be_removed, 'XY-chain')
-                        #         # grid.dump(((cellchain2, set(ALLCAND), Fore.GREEN),))
-                        #         return True
+                        if not all_solutions:
+                            if test_xy_remove(grid, cellchain, candchain):
+                                return True
 
-    for length in range(2, len(paths)):
-        for path in paths[length]:
-            cellchain = path[0]
-            candchain = path[1]
-            if candchain[0] == candchain[-1]:
-                digit = candchain[0]
-                to_be_removed = cellinter(cellchain[0].peers, cellchain[-1].peers)
-                to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
-                if to_be_removed:
-                    #print(path)
-                    discard_color(grid, digit, to_be_removed, 'XY-chain')
+    if all_solutions:
+        for length in range(2, len(paths)):
+            for cellchain, candchain in paths[length]:
+                if test_xy_remove(grid, cellchain, candchain):
                     return True
-
-    # numpath = dict()
-    # for length in range(2, len(paths)):
-    #     for path in paths[length]:
-    #         cellchain = path[0]
-    #         candchain = path[1]
-    #         link = (cellchain[0].cellnum, cellchain[-1].cellnum)
-    #         if link not in numpath:
-    #             numpath[link] = defaultdict(int)
-    #         numpath[link][(candchain[0], candchain[-1])] += 1
-
-    # for link, num in numpath.items():
-    #     if len(num) >= 4:
-    #         print(link, num)
 
     return False
 
@@ -1104,7 +1017,7 @@ def solve_XY_chain_v2(grid):
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
 STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
-STRATEGY = STRATEGY_SSTS + ',xyc' + '-xy'
+STRATEGY = STRATEGY_SSTS + ',xyc' #+ '-xy'
 #STRATEGY = f'{STRATEGY_SSTS}-mc1,mc2'
 
 
@@ -1136,7 +1049,7 @@ SOLVER = {
     'mc1' : solve_multi_coloring_type_1,
     'mc2' : solve_multi_coloring_type_2,
     'xy' : solve_XY_wing,
-    'xyc' : solve_XY_chain_v2,
+    'xyc' : solve_XY_chain_v1,
 }
 
 
