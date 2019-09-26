@@ -342,88 +342,98 @@ def solve_hidden_candidate(grid):
     return grid_modified
 
 
+# Locked pairs and triplets
+
+
+def solve_locked_pairs(grid):
+    print('solve_locked_pairs')
+    for trinum, triplet in enumerate(grid.horizontal_triplets):
+        print(triplet)
+        if nacked_sets_n(grid, triplet, None, 2, 'locked pair'):
+            print('locked pair found')
+            # pop history
+            legend, subcells, subset, legend2, discarded = grid.history.pop()
+            print('discarded', discarded)
+
+            discard_candidates(grid, discarded,
+                                  grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum],
+                                  'locked pair')
+            return True
+
+    return False
+
+
 # Pointing
 
 
 def solve_pointing(grid):
 
-    grid_modified = False
     for digit in ALLDIGITS:
 
         for trinum, triplet in enumerate(grid.horizontal_triplets):
-            if not candidate_in_cells(digit, triplet):
-                continue
-            if not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum]):
-                for cell in grid.rows_less_triplet[trinum]:
-                    if digit in cell.candidates:
-                        cell.discard(digit)
-                        grid_modified = True
-                if grid_modified:
-                    grid.history.append(('pointing h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
+            if (candidate_in_cells(digit, triplet) and
+                not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum])):
+                if discard_candidates(grid, [digit], grid.rows_less_triplet[trinum], 'pointing h'):
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
-            if not candidate_in_cells(digit, triplet):
-                continue
-            if not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum]):
-                for cell in grid.cols_less_triplet[trinum]:
-                    if digit in cell.candidates:
-                        cell.discard(digit)
-                        grid_modified = True
-                if grid_modified:
-                    grid.history.append(('pointing v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
+            if (candidate_in_cells(digit, triplet) and
+                not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum])):
+                if discard_candidates(grid, [digit], grid.cols_less_triplet[trinum], 'pointing h'):
                     return True
 
-    return grid_modified
+    return False
 
 
 def solve_claiming(grid):
 
-    grid_modified = False
     for digit in ALLDIGITS:
 
         for trinum, triplet in enumerate(grid.horizontal_triplets):
-            if not candidate_in_cells(digit, triplet):
-                continue
-            if not candidate_in_cells(digit, grid.rows_less_triplet[trinum]):
-                for cell in grid.boxes_less_hortriplet[trinum]:
-                    if digit in cell.candidates:
-                        cell.discard(digit)
-                        grid_modified = True
-                if grid_modified:
-                    grid.history.append(('claiming h', triplet[0].rownum, triplet[0].boxnum, 'discard', digit))
+            if (candidate_in_cells(digit, triplet) and
+                not candidate_in_cells(digit, grid.rows_less_triplet[trinum])):
+                if discard_candidates(grid, [digit], grid.boxes_less_hortriplet[trinum], 'claiming h'):
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
-            if not candidate_in_cells(digit, triplet):
-                continue
-            if not candidate_in_cells(digit, grid.cols_less_triplet[trinum]):
-                for cell in grid.boxes_less_vertriplet[trinum]:
-                    if digit in cell.candidates:
-                        cell.discard(digit)
-                        grid_modified = True
-                if grid_modified:
-                    grid.history.append(('claiming v', triplet[0].colnum, triplet[0].boxnum, 'discard', digit))
+            if (candidate_in_cells(digit, triplet) and
+                not candidate_in_cells(digit, grid.cols_less_triplet[trinum])):
+                if discard_candidates(grid, [digit], grid.boxes_less_vertriplet[trinum], 'claiming v'):
                     return True
 
-    return grid_modified
+    return False
+
+
+def discard_candidates(grid, candidates, cells, caption):
+    """Discard candidates in cells
+    """
+    discarded = set()
+    for cell in cells:
+        for candidate in candidates:
+            if candidate in cell.candidates:
+                cell.discard(candidate)
+                discarded.add(cell)
+    if discarded:
+        grid.history.append((caption, discarded, 'discard', candidates))
+        return True
+    else:
+        return False
 
 
 # Locked sets
-
 
 def nacked_sets_n(grid, cells, subcells, length, legend):
     if subcells is None:
         subcells = [cell for cell in cells if len(cell.candidates) > 1]
     grid_modified = False
     for subset in itertools.combinations(subcells, length):
-        u = set().union(*(cell.candidates for cell in subset))
-        if length == len(u):
+        candset = set().union(*(cell.candidates for cell in subset))
+        if len(candset) == length:
             cells_less_subset = (cell for cell in subcells if cell not in subset)
             discarded = []
             for cell in cells_less_subset:
-                for c in u:
-                    if c in sorted(cell.candidates):
+                for c in candset:
+                    if c in cell.candidates:
                         cell.discard(c)
                         grid_modified = True
                         if c not in discarded:
@@ -933,6 +943,13 @@ def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
 
     cellchain = cellchain1 + cellchain2[1:]
     candchain = candchain1 + candchain2[2:]
+
+    # number of links: number of cells + number of links between cells
+    # TOTO: check
+    # numlinks = len(cellchain) + (len(cellchain) - 1)
+    # if numlinks > 20:
+    #     return False
+
     adjacency.append([cellchain, candchain])
 
     if len(adjacency) == 4:
@@ -1017,9 +1034,13 @@ def solve_XY_chain_v2(grid):
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
 STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
-#STRATEGY = f'{STRATEGY_SSTS}-mc1,mc2'
 
+STRATEGY_HODOKU_EASY = 'n1,h1'
+STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
+
+STRATEGY = STRATEGY_HODOKU_UNFAIR
+#STRATEGY = 'n1,h1,l2'
 
 def list_techniques(strategy):
     if '-' not in strategy:
@@ -1042,6 +1063,7 @@ SOLVER = {
     'h4': solve_hidden_quad,
     'lc1': solve_pointing,
     'lc2': solve_claiming,
+    'l2': solve_locked_pairs,
     'bf2': solve_X_wing,
     'bf3': solve_swordfish,
     'sc1': solve_coloring_trap,
