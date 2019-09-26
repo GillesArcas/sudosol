@@ -1017,7 +1017,7 @@ def solve_XY_chain_v2(grid):
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
 STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
-STRATEGY = STRATEGY_SSTS + ',xyc' #+ '-xy'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
 #STRATEGY = f'{STRATEGY_SSTS}-mc1,mc2'
 
 
