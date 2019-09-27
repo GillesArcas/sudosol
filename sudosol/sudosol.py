@@ -365,19 +365,41 @@ def solve_hidden_candidate(grid):
 
 
 def solve_locked_pairs(grid):
-    print('solve_locked_pairs')
-    for trinum, triplet in enumerate(grid.horizontal_triplets):
-        print(triplet)
-        if nacked_sets_n(grid, triplet, None, 2, 'locked pair'):
-            print('locked pair found')
-            # pop history
-            legend, subcells, subset, legend2, discarded = grid.history.pop()
-            print('discarded', discarded)
 
-            discard_candidates(grid, discarded,
-                                  grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum],
-                                  'locked pair')
-            return True
+    for trinum, triplet in enumerate(grid.horizontal_triplets):
+        for subset in itertools.combinations(triplet, 2):
+            if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
+                cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                    return True
+
+    for trinum, triplet in enumerate(grid.vertical_triplets):
+        for subset in itertools.combinations(triplet, 2):
+            if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
+                cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                    return True
+
+    return False
+
+
+def solve_locked_triples(grid):
+
+    for trinum, triplet in enumerate(grid.horizontal_triplets):
+        if all(len(cell.candidates) > 0 for cell in triplet):
+            candidates = set().union(*(cell.candidates for cell in triplet))
+            if len(candidates) == 3:
+                cells_to_discard = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                    return True
+
+    for trinum, triplet in enumerate(grid.vertical_triplets):
+        if all(len(cell.candidates) > 0 for cell in triplet):
+            candidates = set().union(*(cell.candidates for cell in triplet))
+            if len(candidates) == 3:
+                cells_to_discard = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                    return True
 
     return False
 
@@ -1007,17 +1029,24 @@ STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
 
-STRATEGY = STRATEGY_HODOKU_UNFAIR
-#STRATEGY = 'n1,h1,l2'
 
 def list_techniques(strategy):
     if '-' not in strategy:
-        return strategy.split(',')
+        r = strategy.split(',')
     else:
         x, y = strategy.split('-')
         x = x.split(',')
         y = y.split(',')
-        return [z for z in x if z not in y]
+        r = [z for z in x if z not in y]
+
+    r2 = []
+    for s in r:
+        if s == 'ssts':
+            r2.extend(STRATEGY_SSTS.split(','))
+        else:
+            r2.append(s)
+
+    return r2
 
 
 SOLVER = {
@@ -1032,6 +1061,7 @@ SOLVER = {
     'lc1': solve_pointing,
     'lc2': solve_claiming,
     'l2': solve_locked_pairs,
+    'l3': solve_locked_triples,
     'bf2': solve_X_wing,
     'bf3': solve_swordfish,
     'sc1': solve_coloring_trap,
@@ -1051,8 +1081,8 @@ def apply_strategy(grid, strategy):
         return False
 
 
-def solve(grid, trace_history=False):
-    while not grid.solved() and apply_strategy(grid, STRATEGY):
+def solve(grid, techniques, trace_history=False):
+    while not grid.solved() and apply_strategy(grid, strategy=techniques):
         pass
     if trace_history:
         for _ in grid.history:
@@ -1062,7 +1092,7 @@ def solve(grid, trace_history=False):
 #
 
 
-def testfile(filename, randnum):
+def testfile(filename, randnum, techniques):
     verbose = False
     grid = Grid()
     success = True
@@ -1080,7 +1110,7 @@ def testfile(filename, randnum):
         input, output, _ = line.strip().split(None, 2)
         ngrids += 1
         grid.input(input)
-        solve(grid)
+        solve(grid, techniques)
         if output != grid.output():
             if verbose:
                 print('-' * 20)
@@ -1094,18 +1124,32 @@ def testfile(filename, randnum):
     return success
 
 
-def testdir(dirname, randnum):
+def testdir(dirname, randnum, techniques):
     tested = 0
     succeeded = 0
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
-            if testfile(filename, randnum):
+            if testfile(filename, randnum, techniques):
                 succeeded += 1
 
     success = succeeded == tested
     print(f'Test dir : {dirname:20} Result: {success} Succeeded: {succeeded}/{tested}')
     return success
+
+
+def testbatch(args):
+    status = True
+    with open(args.batch) as batch:
+        for line in batch:
+            if line.strip() and line[0] != ';':
+                testargs = line.strip()
+
+                status = main(testargs)
+                if not status:
+                    break
+    print('BATCH OK' if status else 'ONE TEST FAILURE in ' + line.strip())
+    return status
 
 
 def parse_command_line(argstring=None):
@@ -1121,9 +1165,13 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('-T', '--testdir', help='test directory',
                         action='store', default=None)
+    parser.add_argument('-b', '--batch', help='test batch',
+                        action='store', default=None)
     parser.add_argument('-r', '--random', help='test N random grids from file',
                         type=int,
                         action='store', default=None)
+    parser.add_argument('--techniques', help='techniques',
+                        action='store', default='ssts')
     parser.add_argument('-H', '--history', help='trace history',
                         action='store_true', default=False)
 
@@ -1143,18 +1191,16 @@ def main(argstring=None):
         grid.dump()
         solve(grid, options.history)
         grid.dump()
+        return True
 
     elif options.testfile:
-        if testfile(options.testfile, options.random):
-            exit(0)
-        else:
-            exit(1)
+        return testfile(options.testfile, options.random, options.techniques)
 
     elif options.testdir:
-        if testdir(options.testdir, options.random):
-            exit(0)
-        else:
-            exit(1)
+        return testdir(options.testdir, options.random, options.techniques)
+
+    elif options.batch:
+        return testbatch(options)
 
     elif options.clipboard:
         if options.format == 'ss':
@@ -1164,6 +1210,7 @@ def main(argstring=None):
             grid.dump()
             solve(grid, options.history)
             grid.dump()
+        return True
 
     else:
         grid = Grid()
@@ -1175,7 +1222,7 @@ def main(argstring=None):
         grid.dump()
         print(grid.output())
         print()
-        exit
+        return True
         # grid.discard_rc(5, 8, 4)
         # grid.discard_rc(5, 8, 6)
         # grid.set_value_rc(5, 2, 1)
@@ -1190,9 +1237,9 @@ def main(argstring=None):
         #test()
 
 
-# x = [37, 78]
-# print(cmp(x, [37, 78]))
-# exit(0)
 if __name__ == '__main__':
     colorama.init()
-    main()
+    if main():
+        exit(0)
+    else:
+        exit(1)
