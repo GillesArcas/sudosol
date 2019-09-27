@@ -302,6 +302,25 @@ def load_ss_clipboard(grid, content):
     return lines
 
 
+# helpers
+
+
+def discard_candidates(grid, candidates, cells, caption):
+    """Discard candidates in cells
+    """
+    discarded = set()
+    for cell in cells:
+        for candidate in candidates:
+            if candidate in cell.candidates:
+                cell.discard(candidate)
+                discarded.add(cell)
+    if discarded:
+        grid.history.append((caption, discarded, 'discard', candidates))
+        return True
+    else:
+        return False
+
+
 # Singles
 
 
@@ -404,43 +423,18 @@ def solve_claiming(grid):
     return False
 
 
-def discard_candidates(grid, candidates, cells, caption):
-    """Discard candidates in cells
-    """
-    discarded = set()
-    for cell in cells:
-        for candidate in candidates:
-            if candidate in cell.candidates:
-                cell.discard(candidate)
-                discarded.add(cell)
-    if discarded:
-        grid.history.append((caption, discarded, 'discard', candidates))
-        return True
-    else:
-        return False
-
-
 # Locked sets
+
 
 def nacked_sets_n(grid, cells, subcells, length, legend):
     if subcells is None:
         subcells = [cell for cell in cells if len(cell.candidates) > 1]
-    grid_modified = False
     for subset in itertools.combinations(subcells, length):
-        candset = set().union(*(cell.candidates for cell in subset))
-        if len(candset) == length:
+        candidates = set().union(*(cell.candidates for cell in subset))
+        if len(candidates) == length:
             cells_less_subset = (cell for cell in subcells if cell not in subset)
-            discarded = []
-            for cell in cells_less_subset:
-                for c in candset:
-                    if c in cell.candidates:
-                        cell.discard(c)
-                        grid_modified = True
-                        if c not in discarded:
-                            discarded.append(c)
-        if grid_modified:
-            grid.history.append((legend, subcells, subset, 'discard', discarded))
-            return True
+            if discard_candidates(grid, candidates, cells_less_subset, legend):
+                return True
     return False
 
 
@@ -506,8 +500,9 @@ def solve_hidden_quad(grid):
 
 
 def solve_X_wing(grid):
-    grid_modified = False
+
     for digit in ALLDIGITS:
+
         for index, house in enumerate(grid.rows):
             dig_house = [cell for cell in house if digit in cell.candidates]
             if len(dig_house) == 2:
@@ -515,16 +510,13 @@ def solve_X_wing(grid):
                     dig_house2 = [cell for cell in house2 if digit in cell.candidates]
                     if len(dig_house2) == 2:
                         if dig_house[0].colnum == dig_house2[0].colnum and dig_house[1].colnum == dig_house2[1].colnum:
-                            discarded = []
+                            cells_to_discard = []
                             for cell in grid.cols[dig_house[0].colnum] + grid.cols[dig_house[1].colnum]:
-                                if digit in cell.candidates and cell.rownum not in (index, index2):
-                                    cell.discard(digit)
-                                    grid_modified = True
-                                    if cell not in discarded:
-                                        discarded.append(cell)
-                            if grid_modified:
-                                grid.history.append(('X-wing', discarded, 'discard', digit))
+                                if cell.rownum not in (index, index2):
+                                    cells_to_discard.append(cell)
+                            if discard_candidates(grid, [digit], cells_to_discard, 'X-wing'):
                                 return True
+
         for index, house in enumerate(grid.cols):
             dig_house = [cell for cell in house if digit in cell.candidates]
             if len(dig_house) == 2:
@@ -532,22 +524,19 @@ def solve_X_wing(grid):
                     dig_house2 = [cell for cell in house2 if digit in cell.candidates]
                     if len(dig_house2) == 2:
                         if dig_house[0].rownum == dig_house2[0].rownum and dig_house[1].rownum == dig_house2[1].rownum:
-                            discarded = []
+                            cells_to_discard = []
                             for cell in grid.rows[dig_house[0].rownum] + grid.rows[dig_house[1].rownum]:
-                                if digit in cell.candidates and cell.colnum not in (index, index2):
-                                    cell.discard(digit)
-                                    grid_modified = True
-                                    if cell not in discarded:
-                                        discarded.append(cell)
-            if grid_modified:
-                grid.history.append(('X-wing', discarded, 'discard', digit))
-                return True
+                                if cell.colnum not in (index, index2):
+                                    cells_to_discard.append(cell)
+                            if discard_candidates(grid, [digit], cells_to_discard, 'X-wing'):
+                                return True
     return False
 
 
 def solve_swordfish(grid):
-    grid_modified = False
+
     for digit in ALLDIGITS:
+
         rows = []
         for row in grid.rows:
             rowcells = [cell for cell in row if digit in cell.candidates]
@@ -561,17 +550,14 @@ def solve_swordfish(grid):
                     colsnum.add(cell.colnum)
             if len(colsnum) == 3:
                 # 3 rows with candidates in 3 cols
-                discarded = []
+                cells_to_discard = []
                 for colnum in colsnum:
                     for cell in grid.cols[colnum]:
-                        if digit in cell.candidates and cell.rownum not in rowsnum:
-                            cell.discard(digit)
-                            grid_modified = True
-                            if cell not in discarded:
-                                discarded.append(cell)
-                if grid_modified:
-                    grid.history.append(('swordfish', discarded, 'discard', digit))
+                        if cell.rownum not in rowsnum:
+                            cells_to_discard.append(cell)
+                if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
                     return True
+
         cols = []
         for col in grid.cols:
             colcells = [cell for cell in col if digit in cell.candidates]
@@ -584,17 +570,12 @@ def solve_swordfish(grid):
                 for cell in col:
                     rowsnum.add(cell.rownum)
             if len(rowsnum) == 3:
-                # 3 cols with candidates in 3 rows
-                discarded = []
+                cells_to_discard = []
                 for rownum in rowsnum:
                     for cell in grid.rows[rownum]:
-                        if digit in cell.candidates and cell.colnum not in colsnum:
-                            cell.discard(digit)
-                            grid_modified = True
-                            if cell not in discarded:
-                                discarded.append(cell)
-                if grid_modified:
-                    grid.history.append(('swordfish', discarded, 'discard', digit))
+                        if cell.colnum not in colsnum:
+                            cells_to_discard.append(cell)
+                if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
                     return True
     return False
 
@@ -616,7 +597,7 @@ def solve_coloring_trap(grid):
             common = cellinter(peers_cluster_blue, peers_cluster_green)
 
             if common:
-                discard_color(grid, digit, common, 'color trap')
+                discard_candidates(grid, [digit], common, 'color trap')
                 return True
 
     return False
@@ -632,11 +613,11 @@ def solve_coloring_wrap(grid):
             cluster_blue, cluster_green = colorize(grid, digit, cluster)
 
             if color_contradiction(cluster_blue):
-                discard_color(grid, digit, cluster_blue, 'color wrap')
+                discard_candidates(grid, [digit], cluster_blue, 'color wrap')
                 return True
 
             if color_contradiction(cluster_green):
-                discard_color(grid, digit, cluster_green, 'color wrap')
+                discard_candidates(grid, [digit], cluster_green, 'color wrap')
                 return True
 
     return False
@@ -655,19 +636,6 @@ def color_contradiction(same_color):
         cols[cell.colnum] += 1
         boxs[cell.boxnum] += 1
     return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
-
-
-def discard_color(grid, digit, to_be_removed, caption):
-    grid_modified = False
-    discarded = []
-    for cell in to_be_removed:
-        cell.discard(digit)
-        grid_modified = True
-        if cell not in discarded:
-            discarded.append(cell)
-    if grid_modified:
-        grid.history.append((caption, discarded, 'discard', digit))
-        return True
 
 
 def solve_multi_coloring_type_1(grid):
@@ -697,25 +665,25 @@ def solve_multi_coloring_type_1(grid):
             if any(cell in peers_cluster_blue2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
                 if to_be_removed:
-                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     return True
 
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
                 if to_be_removed:
-                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     return True
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
                 if to_be_removed:
-                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     return True
 
             if any(cell in peers_cluster_green2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
                 if to_be_removed:
-                    discard_color(grid, digit, to_be_removed, 'multi color type 1')
+                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     return True
 
 
@@ -746,22 +714,22 @@ def solve_multi_coloring_type_2(grid):
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_blue1) and
                 any(cell in peers_cluster_green2 for cell in cluster_blue1)):
-                discard_color(grid, digit, cluster_blue1, 'multi color type 2')
+                discard_candidates(grid, [digit], cluster_blue1, 'multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_green1) and
                 any(cell in peers_cluster_green2 for cell in cluster_green1)):
-                discard_color(grid, digit, cluster_green1, 'multi color type 2')
+                discard_candidates(grid, [digit], cluster_green1, 'multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_blue2) and
                 any(cell in peers_cluster_green1 for cell in cluster_blue2)):
-                discard_color(grid, digit, cluster_blue2, 'multi color type 2')
+                discard_candidates(grid, [digit], cluster_blue2, 'multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_green2) and
                 any(cell in peers_cluster_green1 for cell in cluster_green2)):
-                discard_color(grid, digit, cluster_green2, 'multi color type 2')
+                discard_candidates(grid, [digit], cluster_green2, 'multi color type 2')
                 return True
 
     return False
@@ -969,7 +937,7 @@ def test_xy_remove(grid, cellchain, candchain):
         to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
         to_be_removed = [cell for cell in to_be_removed if cell not in cellchain]
         if to_be_removed:
-            discard_color(grid, digit, to_be_removed, 'XY-chain')
+            discard_candidates(grid, [digit], to_be_removed, 'XY-chain')
             return True
     return False
 
