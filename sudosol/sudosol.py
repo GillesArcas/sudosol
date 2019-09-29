@@ -430,7 +430,7 @@ def solve_locked_pairs(grid):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
-                    explain = not False
+                    explain = False
                     if explain:
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -441,7 +441,7 @@ def solve_locked_pairs(grid):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
-                    explain = not False
+                    explain = False
                     if explain:
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -523,7 +523,7 @@ def nacked_sets_n(grid, cells, subcells, length, legend):
         if len(candidates) == length:
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
-                explain = not False
+                explain = False
                 if explain:
                     explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                             (cells_less_subset, subset[0].candidates, Fore.RED)))
@@ -649,7 +649,7 @@ def solve_swordfish(grid):
                         if cell.rownum not in rowsnum:
                             cells_to_discard.append(cell)
                 if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
-                    explain = not False
+                    explain = False
                     if explain:
                         subset = cellunion(rowtriple[0], cellunion(rowtriple[1], rowtriple[2]))
                         explain_move(grid, ((subset, [digit], Fore.YELLOW),
