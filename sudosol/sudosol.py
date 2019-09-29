@@ -152,7 +152,7 @@ class Grid:
             cell.box = self.boxes[cell.boxnum]
 
         # peers
-        # properties: x not in x.peers,x in y.peers equivalent to y in x.peers
+        # properties: x not in x.peers, x in y.peers equivalent to y in x.peers
         for cell in self.cells:
             cell.peers = cellunion(cell.row, cellunion(cell.col, cell.box))
             cell.peers.remove(cell)
@@ -186,6 +186,21 @@ class Grid:
     def box_rc(self, irow, icol):
         return self.boxes[(irow // 3) * 3 + icol // 3]
 
+    def set_value(self, cell, digit):
+
+        discarded = defaultdict(set)
+        for candidate in cell.candidates:
+            discarded[candidate].add(cell)
+        cell.set_value(digit)
+
+        for peer in cell.peers:
+            if digit in peer.candidates:
+                peer.discard(digit)
+                discarded[digit].add(peer)
+
+        return discarded
+
+
     def set_value_rc(self, irow, icol, digit):
         cell = self.cell_rc(irow, icol)
         cell.set_value(digit)
@@ -215,15 +230,33 @@ class Grid:
         return conj
 
     def dump(self, decor=None):
+        hborder = ('+' + ('-' * (3 * 10 - 1))) * 3 + '+'
         for i in range(9):
-            print(' '.join('%-9s' % colorize_candidates(_, decor) for _ in self.rows[i]))
+            if i % 3 == 0:
+                print(hborder)
+            line = []
+            for j, cell in enumerate(self.rows[i]):
+                line.append('%s%-9s' % ('|' if j % 3 == 0  else ' ', colorize_candidates(cell, decor)))
+            print(''.join(line) + '|')
+        print(hborder)
         print()
 
 
 def colorize_candidates(cell, spec_color):
     # ((cell, '*', Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED))
-    if spec_color is None or not cell.candidates:
-        return str(cell)
+    # if not cell.candidates:
+    #     return Fore.BLUE + str(cell.value) + Fore.RESET + ' ' * 8
+
+    # if spec_color is None or not cell.candidates:
+    #     return str(cell)
+
+    if not cell.candidates:
+        return str(cell.value)
+
+    if spec_color is None:
+        res = Fore.CYAN + str(cell) + Fore.RESET
+        res += ' ' * (9 - len(cell.candidates))
+        return res
 
     for target, *spec_col in spec_color:
         #print('--', target)
@@ -238,12 +271,16 @@ def colorize_candidates(cell, spec_color):
                             res += speccol + str(cand) + Fore.RESET
                             break
                     else:
-                        res += str(cand)
+                        # res += str(cand)
+                        res += Fore.CYAN + str(cand) + Fore.RESET
                 # manual padding as colorama information fools format padding
                 res += ' ' * (9 - len(targ.candidates))
                 return res
     else:
-        return str(cell)
+        # return str(cell)
+        res = Fore.CYAN + str(cell) + Fore.RESET
+        res += ' ' * (9 - len(cell.candidates))
+        return res
 
 
 def candidate_in_cells(digit, cells):
@@ -308,14 +345,14 @@ def load_ss_clipboard(grid, content):
 def discard_candidates(grid, candidates, cells, caption):
     """Discard candidates in cells
     """
-    discarded = set()
+    discarded = defaultdict(set)
     for cell in cells:
         for candidate in candidates:
             if candidate in cell.candidates:
                 cell.discard(candidate)
-                discarded.add(cell)
+                discarded[candidate].add(cell)
     if discarded:
-        grid.history.append((caption, discarded, 'discard', candidates))
+        grid.history.append((caption, 'discard', discarded))
         return True
     else:
         return False
@@ -326,18 +363,14 @@ def discard_candidates(grid, candidates, cells, caption):
 
 def solve_single_candidate(grid):
     # naked singles
-    grid_modified = True
-    while True:
-        grid_modified = False
-        for cell in grid.cells:
-            if len(cell.candidates) == 1:
-                value = list(cell.candidates)[0]
-                grid.set_value_rc(cell.rownum, cell.colnum, value)
-                grid_modified = True
-                grid.history.append(('naked single', cell.rownum, cell.colnum, 'value', value))
-                break
-        break
-    return grid_modified
+    for cell in grid.cells:
+        if len(cell.candidates) == 1:
+            value = list(cell.candidates)[0]
+            #  TODO: use grid.set_value return value to enable undo
+            grid.set_value_rc(cell.rownum, cell.colnum, value)
+            grid.history.append(('naked single', cell, 'value', value))
+            return True
+    return False
 
 
 # Single digit techniques
@@ -355,13 +388,39 @@ def solve_hidden_candidate(grid):
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
                 grid.set_value_rc(cell.rownum, cell.colnum, cand)
                 grid_modified = True
-                grid.history.append(('hidden single', cell.rownum, cell.colnum, 'value', cand))
+                # TODO: should store remining candidates
+                grid.history.append(('hidden single', cell, 'value', cand))
                 # avoid to loop on candidates from initial cell state
                 break
     return grid_modified
 
 
 # Locked pairs and triplets
+
+
+def explain_move(grid, colorspec):
+    i = len(grid.history) - 2
+    while i >= 0 and grid.history[i][0] in ('naked single', 'hidden single'):
+        i -= 1
+    i += 1
+    hist = ''
+    while i < len(grid.history) - 1:
+        tech = grid.history[i][0]
+        desc = grid.history[i][0] + ' '
+        while grid.history[i][0] == tech:
+            desc += '%s=%d ' % (grid.history[i][1].strcoord(), grid.history[i][3])
+            i += 1
+        hist += desc
+    print(hist)
+    tech, _, discarded = grid.history[-1]
+    for digit, cells in discarded.items():
+        for cell in cells:
+            cell.candidates.add(digit)
+    print(tech)
+    grid.dump(colorspec)
+    for digit, cells in discarded.items():
+        for cell in cells:
+            cell.candidates.discard(digit)
 
 
 def solve_locked_pairs(grid):
@@ -371,6 +430,10 @@ def solve_locked_pairs(grid):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                    explain = not False
+                    if explain:
+                        explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
+                                (cells_to_discard, subset[0].candidates, Fore.RED)))
                     return True
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -378,6 +441,10 @@ def solve_locked_pairs(grid):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                    explain = not False
+                    if explain:
+                        explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
+                                (cells_to_discard, subset[0].candidates, Fore.RED)))
                     return True
 
     return False
@@ -454,8 +521,12 @@ def nacked_sets_n(grid, cells, subcells, length, legend):
     for subset in itertools.combinations(subcells, length):
         candidates = set().union(*(cell.candidates for cell in subset))
         if len(candidates) == length:
-            cells_less_subset = (cell for cell in subcells if cell not in subset)
+            cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
+                explain = not False
+                if explain:
+                    explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
+                            (cells_less_subset, subset[0].candidates, Fore.RED)))
                 return True
     return False
 
@@ -578,6 +649,11 @@ def solve_swordfish(grid):
                         if cell.rownum not in rowsnum:
                             cells_to_discard.append(cell)
                 if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
+                    explain = not False
+                    if explain:
+                        subset = cellunion(rowtriple[0], cellunion(rowtriple[1], rowtriple[2]))
+                        explain_move(grid, ((subset, [digit], Fore.YELLOW),
+                                (cells_to_discard, [digit], Fore.RED)))
                     return True
 
         cols = []
@@ -1189,7 +1265,7 @@ def main(argstring=None):
         grid = Grid()
         grid.input(options.solve)
         grid.dump()
-        solve(grid, options.history)
+        solve(grid, options.techniques, options.history)
         grid.dump()
         return True
 
@@ -1218,7 +1294,7 @@ def main(argstring=None):
         print(grid.horizontal_triplets)
         print(grid.vertical_triplets)
         grid.dump()
-        solve(grid)
+        solve(grid, options.techniques)
         grid.dump()
         print(grid.output())
         print()
