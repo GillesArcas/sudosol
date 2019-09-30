@@ -361,7 +361,7 @@ def discard_candidates(grid, candidates, cells, caption):
 # Singles
 
 
-def solve_single_candidate(grid):
+def solve_single_candidate(grid, explain):
     # naked singles
     for cell in grid.cells:
         if len(cell.candidates) == 1:
@@ -376,7 +376,7 @@ def solve_single_candidate(grid):
 # Single digit techniques
 
 
-def solve_hidden_candidate(grid):
+def solve_hidden_candidate(grid, explain):
     # hidden singles
     grid_modified = False
     for cell in grid.cells:
@@ -423,14 +423,13 @@ def explain_move(grid, colorspec):
             cell.candidates.discard(digit)
 
 
-def solve_locked_pairs(grid):
+def solve_locked_pairs(grid, explain):
 
     for trinum, triplet in enumerate(grid.horizontal_triplets):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
-                    explain = False
                     if explain:
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -441,7 +440,6 @@ def solve_locked_pairs(grid):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
-                    explain = False
                     if explain:
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -450,7 +448,7 @@ def solve_locked_pairs(grid):
     return False
 
 
-def solve_locked_triples(grid):
+def solve_locked_triples(grid, explain):
 
     for trinum, triplet in enumerate(grid.horizontal_triplets):
         if all(len(cell.candidates) > 0 for cell in triplet):
@@ -474,7 +472,7 @@ def solve_locked_triples(grid):
 # Pointing
 
 
-def solve_pointing(grid):
+def solve_pointing(grid, explain):
 
     for digit in ALLDIGITS:
 
@@ -493,7 +491,7 @@ def solve_pointing(grid):
     return False
 
 
-def solve_claiming(grid):
+def solve_claiming(grid, explain):
 
     for digit in ALLDIGITS:
 
@@ -515,7 +513,7 @@ def solve_claiming(grid):
 # Locked sets
 
 
-def nacked_sets_n(grid, cells, subcells, length, legend):
+def nacked_sets_n(grid, cells, subcells, length, legend, explain):
     if subcells is None:
         subcells = [cell for cell in cells if len(cell.candidates) > 1]
     for subset in itertools.combinations(subcells, length):
@@ -523,76 +521,75 @@ def nacked_sets_n(grid, cells, subcells, length, legend):
         if len(candidates) == length:
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
-                explain = False
                 if explain:
-                    explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
-                            (cells_less_subset, subset[0].candidates, Fore.RED)))
+                    explain_move(grid, ((subset, candidates, Fore.GREEN),
+                            (cells_less_subset, candidates, Fore.RED)))
                 return True
     return False
 
 
-def solve_nacked_pairs(grid):
+def solve_nacked_pairs(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 2, 'Naked pair in row') for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 2, 'Naked pair in col') for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 2, 'Naked pair in box') for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 2, 'Naked pair in row', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 2, 'Naked pair in col', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 2, 'Naked pair in box', explain) for box in grid.boxes)
     )
 
 
-def solve_nacked_triples(grid):
+def solve_nacked_triples(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 3, 'Naked triple in row') for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 3, 'Naked triple in col') for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 3, 'Naked triple in box') for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 3, 'Naked triple in row', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 3, 'Naked triple in col', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 3, 'Naked triple in box', explain) for box in grid.boxes)
     )
 
 
-def solve_nacked_quads(grid):
+def solve_nacked_quads(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 4, 'Naked quad in row') for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 4, 'Naked quad in col') for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 4, 'Naked quad in box') for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 4, 'Naked quad in row', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 4, 'Naked quad in col', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 4, 'Naked quad in box', explain) for box in grid.boxes)
     )
 
 
-def solve_hidden_set(grid, cells, length, legend):
+def solve_hidden_set(grid, cells, length, legend, explain):
     subcells = [cell for cell in cells if len(cell.candidates) > 1]
     for len_naked_set in range(5, 10 - length):
         len_hidden_set = len(subcells) - len_naked_set
         if len_hidden_set == length:
-            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend):
+            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain=False):
                 return True
     return False
 
 
-def solve_hidden_pair(grid):
+def solve_hidden_pair(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 2, 'Hidden pair in row') for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 2, 'Hidden pair in col') for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 2, 'Hidden pair in box') for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 2, 'Hidden pair in row', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 2, 'Hidden pair in col', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 2, 'Hidden pair in box', explain) for box in grid.boxes)
     )
 
 
-def solve_hidden_triple(grid):
+def solve_hidden_triple(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 3, 'Hidden triple in row') for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 3, 'Hidden triple in col') for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 3, 'Hidden triple in box') for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 3, 'Hidden triple in row', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 3, 'Hidden triple in col', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 3, 'Hidden triple in box', explain) for box in grid.boxes)
     )
 
 
-def solve_hidden_quad(grid):
+def solve_hidden_quad(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 4, 'Hidden quad in row') for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 4, 'Hidden quad in col') for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 4, 'Hidden quad in box') for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 4, 'Hidden quad in row', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 4, 'Hidden quad in col', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 4, 'Hidden quad in box', explain) for box in grid.boxes)
     )
 
 
 # Fishes
 
 
-def solve_X_wing(grid):
+def solve_X_wing(grid, explain):
 
     for digit in ALLDIGITS:
 
@@ -626,7 +623,7 @@ def solve_X_wing(grid):
     return False
 
 
-def solve_swordfish(grid):
+def solve_swordfish(grid, explain):
 
     for digit in ALLDIGITS:
 
@@ -649,7 +646,6 @@ def solve_swordfish(grid):
                         if cell.rownum not in rowsnum:
                             cells_to_discard.append(cell)
                 if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
-                    explain = False
                     if explain:
                         subset = cellunion(rowtriple[0], cellunion(rowtriple[1], rowtriple[2]))
                         explain_move(grid, ((subset, [digit], Fore.YELLOW),
@@ -681,7 +677,7 @@ def solve_swordfish(grid):
 # coloring
 
 
-def solve_coloring_trap(grid):
+def solve_coloring_trap(grid, explain):
     """a candidate sees both colors of a cluster. Whatever the color coding, the
     candidate can be eliminated.
     """
@@ -701,7 +697,7 @@ def solve_coloring_trap(grid):
     return False
 
 
-def solve_coloring_wrap(grid):
+def solve_coloring_wrap(grid, explain):
     """two candidates in the same unit have the same color. All candidates with
     this color can be eliminated.
     """
@@ -736,7 +732,7 @@ def color_contradiction(same_color):
     return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
 
 
-def solve_multi_coloring_type_1(grid):
+def solve_multi_coloring_type_1(grid, explain):
     """Consider two clusters. If a unit contains a color of each cluster, all
     cells seing the opposite colors can be eliminated.
     """
@@ -785,7 +781,7 @@ def solve_multi_coloring_type_1(grid):
                     return True
 
 
-def solve_multi_coloring_type_2(grid):
+def solve_multi_coloring_type_2(grid, explain):
     """Consider two clusters. If a color of one cluster sees both colors of the
     second cluster, all candidates from first color can be eliminated.
     """
@@ -898,7 +894,7 @@ def multi_peers(grid, digit, cluster):
 # xy-wings
 
 
-def solve_XY_wing(grid):
+def solve_XY_wing(grid, explain):
     for cell in grid.cells:
         if cell.is_pair():
             cand1, cand2 = list(cell.candidates)
@@ -932,7 +928,7 @@ def solve_XY_wing(grid):
 # xy-chains
 
 
-def solve_XY_chain_v1(grid):
+def solve_XY_chain_v1(grid, explain):
     all_solutions = False
     pairs, links = xy_links(grid)
 
@@ -1040,7 +1036,7 @@ def test_xy_remove(grid, cellchain, candchain):
     return False
 
 
-def solve_XY_chain_v2(grid):
+def solve_XY_chain_v2(grid, explain):
     all_solutions = False
     _, links = xy_links(grid)
 
@@ -1149,26 +1145,23 @@ SOLVER = {
 }
 
 
-def apply_strategy(grid, strategy):
+def apply_strategy(grid, strategy, explain):
     for solver in list_techniques(strategy):
-        if SOLVER[solver](grid):
+        if SOLVER[solver](grid, explain):
             return True
     else:
         return False
 
 
-def solve(grid, techniques, trace_history=False):
-    while not grid.solved() and apply_strategy(grid, strategy=techniques):
+def solve(grid, techniques, explain):
+    while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
-    if trace_history:
-        for _ in grid.history:
-            print(_)
 
 
 #
 
 
-def testfile(filename, randnum, techniques):
+def testfile(filename, randnum, techniques, explain):
     verbose = False
     grid = Grid()
     success = True
@@ -1186,7 +1179,7 @@ def testfile(filename, randnum, techniques):
         input, output, _ = line.strip().split(None, 2)
         ngrids += 1
         grid.input(input)
-        solve(grid, techniques)
+        solve(grid, techniques, explain)
         if output != grid.output():
             if verbose:
                 print('-' * 20)
@@ -1200,13 +1193,13 @@ def testfile(filename, randnum, techniques):
     return success
 
 
-def testdir(dirname, randnum, techniques):
+def testdir(dirname, randnum, techniques, explain):
     tested = 0
     succeeded = 0
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
-            if testfile(filename, randnum, techniques):
+            if testfile(filename, randnum, techniques, explain):
                 succeeded += 1
 
     success = succeeded == tested
@@ -1248,7 +1241,7 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('--techniques', help='techniques',
                         action='store', default='ssts')
-    parser.add_argument('-H', '--history', help='trace history',
+    parser.add_argument('-e', '--explain', help='explain techniques',
                         action='store_true', default=False)
 
     if argstring is None:
@@ -1265,15 +1258,15 @@ def main(argstring=None):
         grid = Grid()
         grid.input(options.solve)
         grid.dump()
-        solve(grid, options.techniques, options.history)
+        solve(grid, options.techniques, options.explain)
         grid.dump()
         return True
 
     elif options.testfile:
-        return testfile(options.testfile, options.random, options.techniques)
+        return testfile(options.testfile, options.random, options.techniques, options.explain)
 
     elif options.testdir:
-        return testdir(options.testdir, options.random, options.techniques)
+        return testdir(options.testdir, options.random, options.techniques, options.explain)
 
     elif options.batch:
         return testbatch(options)
@@ -1284,7 +1277,7 @@ def main(argstring=None):
             content = clipboard.paste()
             load_ss_clipboard(grid, content)
             grid.dump()
-            solve(grid, options.history)
+            solve(grid, options.explain, options.history)
             grid.dump()
         return True
 
@@ -1294,7 +1287,7 @@ def main(argstring=None):
         print(grid.horizontal_triplets)
         print(grid.vertical_triplets)
         grid.dump()
-        solve(grid, options.techniques)
+        solve(grid, options.techniques, options.explain)
         grid.dump()
         print(grid.output())
         print()
@@ -1303,14 +1296,6 @@ def main(argstring=None):
         # grid.discard_rc(5, 8, 6)
         # grid.set_value_rc(5, 2, 1)
         # grid.set_value_rc(0, 8, 9)
-
-        #solve_single_candidate(grid)
-        #solve_hidden_candidate(grid)
-        # solve(grid)
-        # grid.dump()
-        # print(grid.output())
-        # print()
-        #test()
 
 
 if __name__ == '__main__':
