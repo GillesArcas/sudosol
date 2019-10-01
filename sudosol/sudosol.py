@@ -391,7 +391,7 @@ def single_history(grid):
             ldesc.append('%s=%d' % (grid.history[i][1].strcoord(), grid.history[i][3]))
             i += 1
         for k in range(0, len(ldesc), 10):
-            hist.append(tech + ': ' + ', '.join(ldesc[k:k + 10]))
+            hist.append('%-13s: ' % tech + ', '.join(ldesc[k:k + 10]))
     return '\n'.join(hist)
 
 
@@ -453,8 +453,11 @@ def solve_locked_pairs(grid, explain):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
-                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'Locked pair'):
                     if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
                     return True
@@ -463,8 +466,11 @@ def solve_locked_pairs(grid, explain):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
-                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'locked pair'):
+                if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'Locked pair'):
                     if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
                     return True
@@ -480,6 +486,12 @@ def solve_locked_triples(grid, explain):
             if len(candidates) == 3:
                 cells_to_discard = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
+                        explain_move(grid, ((triplet, candidates, Fore.GREEN),
+                                (cells_to_discard, candidates, Fore.RED)))
                     return True
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -488,6 +500,12 @@ def solve_locked_triples(grid, explain):
             if len(candidates) == 3:
                 cells_to_discard = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
+                        explain_move(grid, ((triplet, candidates, Fore.GREEN),
+                                (cells_to_discard, candidates, Fore.RED)))
                     return True
 
     return False
@@ -552,15 +570,13 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
                         L.append(f'{packed_coordinates(cells)}<>{digit}')
                     discarded = ', '.join(L)
 
+                    print(single_history(grid))
+                    print()
                     if legend.startswith('Naked'):
-                        print(single_history(grid))
-                        print()
                         print(legend_locked_set(grid, legend, candidates, subset))
                         explain_move(grid, ((subset, candidates, Fore.GREEN), (cells_less_subset, candidates, Fore.RED)))
                     if legend.startswith('Hidden'):
                         allcand = set().union(*(cell.candidates for cell in subcells))
-                        print(single_history(grid))
-                        print()
                         print(legend_locked_set(grid, legend, allcand - candidates, cells_less_subset))
                         explain_move(grid, ((cells_less_subset, ALLCAND - candidates, Fore.GREEN, candidates, Fore.RED),))
                 return True
@@ -609,7 +625,7 @@ def solve_hidden_set(grid, cells, length, legend, explain):
     for len_naked_set in range(5, 10 - length):
         len_hidden_set = len(subcells) - len_naked_set
         if len_hidden_set == length:
-            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain=not False):
+            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain):
                 #print(grid.history[-1])
                 return True
     return False
@@ -1209,8 +1225,9 @@ def apply_strategy(grid, strategy, explain):
 def solve(grid, techniques, explain):
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
-    print(single_history(grid))
-    print()
+    if explain:
+        print(single_history(grid))
+        print()
 
 
 #
