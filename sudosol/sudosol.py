@@ -47,7 +47,7 @@ class Cell:
     def strcoord(self):
         """format cell as coordinates
         """
-        return f'r{self.rownum}c{self.colnum}'
+        return f'r{self.rownum + 1}c{self.colnum + 1}'
 
     def __repr__(self):
         return self.__str__()
@@ -259,7 +259,6 @@ def colorize_candidates(cell, spec_color):
         return res
 
     for target, *spec_col in spec_color:
-        #print('--', target)
         if isinstance(target, Cell):
             target = (target,)
         for targ in target:
@@ -343,7 +342,7 @@ def load_ss_clipboard(grid, content):
 
 
 def discard_candidates(grid, candidates, cells, caption):
-    """Discard candidates in cells
+    """Discard candidates in a list of cells. Update grid history.
     """
     discarded = defaultdict(set)
     for cell in cells:
@@ -358,6 +357,44 @@ def discard_candidates(grid, candidates, cells, caption):
         return False
 
 
+def packed_coordinates(cells):
+    """Make a string of packed coordinates (ex: r4c89,r5c89) from a list of cells.
+    """
+    row_cells = defaultdict(list)
+    col_cells = defaultdict(list)
+    for cell in cells:
+        row_cells[cell.rownum + 1].append(cell.colnum + 1)
+        col_cells[cell.colnum + 1].append(cell.rownum + 1)
+
+    if len(row_cells) <= len(col_cells):
+        for rownum, lst in row_cells.items():
+            row_cells[rownum] = ''.join(str(_) for _ in sorted(lst))
+        lcoord = sorted(f'r{rownum}c{cols}' for rownum, cols in row_cells.items())
+    else:
+        for colnum, lst in col_cells.items():
+            col_cells[colnum] = ''.join(str(_) for _ in sorted(lst))
+        lcoord = sorted(f'r{rows}c{colnum}' for colnum, rows in col_cells.items())
+
+    return ','.join(lcoord)
+
+
+def single_history(grid):
+    i = len(grid.history) - 2
+    while i >= 0 and grid.history[i][0] in ('Naked single', 'Hidden single'):
+        i -= 1
+    i += 1
+    hist = []
+    while i < len(grid.history) - 1:
+        tech = grid.history[i][0]
+        ldesc = []
+        while i < len(grid.history) - 1 and grid.history[i][0] == tech:
+            ldesc.append('%s=%d' % (grid.history[i][1].strcoord(), grid.history[i][3]))
+            i += 1
+        for k in range(0, len(ldesc), 10):
+            hist.append(tech + ': ' + ', '.join(ldesc[k:k + 10]))
+    return '\n'.join(hist)
+
+
 # Singles
 
 
@@ -368,7 +405,7 @@ def solve_single_candidate(grid, explain):
             value = list(cell.candidates)[0]
             #  TODO: use grid.set_value return value to enable undo
             grid.set_value_rc(cell.rownum, cell.colnum, value)
-            grid.history.append(('naked single', cell, 'value', value))
+            grid.history.append(('Naked single', cell, 'value', value))
             return True
     return False
 
@@ -388,8 +425,8 @@ def solve_hidden_candidate(grid, explain):
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
                 grid.set_value_rc(cell.rownum, cell.colnum, cand)
                 grid_modified = True
-                # TODO: should store remining candidates
-                grid.history.append(('hidden single', cell, 'value', cand))
+                # TODO: should store remaining candidates
+                grid.history.append(('Hidden single', cell, 'value', cand))
                 # avoid to loop on candidates from initial cell state
                 break
     return grid_modified
@@ -399,24 +436,11 @@ def solve_hidden_candidate(grid, explain):
 
 
 def explain_move(grid, colorspec):
-    i = len(grid.history) - 2
-    while i >= 0 and grid.history[i][0] in ('naked single', 'hidden single'):
-        i -= 1
-    i += 1
-    hist = ''
-    while i < len(grid.history) - 1:
-        tech = grid.history[i][0]
-        desc = grid.history[i][0] + ' '
-        while grid.history[i][0] == tech:
-            desc += '%s=%d ' % (grid.history[i][1].strcoord(), grid.history[i][3])
-            i += 1
-        hist += desc
-    print(hist)
-    tech, _, discarded = grid.history[-1]
+    _, _, discarded = grid.history[-1]
     for digit, cells in discarded.items():
         for cell in cells:
             cell.candidates.add(digit)
-    print(tech)
+
     grid.dump(colorspec)
     for digit, cells in discarded.items():
         for cell in cells:
@@ -522,10 +546,38 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
                 if explain:
-                    explain_move(grid, ((subset, candidates, Fore.GREEN),
-                            (cells_less_subset, candidates, Fore.RED)))
+                    _, _, discarded = grid.history[-1]
+                    L = []
+                    for digit, cells in discarded.items():
+                        L.append(f'{packed_coordinates(cells)}<>{digit}')
+                    discarded = ', '.join(L)
+
+                    if legend.startswith('Naked'):
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, legend, candidates, subset))
+                        explain_move(grid, ((subset, candidates, Fore.GREEN), (cells_less_subset, candidates, Fore.RED)))
+                    if legend.startswith('Hidden'):
+                        allcand = set().union(*(cell.candidates for cell in subcells))
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_set(grid, legend, allcand - candidates, cells_less_subset))
+                        explain_move(grid, ((cells_less_subset, ALLCAND - candidates, Fore.GREEN, candidates, Fore.RED),))
                 return True
     return False
+
+
+def legend_locked_set(grid, legend, defcands, defset):
+    _, _, discarded = grid.history[-1]
+    L = []
+    for digit, cells in discarded.items():
+        L.append(f'{packed_coordinates(cells)}<>{digit}')
+    discarded = ', '.join(L)
+
+    return '%s: %s in %s => %s' % (legend,
+        ','.join(f'{_}' for _ in sorted(defcands)),
+        packed_coordinates(defset),
+        discarded)
 
 
 def solve_nacked_pairs(grid, explain):
@@ -557,7 +609,8 @@ def solve_hidden_set(grid, cells, length, legend, explain):
     for len_naked_set in range(5, 10 - length):
         len_hidden_set = len(subcells) - len_naked_set
         if len_hidden_set == length:
-            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain=False):
+            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain=not False):
+                #print(grid.history[-1])
                 return True
     return False
 
@@ -580,9 +633,9 @@ def solve_hidden_triple(grid, explain):
 
 def solve_hidden_quad(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 4, 'Hidden quad in row', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 4, 'Hidden quad in col', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 4, 'Hidden quad in box', explain) for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 4, 'Hidden quadruple', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 4, 'Hidden quadruple', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 4, 'Hidden quadruple', explain) for box in grid.boxes)
     )
 
 
@@ -1156,6 +1209,8 @@ def apply_strategy(grid, strategy, explain):
 def solve(grid, techniques, explain):
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
+    print(single_history(grid))
+    print()
 
 
 #
