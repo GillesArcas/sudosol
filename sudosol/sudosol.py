@@ -338,7 +338,7 @@ def load_ss_clipboard(grid, content):
     return lines
 
 
-# helpers
+# Helpers
 
 
 def discard_candidates(grid, candidates, cells, caption):
@@ -376,6 +376,17 @@ def packed_coordinates(cells):
         lcoord = sorted(f'r{rows}c{colnum}' for colnum, rows in col_cells.items())
 
     return ','.join(lcoord)
+
+
+def discarded_at_last_move(grid):
+    """Return candidates discarded at last move (from history) in text
+    explanation format (e.g. 'r45c8<>3, r4c89<>5').
+    """
+    _, _, discarded = grid.history[-1]
+    L = []
+    for digit, cells in discarded.items():
+        L.append(f'{packed_coordinates(cells)}<>{digit}')
+    return ', '.join(L)
 
 
 def single_history(grid):
@@ -485,7 +496,7 @@ def solve_locked_triples(grid, explain):
             candidates = set().union(*(cell.candidates for cell in triplet))
             if len(candidates) == 3:
                 cells_to_discard = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
-                if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                if discard_candidates(grid, candidates, cells_to_discard, 'Locked triple'):
                     if explain:
                         print(single_history(grid))
                         print()
@@ -499,7 +510,7 @@ def solve_locked_triples(grid, explain):
             candidates = set().union(*(cell.candidates for cell in triplet))
             if len(candidates) == 3:
                 cells_to_discard = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
-                if discard_candidates(grid, candidates, cells_to_discard, 'locked triple'):
+                if discard_candidates(grid, candidates, cells_to_discard, 'Locked triple'):
                     if explain:
                         print(single_history(grid))
                         print()
@@ -521,13 +532,25 @@ def solve_pointing(grid, explain):
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum])):
-                if discard_candidates(grid, [digit], grid.rows_less_triplet[trinum], 'pointing h'):
+                if discard_candidates(grid, [digit], grid.rows_less_triplet[trinum], 'Pointing'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
+                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
+                                (grid.rows_less_triplet[trinum], [digit], Fore.RED)))
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum])):
-                if discard_candidates(grid, [digit], grid.cols_less_triplet[trinum], 'pointing h'):
+                if discard_candidates(grid, [digit], grid.cols_less_triplet[trinum], 'Pointing'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
+                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
+                                (grid.cols_less_triplet[trinum], [digit], Fore.RED)))
                     return True
 
     return False
@@ -540,16 +563,37 @@ def solve_claiming(grid, explain):
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.rows_less_triplet[trinum])):
-                if discard_candidates(grid, [digit], grid.boxes_less_hortriplet[trinum], 'claiming h'):
+                if discard_candidates(grid, [digit], grid.boxes_less_hortriplet[trinum], 'Claiming'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_candidates(grid, 'Claiming', [digit], f'r{triplet[0].rownum + 1}'))
+                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
+                                (grid.boxes_less_hortriplet[trinum], [digit], Fore.RED)))
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.cols_less_triplet[trinum])):
-                if discard_candidates(grid, [digit], grid.boxes_less_vertriplet[trinum], 'claiming v'):
+                if discard_candidates(grid, [digit], grid.boxes_less_vertriplet[trinum], 'Claiming'):
+                    if explain:
+                        print(single_history(grid))
+                        print()
+                        print(legend_locked_candidates(grid, 'Claiming', [digit], f'c{triplet[0].colnum + 1}'))
+                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
+                                (grid.boxes_less_vertriplet[trinum], [digit], Fore.RED)))
                     return True
 
     return False
+
+
+def legend_locked_candidates(grid, legend, defcands, defunit):
+    discarded = discarded_at_last_move(grid)
+
+    return '%s: %s in %s => %s' % (legend,
+        ','.join(f'{_}' for _ in sorted(defcands)),
+        defunit,
+        discarded)
 
 
 # Locked sets
@@ -564,12 +608,6 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
                 if explain:
-                    _, _, discarded = grid.history[-1]
-                    L = []
-                    for digit, cells in discarded.items():
-                        L.append(f'{packed_coordinates(cells)}<>{digit}')
-                    discarded = ', '.join(L)
-
                     print(single_history(grid))
                     print()
                     if legend.startswith('Naked'):
@@ -584,11 +622,7 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
 
 
 def legend_locked_set(grid, legend, defcands, defset):
-    _, _, discarded = grid.history[-1]
-    L = []
-    for digit, cells in discarded.items():
-        L.append(f'{packed_coordinates(cells)}<>{digit}')
-    discarded = ', '.join(L)
+    discarded = discarded_at_last_move(grid)
 
     return '%s: %s in %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(defcands)),
@@ -598,25 +632,25 @@ def legend_locked_set(grid, legend, defcands, defset):
 
 def solve_nacked_pairs(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 2, 'Naked pair in row', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 2, 'Naked pair in col', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 2, 'Naked pair in box', explain) for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 2, 'Naked pair', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 2, 'Naked pair', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 2, 'Naked pair', explain) for box in grid.boxes)
     )
 
 
 def solve_nacked_triples(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 3, 'Naked triple in row', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 3, 'Naked triple in col', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 3, 'Naked triple in box', explain) for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 3, 'Naked triple', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 3, 'Naked triple', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 3, 'Naked triple', explain) for box in grid.boxes)
     )
 
 
 def solve_nacked_quads(grid, explain):
     return (
-        any(nacked_sets_n(grid, row, None, 4, 'Naked quad in row', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 4, 'Naked quad in col', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 4, 'Naked quad in box', explain) for box in grid.boxes)
+        any(nacked_sets_n(grid, row, None, 4, 'Naked quadruple', explain) for row in grid.rows) or
+        any(nacked_sets_n(grid, col, None, 4, 'Naked quadruple', explain) for col in grid.cols) or
+        any(nacked_sets_n(grid, box, None, 4, 'Naked quadruple', explain) for box in grid.boxes)
     )
 
 
@@ -633,17 +667,17 @@ def solve_hidden_set(grid, cells, length, legend, explain):
 
 def solve_hidden_pair(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 2, 'Hidden pair in row', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 2, 'Hidden pair in col', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 2, 'Hidden pair in box', explain) for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 2, 'Hidden pair', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 2, 'Hidden pair', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 2, 'Hidden pair', explain) for box in grid.boxes)
     )
 
 
 def solve_hidden_triple(grid, explain):
     return (
-        any(solve_hidden_set(grid, row, 3, 'Hidden triple in row', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 3, 'Hidden triple in col', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 3, 'Hidden triple in box', explain) for box in grid.boxes)
+        any(solve_hidden_set(grid, row, 3, 'Hidden triple', explain) for row in grid.rows) or
+        any(solve_hidden_set(grid, col, 3, 'Hidden triple', explain) for col in grid.cols) or
+        any(solve_hidden_set(grid, box, 3, 'Hidden triple', explain) for box in grid.boxes)
     )
 
 
