@@ -410,6 +410,12 @@ def single_history(grid):
     return '\n'.join(hist)
 
 
+def print_single_history(grid):
+    singlehistory = single_history(grid)
+    if singlehistory:
+        print(singlehistory)
+        print()
+
 # Singles
 
 
@@ -470,8 +476,7 @@ def solve_locked_pairs(grid, explain):
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'Locked pair'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -483,8 +488,7 @@ def solve_locked_pairs(grid, explain):
                 cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, subset[0].candidates, cells_to_discard, 'Locked pair'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
                         explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
                                 (cells_to_discard, subset[0].candidates, Fore.RED)))
@@ -502,8 +506,7 @@ def solve_locked_triples(grid, explain):
                 cells_to_discard = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
                 if discard_candidates(grid, candidates, cells_to_discard, 'Locked triple'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
                         explain_move(grid, ((triplet, candidates, Fore.GREEN),
                                 (cells_to_discard, candidates, Fore.RED)))
@@ -516,8 +519,7 @@ def solve_locked_triples(grid, explain):
                 cells_to_discard = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
                 if discard_candidates(grid, candidates, cells_to_discard, 'Locked triple'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
                         explain_move(grid, ((triplet, candidates, Fore.GREEN),
                                 (cells_to_discard, candidates, Fore.RED)))
@@ -538,8 +540,7 @@ def solve_pointing(grid, explain):
                 not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum])):
                 if discard_candidates(grid, [digit], grid.rows_less_triplet[trinum], 'Pointing'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
                         explain_move(grid, ((triplet, [digit], Fore.GREEN),
                                 (grid.rows_less_triplet[trinum], [digit], Fore.RED)))
@@ -550,8 +551,7 @@ def solve_pointing(grid, explain):
                 not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum])):
                 if discard_candidates(grid, [digit], grid.cols_less_triplet[trinum], 'Pointing'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
                         explain_move(grid, ((triplet, [digit], Fore.GREEN),
                                 (grid.cols_less_triplet[trinum], [digit], Fore.RED)))
@@ -569,8 +569,7 @@ def solve_claiming(grid, explain):
                 not candidate_in_cells(digit, grid.rows_less_triplet[trinum])):
                 if discard_candidates(grid, [digit], grid.boxes_less_hortriplet[trinum], 'Claiming'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Claiming', [digit], f'r{triplet[0].rownum + 1}'))
                         explain_move(grid, ((triplet, [digit], Fore.GREEN),
                                 (grid.boxes_less_hortriplet[trinum], [digit], Fore.RED)))
@@ -581,8 +580,7 @@ def solve_claiming(grid, explain):
                 not candidate_in_cells(digit, grid.cols_less_triplet[trinum])):
                 if discard_candidates(grid, [digit], grid.boxes_less_vertriplet[trinum], 'Claiming'):
                     if explain:
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Claiming', [digit], f'c{triplet[0].colnum + 1}'))
                         explain_move(grid, ((triplet, [digit], Fore.GREEN),
                                 (grid.boxes_less_vertriplet[trinum], [digit], Fore.RED)))
@@ -612,8 +610,7 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             if discard_candidates(grid, candidates, cells_less_subset, legend):
                 if explain:
-                    print(single_history(grid))
-                    print()
+                    print_single_history(grid)
                     if legend.startswith('Naked'):
                         print(legend_locked_set(grid, legend, candidates, subset))
                         explain_move(grid, ((subset, candidates, Fore.GREEN), (cells_less_subset, candidates, Fore.RED)))
@@ -697,15 +694,15 @@ def solve_hidden_quad(grid, explain):
 
 
 def solve_X_wing(grid, explain):
-     return solve_basicfish(grid, explain, 2, 'x-wing')
+     return solve_basicfish(grid, explain, 2, 'X-wing')
 
 
 def solve_swordfish(grid, explain):
-    return solve_basicfish(grid, explain, 3, 'swordfish')
+    return solve_basicfish(grid, explain, 3, 'Swordfish')
 
 
 def solve_jellyfish(grid, explain):
-    return solve_basicfish(grid, explain, 4, 'jellyfish')
+    return solve_basicfish(grid, explain, 4, 'Jellyfish')
 
 
 def solve_basicfish(grid, explain, order, name):
@@ -731,8 +728,7 @@ def solve_basicfish(grid, explain, order, name):
                 if discard_candidates(grid, [digit], cells_to_discard, name):
                     if explain:
                         subset = cellunionx(*defrows)
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_basic_fish(grid, name, [digit], subset, 'H'))
                         explain_move(grid, ((subset, [digit], Fore.GREEN),
                                 (cells_to_discard, [digit], Fore.RED)))
@@ -756,8 +752,7 @@ def solve_basicfish(grid, explain, order, name):
                 if discard_candidates(grid, [digit], cells_to_discard, name):
                     if explain:
                         subset = cellunionx(*defrows)
-                        print(single_history(grid))
-                        print()
+                        print_single_history(grid)
                         print(legend_basic_fish(grid, name, [digit], subset, 'V'))
                         explain_move(grid, ((subset, [digit], Fore.GREEN),
                                 (cells_to_discard, [digit], Fore.RED)))
@@ -797,6 +792,9 @@ def solve_coloring_trap(grid, explain):
 
             if common:
                 discard_candidates(grid, [digit], common, 'color trap')
+                if explain:
+                    print_single_history(grid)
+                    print('color trap')
                 return True
 
     return False
@@ -817,6 +815,9 @@ def solve_coloring_wrap(grid, explain):
 
             if color_contradiction(cluster_green):
                 discard_candidates(grid, [digit], cluster_green, 'color wrap')
+                if explain:
+                    print_single_history(grid)
+                    print('color wrap')
                 return True
 
     return False
@@ -865,24 +866,36 @@ def solve_multi_coloring_type_1(grid, explain):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
+                    if explain:
+                        print_single_history(grid)
+                        print('multi color type 1')
                     return True
 
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
+                    if explain:
+                        print_single_history(grid)
+                        print('multi color type 1')
                     return True
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
+                    if explain:
+                        print_single_history(grid)
+                        print('multi color type 1')
                     return True
 
             if any(cell in peers_cluster_green2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
+                    if explain:
+                        print_single_history(grid)
+                        print('multi color type 1')
                     return True
 
 
@@ -914,21 +927,33 @@ def solve_multi_coloring_type_2(grid, explain):
             if (any(cell in peers_cluster_blue2 for cell in cluster_blue1) and
                 any(cell in peers_cluster_green2 for cell in cluster_blue1)):
                 discard_candidates(grid, [digit], cluster_blue1, 'multi color type 2')
+                if explain:
+                    print_single_history(grid)
+                    print('multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_green1) and
                 any(cell in peers_cluster_green2 for cell in cluster_green1)):
                 discard_candidates(grid, [digit], cluster_green1, 'multi color type 2')
+                if explain:
+                    print_single_history(grid)
+                    print('multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_blue2) and
                 any(cell in peers_cluster_green1 for cell in cluster_blue2)):
                 discard_candidates(grid, [digit], cluster_blue2, 'multi color type 2')
+                if explain:
+                    print_single_history(grid)
+                    print('multi color type 2')
                 return True
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_green2) and
                 any(cell in peers_cluster_green1 for cell in cluster_green2)):
                 discard_candidates(grid, [digit], cluster_green2, 'multi color type 2')
+                if explain:
+                    print_single_history(grid)
+                    print('multi color type 2')
                 return True
 
     return False
@@ -1025,6 +1050,9 @@ def solve_XY_wing(grid, explain):
                         cell2.discard(digit)
                     if grid_modified:
                         grid.history.append(('XY-wing', discarded, 'discard', digit))
+                        if explain:
+                            print_single_history(grid)
+                            print('XY-wing')
                         return True
     else:
         return False
@@ -1052,6 +1080,9 @@ def solve_XY_chain_v1(grid, explain):
                 for adjacency1 in adjacency[i][k]:
                     for adjacency2 in adjacency[k][j]:
                         if test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions):
+                            if explain:
+                                print_single_history(grid)
+                                print('XY-chain')
                             return True
 
     if all_solutions:
@@ -1264,8 +1295,7 @@ def solve(grid, techniques, explain):
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
     if explain:
-        print(single_history(grid))
-        print()
+        print_single_history(grid)
 
 
 #

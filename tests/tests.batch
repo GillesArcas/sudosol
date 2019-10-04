@@ -22,5 +22,7 @@
 --testf tests/l2.txt  --rand 100 --tech n1,h1,l2,l3
 --testf tests/l3.txt  --rand 100 --tech n1,h1,l2,l3
 
+--testf tests/bf4-ssts.txt  --rand 100 --tech ssts,bf4
+
 --testf tests/xyc.txt  --rand 100 --tech n1,h1,xyc
 --testf tests/xyc-ssts.txt  --rand 100 --tech ssts,xyc
