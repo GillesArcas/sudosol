@@ -1311,6 +1311,17 @@ def solvegrid(sgrid, techniques, explain):
     return True, None
 
 
+def solveclipboard(clipformat, techniques, explain):
+    if clipformat == 'ss':
+        grid = Grid()
+        content = clipboard.paste()
+        load_ss_clipboard(grid, content)
+        grid.dump()
+        solve(grid, techniques, explain)
+        grid.dump()
+    return True, None
+
+
 def testfile(filename, randnum, techniques, explain):
     verbose = False
     grid = Grid()
@@ -1422,14 +1433,7 @@ def main(argstring=None):
         return testbatch(options)
 
     elif options.clipboard:
-        if options.format == 'ss':
-            grid = Grid()
-            content = clipboard.paste()
-            load_ss_clipboard(grid, content)
-            grid.dump()
-            solve(grid, options.explain, options.history)
-            grid.dump()
-        return True, None
+        return solveclipboard(options.format, options.techniques, options.explain)
 
     else:
         grid = Grid()
