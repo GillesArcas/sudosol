@@ -298,6 +298,10 @@ def cellunion(cells1, cells2):
     return set.union(set(cells1), set(cells2))
 
 
+def cellunionx(*list_of_list_cells):
+    return set.union(*[set(cells) for cells in list_of_list_cells])
+
+
 # Loading
 
 
@@ -689,92 +693,90 @@ def solve_hidden_quad(grid, explain):
     )
 
 
-# Fishes
+# Basic fishes
 
 
 def solve_X_wing(grid, explain):
-
-    for digit in ALLDIGITS:
-
-        for index, house in enumerate(grid.rows):
-            dig_house = [cell for cell in house if digit in cell.candidates]
-            if len(dig_house) == 2:
-                for index2, house2 in enumerate(grid.rows[index + 1:], index + 1):
-                    dig_house2 = [cell for cell in house2 if digit in cell.candidates]
-                    if len(dig_house2) == 2:
-                        if dig_house[0].colnum == dig_house2[0].colnum and dig_house[1].colnum == dig_house2[1].colnum:
-                            cells_to_discard = []
-                            for cell in grid.cols[dig_house[0].colnum] + grid.cols[dig_house[1].colnum]:
-                                if cell.rownum not in (index, index2):
-                                    cells_to_discard.append(cell)
-                            if discard_candidates(grid, [digit], cells_to_discard, 'X-wing'):
-                                return True
-
-        for index, house in enumerate(grid.cols):
-            dig_house = [cell for cell in house if digit in cell.candidates]
-            if len(dig_house) == 2:
-                for index2, house2 in enumerate(grid.cols[index + 1:], index + 1):
-                    dig_house2 = [cell for cell in house2 if digit in cell.candidates]
-                    if len(dig_house2) == 2:
-                        if dig_house[0].rownum == dig_house2[0].rownum and dig_house[1].rownum == dig_house2[1].rownum:
-                            cells_to_discard = []
-                            for cell in grid.rows[dig_house[0].rownum] + grid.rows[dig_house[1].rownum]:
-                                if cell.colnum not in (index, index2):
-                                    cells_to_discard.append(cell)
-                            if discard_candidates(grid, [digit], cells_to_discard, 'X-wing'):
-                                return True
-    return False
+     return solve_basicfish(grid, explain, 2, 'x-wing')
 
 
 def solve_swordfish(grid, explain):
+    return solve_basicfish(grid, explain, 3, 'swordfish')
+
+
+def solve_jellyfish(grid, explain):
+    return solve_basicfish(grid, explain, 4, 'jellyfish')
+
+
+def solve_basicfish(grid, explain, order, name):
 
     for digit in ALLDIGITS:
 
         rows = []
         for row in grid.rows:
             rowcells = [cell for cell in row if digit in cell.candidates]
-            if 0 < len(rowcells) <= 3:
+            if 1 < len(rowcells) <= order:
                 rows.append(rowcells)
-        for rowtriple in itertools.combinations(rows, 3):
-            rowsnum = [row[0].rownum for row in rowtriple]
-            colsnum = set()
-            for row in rowtriple:
-                for cell in row:
-                    colsnum.add(cell.colnum)
-            if len(colsnum) == 3:
-                # 3 rows with candidates in 3 cols
+
+        for defrows in itertools.combinations(rows, order):
+            rowsnum = [row[0].rownum for row in defrows]
+            colsnum = {cell.colnum for row in defrows for cell in row}
+            if len(colsnum) == order:
+                # n rows with candidates in n cols
                 cells_to_discard = []
                 for colnum in colsnum:
                     for cell in grid.cols[colnum]:
                         if cell.rownum not in rowsnum:
                             cells_to_discard.append(cell)
-                if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
+                if discard_candidates(grid, [digit], cells_to_discard, name):
                     if explain:
-                        subset = cellunion(rowtriple[0], cellunion(rowtriple[1], rowtriple[2]))
-                        explain_move(grid, ((subset, [digit], Fore.YELLOW),
+                        subset = cellunionx(*defrows)
+                        print(single_history(grid))
+                        print()
+                        print(legend_basic_fish(grid, name, [digit], subset, 'H'))
+                        explain_move(grid, ((subset, [digit], Fore.GREEN),
                                 (cells_to_discard, [digit], Fore.RED)))
                     return True
 
         cols = []
         for col in grid.cols:
             colcells = [cell for cell in col if digit in cell.candidates]
-            if 0 < len(colcells) <= 3:
+            if 1 < len(colcells) <= order:
                 cols.append(colcells)
-        for coltriple in itertools.combinations(cols, 3):
-            colsnum = [col[0].colnum for col in coltriple]
-            rowsnum = set()
-            for col in coltriple:
-                for cell in col:
-                    rowsnum.add(cell.rownum)
-            if len(rowsnum) == 3:
+
+        for defrows in itertools.combinations(cols, order):
+            colsnum = [col[0].colnum for col in defrows]
+            rowsnum = {cell.rownum for col in defrows for cell in col}
+            if len(rowsnum) == order:
                 cells_to_discard = []
                 for rownum in rowsnum:
                     for cell in grid.rows[rownum]:
                         if cell.colnum not in colsnum:
                             cells_to_discard.append(cell)
-                if discard_candidates(grid, [digit], cells_to_discard, 'swordfish'):
+                if discard_candidates(grid, [digit], cells_to_discard, name):
+                    if explain:
+                        subset = cellunionx(*defrows)
+                        print(single_history(grid))
+                        print()
+                        print(legend_basic_fish(grid, name, [digit], subset, 'V'))
+                        explain_move(grid, ((subset, [digit], Fore.GREEN),
+                                (cells_to_discard, [digit], Fore.RED)))
                     return True
     return False
+
+
+def legend_basic_fish(grid, legend, defcands, subset, dir):
+    discarded = discarded_at_last_move(grid)
+
+    rows = {cell.rownum + 1 for cell in subset}
+    cols = {cell.colnum + 1 for cell in subset}
+    srows = ''.join(f'{_}' for _ in sorted(list(rows)))
+    scols = ''.join(f'{_}' for _ in sorted(list(cols)))
+    defcells = f'r{srows} c{scols}' if dir == 'H' else f'c{scols} r{srows}'
+    return '%s: %s %s => %s' % (legend,
+        ','.join(f'{_}' for _ in sorted(defcands)),
+        defcells,
+        discarded)
 
 
 # coloring
@@ -1110,7 +1112,7 @@ def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
     candchain = candchain1 + candchain2[2:]
 
     # number of links: number of cells + number of links between cells
-    # TOTO: check
+    # TODO: check
     # numlinks = len(cellchain) + (len(cellchain) - 1)
     # if numlinks > 20:
     #     return False
@@ -1202,6 +1204,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
 
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,SK,2SK,TF,ER,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
 
 
@@ -1239,6 +1242,7 @@ SOLVER = {
     'l3': solve_locked_triples,
     'bf2': solve_X_wing,
     'bf3': solve_swordfish,
+    'bf4': solve_jellyfish,
     'sc1': solve_coloring_trap,
     'sc2': solve_coloring_wrap,
     'mc1' : solve_multi_coloring_type_1,
@@ -1265,6 +1269,16 @@ def solve(grid, techniques, explain):
 
 
 #
+
+
+def solvegrid(sgrid, techniques, explain):
+    grid = Grid()
+    grid.input(sgrid)
+    print(grid.output())
+    grid.dump()
+    solve(grid, techniques, explain)
+    grid.dump()
+    return True, None
 
 
 def testfile(filename, randnum, techniques, explain):
@@ -1294,37 +1308,42 @@ def testfile(filename, randnum, techniques, explain):
         else:
             solved += 1
 
-    time_solve = time.time() - t0
-    print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {time_solve}')
-    return success
+    timing = time.time() - t0
+    print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {timing:0.3}')
+    return success, timing
 
 
 def testdir(dirname, randnum, techniques, explain):
     tested = 0
     succeeded = 0
+    timing_dir = 0
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
-            if testfile(filename, randnum, techniques, explain):
+            success, timing = testfile(filename, randnum, techniques, explain)
+            if success:
                 succeeded += 1
+            timing_dir += timing
 
     success = succeeded == tested
-    print(f'Test dir : {dirname:20} Result: {success} Succeeded: {succeeded}/{tested}')
-    return success
+    print(f'Test dir : {dirname:20} Result: {success} Succeeded: {succeeded}/{tested} Time: {timing_dir:0.3}')
+    return success, timing_dir
 
 
 def testbatch(args):
     status = True
+    timing_batch = 0
     with open(args.batch) as batch:
         for line in batch:
             if line.strip() and line[0] != ';':
                 testargs = line.strip()
 
-                status = main(testargs)
-                if not status:
+                success, timing = main(testargs)
+                if not success:
                     break
-    print('BATCH OK' if status else 'ONE TEST FAILURE in ' + line.strip())
-    return status
+                timing_batch += timing
+    print(f'BATCH OK Time: {timing_batch:0.3}' if status else 'ONE TEST FAILURE in ' + line.strip())
+    return success, timing_batch
 
 
 def parse_command_line(argstring=None):
@@ -1361,12 +1380,7 @@ def main(argstring=None):
     options = parse_command_line(argstring)
 
     if options.solve:
-        grid = Grid()
-        grid.input(options.solve)
-        grid.dump()
-        solve(grid, options.techniques, options.explain)
-        grid.dump()
-        return True
+        return solvegrid(options.solve, options.techniques, options.explain)
 
     elif options.testfile:
         return testfile(options.testfile, options.random, options.techniques, options.explain)
@@ -1385,7 +1399,7 @@ def main(argstring=None):
             grid.dump()
             solve(grid, options.explain, options.history)
             grid.dump()
-        return True
+        return True, None
 
     else:
         grid = Grid()
@@ -1397,7 +1411,7 @@ def main(argstring=None):
         grid.dump()
         print(grid.output())
         print()
-        return True
+        return True, None
         # grid.discard_rc(5, 8, 4)
         # grid.discard_rc(5, 8, 6)
         # grid.set_value_rc(5, 2, 1)
@@ -1406,7 +1420,8 @@ def main(argstring=None):
 
 if __name__ == '__main__':
     colorama.init()
-    if main():
+    success, timing = main()
+    if success:
         exit(0)
     else:
         exit(1)
