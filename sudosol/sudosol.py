@@ -458,11 +458,13 @@ def solve_hidden_candidate(grid, explain):
 
 def explain_move(grid, colorspec):
     _, _, discarded = grid.history[-1]
+
     for digit, cells in discarded.items():
         for cell in cells:
             cell.candidates.add(digit)
 
     grid.dump(colorspec)
+
     for digit, cells in discarded.items():
         for cell in cells:
             cell.candidates.discard(digit)
@@ -794,7 +796,10 @@ def solve_coloring_trap(grid, explain):
                 discard_candidates(grid, [digit], common, 'color trap')
                 if explain:
                     print_single_history(grid)
-                    print('color trap')
+                    print(legend_simple_coloring(grid, 'Simple color trap', digit, cluster_green, cluster_blue))
+                    explain_move(grid, ((cluster_green, [digit], Fore.GREEN),
+                                        (cluster_blue, [digit], Fore.YELLOW),
+                                        (common, [digit], Fore.RED)))
                 return True
 
     return False
@@ -811,13 +816,20 @@ def solve_coloring_wrap(grid, explain):
 
             if color_contradiction(cluster_blue):
                 discard_candidates(grid, [digit], cluster_blue, 'color wrap')
+                if explain:
+                    print_single_history(grid)
+                    print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
+                    explain_move(grid, ((cluster_green, [digit], Fore.GREEN),
+                                        (cluster_blue, [digit], Fore.RED)))
                 return True
 
             if color_contradiction(cluster_green):
                 discard_candidates(grid, [digit], cluster_green, 'color wrap')
                 if explain:
                     print_single_history(grid)
-                    print('color wrap')
+                    print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
+                    explain_move(grid, ((cluster_blue, [digit], Fore.GREEN),
+                                        (cluster_green, [digit], Fore.RED)))
                 return True
 
     return False
@@ -836,6 +848,15 @@ def color_contradiction(same_color):
         cols[cell.colnum] += 1
         boxs[cell.boxnum] += 1
     return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
+
+
+def legend_simple_coloring(grid, legend, digit, cluster_green, cluster_blue):
+    discarded = discarded_at_last_move(grid)
+
+    return '%s: %d (%s) / (%s) => %s' % (legend, digit,
+        packed_coordinates(cluster_green),
+        packed_coordinates(cluster_blue),
+        discarded)
 
 
 def solve_multi_coloring_type_1(grid, explain):
@@ -1240,6 +1261,8 @@ STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
 
 
 def list_techniques(strategy):
+    strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
+
     if '-' not in strategy:
         r = strategy.split(',')
     else:
@@ -1248,14 +1271,7 @@ def list_techniques(strategy):
         y = y.split(',')
         r = [z for z in x if z not in y]
 
-    r2 = []
-    for s in r:
-        if s == 'ssts':
-            r2.extend(STRATEGY_SSTS.split(','))
-        else:
-            r2.append(s)
-
-    return r2
+    return r
 
 
 SOLVER = {
