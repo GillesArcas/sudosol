@@ -866,6 +866,8 @@ def solve_multi_coloring_type_1(grid, explain):
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         clusters_data = []
+        to_be_removed = None
+
         for cluster in clusters:
             cluster_blue, cluster_green = colorize(grid, digit, cluster)
 
@@ -887,37 +889,40 @@ def solve_multi_coloring_type_1(grid, explain):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-                    if explain:
-                        print_single_history(grid)
-                        print('multi color type 1')
-                    return True
+                    break
 
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-                    if explain:
-                        print_single_history(grid)
-                        print('multi color type 1')
-                    return True
+                    break
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-                    if explain:
-                        print_single_history(grid)
-                        print('multi color type 1')
-                    return True
+                    break
 
             if any(cell in peers_cluster_green2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
                 if to_be_removed:
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-                    if explain:
-                        print_single_history(grid)
-                        print('multi color type 1')
-                    return True
+                    break
+
+        if to_be_removed:
+            if explain:
+                print_single_history(grid)
+                print(legend_multi_coloring(grid, 'Multi color type 1', digit,
+                          cluster_green1, cluster_blue1,
+                          cluster_green2, cluster_blue2))
+                explain_move(grid, ((cluster_blue1, [digit], Fore.GREEN),
+                                    (cluster_green1, [digit], Fore.BLUE),
+                                    (cluster_blue2, [digit], Fore.YELLOW),
+                                    (cluster_green2, [digit], Fore.MAGENTA),
+                                    (to_be_removed, [digit], Fore.RED)))
+            return True
+
+    return False
 
 
 def solve_multi_coloring_type_2(grid, explain):
@@ -927,6 +932,7 @@ def solve_multi_coloring_type_2(grid, explain):
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         clusters_data = []
+        to_be_removed = None
         for cluster in clusters:
             cluster_blue, cluster_green = colorize(grid, digit, cluster)
 
@@ -947,37 +953,58 @@ def solve_multi_coloring_type_2(grid, explain):
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_blue1) and
                 any(cell in peers_cluster_green2 for cell in cluster_blue1)):
-                discard_candidates(grid, [digit], cluster_blue1, 'multi color type 2')
-                if explain:
-                    print_single_history(grid)
-                    print('multi color type 2')
-                return True
+                to_be_removed = cluster_blue1
+                break
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_green1) and
                 any(cell in peers_cluster_green2 for cell in cluster_green1)):
-                discard_candidates(grid, [digit], cluster_green1, 'multi color type 2')
-                if explain:
-                    print_single_history(grid)
-                    print('multi color type 2')
-                return True
+                to_be_removed = cluster_green1
+                break
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_blue2) and
                 any(cell in peers_cluster_green1 for cell in cluster_blue2)):
-                discard_candidates(grid, [digit], cluster_blue2, 'multi color type 2')
-                if explain:
-                    print_single_history(grid)
-                    print('multi color type 2')
-                return True
+                to_be_removed = cluster_blue2
+                break
 
             if (any(cell in peers_cluster_blue1 for cell in cluster_green2) and
                 any(cell in peers_cluster_green1 for cell in cluster_green2)):
-                discard_candidates(grid, [digit], cluster_green2, 'multi color type 2')
-                if explain:
-                    print_single_history(grid)
-                    print('multi color type 2')
-                return True
+                to_be_removed = cluster_green2
+                break
+
+        if to_be_removed:
+            discard_candidates(grid, [digit], to_be_removed, 'multi color type 2')
+            if explain:
+                print_single_history(grid)
+                print(legend_multi_coloring(grid, 'Multi color type 2', digit,
+                          cluster_green1, cluster_blue1,
+                          cluster_green2, cluster_blue2))
+                if cluster_blue1 == to_be_removed: cluster_blue1 = {}
+                if cluster_green1 == to_be_removed: cluster_green1 = {}
+                if cluster_blue2 == to_be_removed: cluster_blue2 = {}
+                if cluster_green2 == to_be_removed: cluster_green2 = {}
+                explain_move(grid, ((cluster_blue1, [digit], Fore.GREEN),
+                                    (cluster_green1, [digit], Fore.BLUE),
+                                    (cluster_blue2, [digit], Fore.YELLOW),
+                                    (cluster_green2, [digit], Fore.MAGENTA),
+                                    (to_be_removed, [digit], Fore.RED)))
+            return True
 
     return False
+
+
+def legend_multi_coloring(grid, legend, digit,
+                          cluster_green1, cluster_blue1,
+                          cluster_green2, cluster_blue2):
+    """multi coloring is limited to two clusters.
+    """
+    discarded = discarded_at_last_move(grid)
+
+    return '%s: %d (%s) / (%s), (%s) / (%s) => %s' % (legend, digit,
+        packed_coordinates(cluster_green1),
+        packed_coordinates(cluster_blue1),
+        packed_coordinates(cluster_green2),
+        packed_coordinates(cluster_blue2),
+        discarded)
 
 
 # clusters
