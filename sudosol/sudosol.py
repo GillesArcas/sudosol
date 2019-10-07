@@ -243,43 +243,34 @@ class Grid:
 
 
 def colorize_candidates(cell, spec_color):
-    # ((cell, '*', Fore.GREEN), ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED))
-    # if not cell.candidates:
-    #     return Fore.BLUE + str(cell.value) + Fore.RESET + ' ' * 8
+    """
+    col_spec ::= [cells, [candidates, color]*]*
+    ex:
+    (({cell}, [1], Fore.GREEN), ((cell1, cell2), ALLCAND, Fore.RED, {cand1, cand2}, Fore.GREEN))
 
-    # if spec_color is None or not cell.candidates:
-    #     return str(cell)
-
+    cells and candidates are iterables.
+    A cell or a candidate may appear several times. The last color spec is taken into accout.
+    """
     if not cell.candidates:
         return str(cell.value)
 
     if spec_color is None:
         res = Fore.CYAN + str(cell) + Fore.RESET
-        res += ' ' * (9 - len(cell.candidates))
-        return res
-
-    for target, *spec_col in spec_color:
-        if isinstance(target, Cell):
-            target = (target,)
-        for targ in target:
-            if targ == cell:
-                res = ''
-                for cand in sorted(targ.candidates):
-                    for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
-                        if cand == spec_cand or cand in spec_cand:
-                            res += speccol + str(cand) + Fore.RESET
-                            break
-                    else:
-                        # res += str(cand)
-                        res += Fore.CYAN + str(cand) + Fore.RESET
-                # manual padding as colorama information fools format padding
-                res += ' ' * (9 - len(targ.candidates))
-                return res
     else:
-        # return str(cell)
-        res = Fore.CYAN + str(cell) + Fore.RESET
-        res += ' ' * (9 - len(cell.candidates))
-        return res
+        candcol = defaultdict(lambda:Fore.CYAN)
+        for target, *spec_col in spec_color:
+            if cell in target:
+                for cand in cell.candidates:
+                    for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
+                        if cand in spec_cand:
+                            candcol[cand] = speccol
+        res = ''
+        for cand in sorted(cell.candidates):
+            res += candcol[cand] + str(cand) + Fore.RESET
+
+    # manual padding as colorama information fools format padding
+    res += ' ' * (9 - len(cell.candidates))
+    return res
 
 
 def candidate_in_cells(digit, cells):
@@ -383,14 +374,21 @@ def packed_coordinates(cells):
 
 
 def discarded_at_last_move(grid):
+    """Return candidates discarded at last move (from history).
+    """
+    _, _, discarded = grid.history[-1]
+    return discarded
+
+
+def discarded_at_last_move_text(grid):
     """Return candidates discarded at last move (from history) in text
     explanation format (e.g. 'r45c8<>3, r4c89<>5').
     """
-    _, _, discarded = grid.history[-1]
-    L = []
+    discarded = discarded_at_last_move(grid)
+    list_coord = []
     for digit, cells in discarded.items():
-        L.append(f'{packed_coordinates(cells)}<>{digit}')
-    return ', '.join(L)
+        list_coord.append(f'{packed_coordinates(cells)}<>{digit}')
+    return ', '.join(list_coord)
 
 
 def single_history(grid):
@@ -592,7 +590,7 @@ def solve_claiming(grid, explain):
 
 
 def legend_locked_candidates(grid, legend, defcands, defunit):
-    discarded = discarded_at_last_move(grid)
+    discarded = discarded_at_last_move_text(grid)
 
     return '%s: %s in %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(defcands)),
@@ -625,7 +623,7 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
 
 
 def legend_locked_set(grid, legend, defcands, defset):
-    discarded = discarded_at_last_move(grid)
+    discarded = discarded_at_last_move_text(grid)
 
     return '%s: %s in %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(defcands)),
@@ -763,7 +761,7 @@ def solve_basicfish(grid, explain, order, name):
 
 
 def legend_basic_fish(grid, legend, defcands, subset, dir):
-    discarded = discarded_at_last_move(grid)
+    discarded = discarded_at_last_move_text(grid)
 
     rows = {cell.rownum + 1 for cell in subset}
     cols = {cell.colnum + 1 for cell in subset}
@@ -851,7 +849,7 @@ def color_contradiction(same_color):
 
 
 def legend_simple_coloring(grid, legend, digit, cluster_green, cluster_blue):
-    discarded = discarded_at_last_move(grid)
+    discarded = discarded_at_last_move_text(grid)
 
     return '%s: %d (%s) / (%s) => %s' % (legend, digit,
         packed_coordinates(cluster_green),
@@ -888,6 +886,7 @@ def solve_multi_coloring_type_1(grid, explain):
             if any(cell in peers_cluster_blue2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
                 if to_be_removed:
+                    # TODO: move outside loop
                     discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     break
 
@@ -978,10 +977,12 @@ def solve_multi_coloring_type_2(grid, explain):
                 print(legend_multi_coloring(grid, 'Multi color type 2', digit,
                           cluster_green1, cluster_blue1,
                           cluster_green2, cluster_blue2))
+                # TODO: remove 4 lines and test
                 if cluster_blue1 == to_be_removed: cluster_blue1 = {}
                 if cluster_green1 == to_be_removed: cluster_green1 = {}
                 if cluster_blue2 == to_be_removed: cluster_blue2 = {}
                 if cluster_green2 == to_be_removed: cluster_green2 = {}
+
                 explain_move(grid, ((cluster_blue1, [digit], Fore.GREEN),
                                     (cluster_green1, [digit], Fore.BLUE),
                                     (cluster_blue2, [digit], Fore.YELLOW),
@@ -997,7 +998,7 @@ def legend_multi_coloring(grid, legend, digit,
                           cluster_green2, cluster_blue2):
     """multi coloring is limited to two clusters.
     """
-    discarded = discarded_at_last_move(grid)
+    discarded = discarded_at_last_move_text(grid)
 
     return '%s: %d (%s) / (%s), (%s) / (%s) => %s' % (legend, digit,
         packed_coordinates(cluster_green1),
@@ -1087,23 +1088,26 @@ def solve_XY_wing(grid, explain):
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
                     digit = list(wings_inter)[0]
-                    discarded = [_ for _ in cellinter(wing1.peers, wing2.peers)
-                                         if digit in _.candidates]
-                    grid_modified = len(discarded) > 0
-                    if False and grid_modified:
-                        grid.dump(((cell, ALLCAND, Fore.GREEN),
-                                ((wing1, wing2), {cand1, cand2}, Fore.GREEN, ALLCAND, Fore.RED),
-                                (discarded, {digit}, Fore.RED)))
-                    for cell2 in discarded:
-                        cell2.discard(digit)
-                    if grid_modified:
-                        grid.history.append(('XY-wing', discarded, 'discard', digit))
+
+                    if discard_candidates(grid, [digit], cellinter(wing1.peers, wing2.peers), 'XY-wing'):
                         if explain:
                             print_single_history(grid)
-                            print('XY-wing')
+                            print(legend_xy_wing(grid, 'XY-wing', [cand1, cand2, digit], [cell, wing1, wing2]))
+                            explain_move(grid, (([cell, wing1, wing2], cell.candidates, Fore.GREEN),
+                                    ((wing1, wing2), ALLCAND - cell.candidates, Fore.BLUE),
+                                    (cellinter(wing1.peers, wing2.peers), [digit], Fore.RED)))
                         return True
     else:
         return False
+
+
+def legend_xy_wing(grid, legend, digits, cells):
+    discarded = discarded_at_last_move_text(grid)
+
+    return '%s: %s in %s => %s' % (legend,
+        '/'.join(f'{_}' for _ in digits),
+        packed_coordinates(cells),
+        discarded)
 
 
 # xy-chains
