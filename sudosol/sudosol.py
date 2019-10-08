@@ -1149,7 +1149,7 @@ def solve_XY_chain_v1(grid, explain):
                                     L.append(([cell], [cand1], Fore.BLUE, [cand2], Fore.GREEN))
                                 L.append((discarded_at_last_move(grid)[digit], [digit], Fore.RED))
                                 explain_move(grid, L)
-                                return True
+                            return True
 
     if all_solutions:
         for i in range(len(pairs)):
