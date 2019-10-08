@@ -1458,7 +1458,7 @@ def testdir(dirname, randnum, techniques, explain):
 
 
 def testbatch(args):
-    status = True
+    success = True
     timing_batch = 0
     with open(args.batch) as batch:
         for line in batch:
@@ -1469,7 +1469,7 @@ def testbatch(args):
                 if not success:
                     break
                 timing_batch += timing
-    print(f'BATCH OK Time: {timing_batch:0.3}' if status else 'ONE TEST FAILURE in ' + line.strip())
+    print(f'BATCH OK Time: {timing_batch:0.3}' if success else 'TEST FAILURE')
     return success, timing_batch
 
 
