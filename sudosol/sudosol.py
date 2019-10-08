@@ -1,4 +1,5 @@
 import argparse
+import sys
 import re
 import itertools
 import glob
@@ -257,13 +258,7 @@ def colorize_candidates(cell, spec_color):
     if spec_color is None:
         res = Fore.CYAN + str(cell) + Fore.RESET
     else:
-        candcol = defaultdict(lambda:Fore.CYAN)
-        for target, *spec_col in spec_color:
-            if cell in target:
-                for cand in cell.candidates:
-                    for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
-                        if cand in spec_cand:
-                            candcol[cand] = speccol
+        candcol = retain_decor(cell, spec_color)
         res = ''
         for cand in sorted(cell.candidates):
             res += candcol[cand] + str(cand) + Fore.RESET
@@ -271,6 +266,17 @@ def colorize_candidates(cell, spec_color):
     # manual padding as colorama information fools format padding
     res += ' ' * (9 - len(cell.candidates))
     return res
+
+
+def retain_decor(cell, spec_color):
+    candcol = defaultdict(lambda:Fore.CYAN)
+    for target, *spec_col in spec_color:
+        if cell in target:
+            for cand in cell.candidates:
+                for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
+                    if cand in spec_cand:
+                        candcol[cand] = speccol
+    return candcol
 
 
 def candidate_in_cells(digit, cells):
@@ -1133,9 +1139,17 @@ def solve_XY_chain_v1(grid, explain):
                     for adjacency2 in adjacency[k][j]:
                         if test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions):
                             if explain:
+                                link = adjacency[i][j][-1]
+                                cellchain, candchain = link
+                                digit = candchain[0]
                                 print_single_history(grid)
-                                print('XY-chain')
-                            return True
+                                print(legend_xy_chain(grid, 'XY-chain', digit, cellchain, candchain))
+                                L = []
+                                for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
+                                    L.append(([cell], [cand1], Fore.BLUE, [cand2], Fore.GREEN))
+                                L.append((discarded_at_last_move(grid)[digit], [digit], Fore.RED))
+                                explain_move(grid, L)
+                                return True
 
     if all_solutions:
         for i in range(len(pairs)):
@@ -1222,6 +1236,18 @@ def test_xy_remove(grid, cellchain, candchain):
             discard_candidates(grid, [digit], to_be_removed, 'XY-chain')
             return True
     return False
+
+
+def legend_xy_chain(grid, legend, digit, cellchain, candchain):
+    l = []
+    l.append('%d-' % candchain[0])
+    for index, cell in enumerate(cellchain[:-1]):
+        l.append(cell.strcoord())
+        l.append('-%d-' % candchain[index + 1])
+    l.append(cellchain[-1].strcoord())
+    l.append('-%d' % candchain[-1])
+    return '%s: %d %s => %s' % (
+                legend, digit, ' '.join(l), discarded_at_last_move_text(grid))
 
 
 def solve_XY_chain_v2(grid, explain):
@@ -1339,10 +1365,14 @@ def apply_strategy(grid, strategy, explain):
 
 
 def solve(grid, techniques, explain):
+    if explain:
+        print(grid.output())
+        grid.dump()
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
     if explain:
         print_single_history(grid)
+        grid.dump()
 
 
 #
@@ -1351,10 +1381,12 @@ def solve(grid, techniques, explain):
 def solvegrid(sgrid, techniques, explain):
     grid = Grid()
     grid.input(sgrid)
-    print(grid.output())
-    grid.dump()
+    if not explain:
+        print(grid.output())
+        grid.dump()
     solve(grid, techniques, explain)
-    grid.dump()
+    if not explain:
+        grid.dump()
     return True, None
 
 
@@ -1369,7 +1401,7 @@ def solveclipboard(clipformat, techniques, explain):
     return True, None
 
 
-def testfile(filename, randnum, techniques, explain):
+def testfile(filename, randnum, techniques, explain, logfile=None):
     verbose = False
     grid = Grid()
     success = True
@@ -1383,18 +1415,25 @@ def testfile(filename, randnum, techniques, explain):
 
     t0 = time.time()
 
-    for line in grids:
-        input, output, _ = line.strip().split(None, 2)
-        ngrids += 1
-        grid.input(input)
-        solve(grid, techniques, explain)
-        if output != grid.output():
-            if verbose:
-                print('-' * 20)
-                print('\n'.join((input, output, grid.output())))
-            success = False
-        else:
-            solved += 1
+    try:
+        if logfile:
+            stdout = sys.stdout
+            sys.stdout = open(logfile, 'wt')
+        for line in grids:
+            input, output, _ = line.strip().split(None, 2)
+            ngrids += 1
+            grid.input(input)
+            solve(grid, techniques, explain)
+            if output != grid.output():
+                if verbose:
+                    print('-' * 20)
+                    print('\n'.join((input, output, grid.output())))
+                success = False
+            else:
+                solved += 1
+    finally:
+        if logfile:
+            sys.stdout = stdout
 
     timing = time.time() - t0
     print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {timing:0.3}')
