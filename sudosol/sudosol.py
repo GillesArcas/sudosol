@@ -959,29 +959,25 @@ def solve_multi_coloring_type_1(grid, explain):
             if any(cell in peers_cluster_blue2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
                 if to_be_removed:
-                    # TODO: move outside loop
-                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     break
 
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
                 if to_be_removed:
-                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-                    break
+                   break
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
                 if to_be_removed:
-                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     break
 
             if any(cell in peers_cluster_green2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
                 if to_be_removed:
-                    discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
                     break
 
         if to_be_removed:
+            discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
             if explain:
                 print_single_history(grid)
                 print(legend_multi_coloring(grid, 'Multi color type 1', digit,
@@ -1050,11 +1046,6 @@ def solve_multi_coloring_type_2(grid, explain):
                 print(legend_multi_coloring(grid, 'Multi color type 2', digit,
                           cluster_green1, cluster_blue1,
                           cluster_green2, cluster_blue2))
-                # TODO: remove 4 lines and test
-                if cluster_blue1 == to_be_removed: cluster_blue1 = {}
-                if cluster_green1 == to_be_removed: cluster_green1 = {}
-                if cluster_blue2 == to_be_removed: cluster_blue2 = {}
-                if cluster_green2 == to_be_removed: cluster_green2 = {}
 
                 explain_move(grid, ((cluster_blue1, [digit], CellDecor.COLOR1),
                                     (cluster_green1, [digit], CellDecor.COLOR2),
