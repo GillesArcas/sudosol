@@ -159,7 +159,7 @@ class Grid:
         # peers
         # properties: x not in x.peers, x in y.peers equivalent to y in x.peers
         for cell in self.cells:
-            cell.peers = cellunion(cell.row, cellunion(cell.col, cell.box))
+            cell.peers = sorted(cellunion(cell.row, cellunion(cell.col, cell.box)))
             cell.peers.remove(cell)
 
         # init history
