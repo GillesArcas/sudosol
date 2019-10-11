@@ -1,0 +1,28 @@
+--testf tests/n1.txt  --rand 100 --tech ssts
+--testf tests/n2.txt  --rand 100 --tech ssts
+--testf tests/n3.txt  --rand 100 --tech ssts
+--testf tests/n4.txt  --rand 100 --tech ssts
+--testf tests/h1.txt  --rand 100 --tech ssts
+--testf tests/h2.txt  --rand 100 --tech ssts
+--testf tests/h3.txt  --rand 100 --tech ssts
+--testf tests/h4.txt  --rand 100 --tech ssts
+--testf tests/lc1.txt --rand 100 --tech ssts
+--testf tests/lc2.txt --rand 100 --tech ssts
+--testf tests/bf2.txt --rand 100 --tech ssts
+--testf tests/bf3.txt --rand 100 --tech ssts
+--testf tests/sc1.txt --rand 100 --tech ssts
+--testf tests/sc2.txt --rand 100 --tech ssts
+--testf tests/mc1.txt --rand 100 --tech ssts
+--testf tests/mc2.txt --rand 100 --tech ssts
+--testf tests/xy.txt  --rand 100 --tech ssts
+
+--testf tests/sudocue_The_Learning_Curve_Collection.txt  --rand 100 --tech ssts
+--testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech ssts
+
+--testf tests/l2.txt  --rand 100 --tech n1,h1,l2,l3
+--testf tests/l3.txt  --rand 100 --tech n1,h1,l2,l3
+
+--testf tests/bf4-ssts.txt  --rand 100 --tech ssts,bf4
+
+--testf tests/xyc.txt  --rand 100 --tech n1,h1,xyc
+--testf tests/xyc-ssts.txt  --rand 100 --tech ssts,xyc
