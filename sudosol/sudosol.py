@@ -1488,11 +1488,14 @@ def testfile(options, filename, techniques, explain):
     with open(filename) as f:
         grids = f.readlines()
 
-    if options.first and options.first < len(grids):
-        grids = grids[:options.first]
-
-    if options.random and options.random < len(grids):
-        grids = random.sample(grids, options.random)
+    if options.first:
+        if options.first < len(grids):
+            grids = grids[:options.first]
+    elif options.random:
+        if options.random < len(grids):
+            grids = random.sample(grids, options.random)
+    else:
+        pass
 
     t0 = time.time()
 
