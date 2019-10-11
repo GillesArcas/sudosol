@@ -1,5 +1,5 @@
---batch tests\techniques.batch
+--batch tests/techniques.batch
 
---batch tests\techniques.batch --explain --decor char --first 5  --comp tests\trace_grids.txt
+--batch tests/techniques.batch --explain --decor char --first 5  --comp tests/trace_grids.txt
 ; note: the reference for comparison is obtaines with
-; --batch tests\techniques.batch --explain --decor char --first 5  --ref tests\trace_grids.txt
+; --batch tests/techniques.batch --explain --decor char --first 5  --ref tests/trace_grids.txt
