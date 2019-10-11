@@ -5,7 +5,11 @@ import itertools
 import glob
 import random
 import time
+import io
+
 from collections import defaultdict
+from enum import Enum
+from contextlib import redirect_stdout
 
 import clipboard
 import colorama
@@ -161,6 +165,9 @@ class Grid:
         # init history
         self.history = []
 
+        # cell decoration when tracing ('color' or 'char')
+        self.decorate = 'color'
+
     def reset(self):
         for cell in self.cells:
             cell.reset()
@@ -227,10 +234,16 @@ class Grid:
         conj = conj.union(colpeers if len(colpeers) == 2 else set())
         conj = conj.union(boxpeers if len(boxpeers) == 2 else set())
         conj.discard(cell)
-        #print('conj', cell, digit, conj)
         return conj
 
     def dump(self, decor=None):
+        if self.decorate == 'color':
+            colorize_candidates = colorize_candidates_color
+        elif self.decorate == 'char':
+            colorize_candidates = colorize_candidates_char
+        else:
+            colorize_candidates = colorize_candidates_color
+
         hborder = ('+' + ('-' * (3 * 10 - 1))) * 3 + '+'
         for i in range(9):
             if i % 3 == 0:
@@ -243,33 +256,87 @@ class Grid:
         print()
 
 
-def colorize_candidates(cell, spec_color):
+CellDecor = Enum('CellDecor', 'VALUE DEFAULTCAND DEFININGCAND REMOVECAND COLOR1 COLOR2 COLOR3 COLOR4')
+
+CellDecorColor = {
+    CellDecor.VALUE: Fore.BLUE,
+    CellDecor.DEFAULTCAND: Fore.WHITE,
+    CellDecor.DEFININGCAND: Fore.GREEN,
+    CellDecor.REMOVECAND: Fore.RED,
+    CellDecor.COLOR1: Fore.GREEN,
+    CellDecor.COLOR2: Fore.CYAN,
+    CellDecor.COLOR3: Fore.YELLOW,
+    CellDecor.COLOR4: Fore.MAGENTA
+}
+
+def colorize_candidates_color(cell, spec_color):
     """
     col_spec ::= [cells, [candidates, color]*]*
     ex:
-    (({cell}, [1], Fore.GREEN), ((cell1, cell2), ALLCAND, Fore.RED, {cand1, cand2}, Fore.GREEN))
+    (({cell}, [1], CellDecor.COLOR1),
+     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, Fore.CellDecor.COLOR1))
 
     cells and candidates are iterables.
     A cell or a candidate may appear several times. The last color spec is taken into accout.
     """
     if not cell.candidates:
-        return str(cell.value)
+        res = CellDecorColor[CellDecor.VALUE] + str(cell.value)  + Fore.RESET
+        # manual padding as colorama information fools format padding
+        res += ' ' * (9 - 1)
+        return res
+    else:
+        if spec_color is None:
+            res = CellDecorColor[CellDecor.DEFAULTCAND] + str(cell) + Fore.RESET
+        else:
+            candcol = retain_decor(cell, spec_color)
+            res = ''
+            for cand in sorted(cell.candidates):
+                res += CellDecorColor[candcol[cand]] + str(cand) + Fore.RESET
+
+        # manual padding as colorama information fools format padding
+        res += ' ' * (9 - len(cell.candidates))
+        return res
+
+
+CellDecorChar = {
+    CellDecor.VALUE: '.',
+    CellDecor.DEFAULTCAND: '',
+    CellDecor.DEFININGCAND: '!',
+    CellDecor.REMOVECAND: 'x',
+    CellDecor.COLOR1: 'a',
+    CellDecor.COLOR2: 'b',
+    CellDecor.COLOR3: 'c',
+    CellDecor.COLOR4: 'd'
+}
+
+
+def colorize_candidates_char(cell, spec_color):
+    """
+    col_spec ::= [cells, [candidates, color]*]*
+    ex:
+    (({cell}, [1], CellDecor.COLOR1),
+     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, Fore.CellDecor.COLOR1))
+
+    cells and candidates are iterables.
+    A cell or a candidate may appear several times. The last color spec is taken into accout.
+    """
+    if not cell.candidates:
+        return str(cell.value) + CellDecorChar[CellDecor.VALUE]
 
     if spec_color is None:
-        res = Fore.CYAN + str(cell) + Fore.RESET
+        res = str(cell)
     else:
         candcol = retain_decor(cell, spec_color)
         res = ''
         for cand in sorted(cell.candidates):
-            res += candcol[cand] + str(cand) + Fore.RESET
+            res += str(cand) + CellDecorChar[candcol[cand]]
 
-    # manual padding as colorama information fools format padding
-    res += ' ' * (9 - len(cell.candidates))
+    res += ' ' * (9 - len(res))
     return res
 
 
 def retain_decor(cell, spec_color):
-    candcol = defaultdict(lambda:Fore.CYAN)
+    candcol = defaultdict(lambda:CellDecor.DEFAULTCAND)
     for target, *spec_col in spec_color:
         if cell in target:
             for cand in cell.candidates:
@@ -484,8 +551,8 @@ def solve_locked_pairs(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
-                        explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
-                                (cells_to_discard, subset[0].candidates, Fore.RED)))
+                        explain_move(grid, ((subset, subset[0].candidates, CellDecor.DEFININGCAND),
+                                (cells_to_discard, subset[0].candidates, CellDecor.REMOVECAND)))
                     return True
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -496,8 +563,8 @@ def solve_locked_pairs(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked pair', subset[0].candidates, subset))
-                        explain_move(grid, ((subset, subset[0].candidates, Fore.GREEN),
-                                (cells_to_discard, subset[0].candidates, Fore.RED)))
+                        explain_move(grid, ((subset, subset[0].candidates, CellDecor.DEFININGCAND),
+                                (cells_to_discard, subset[0].candidates, CellDecor.REMOVECAND)))
                     return True
 
     return False
@@ -514,8 +581,8 @@ def solve_locked_triples(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
-                        explain_move(grid, ((triplet, candidates, Fore.GREEN),
-                                (cells_to_discard, candidates, Fore.RED)))
+                        explain_move(grid, ((triplet, candidates, CellDecor.DEFININGCAND),
+                                (cells_to_discard, candidates, CellDecor.REMOVECAND)))
                     return True
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -527,8 +594,8 @@ def solve_locked_triples(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_set(grid, 'Locked triple', candidates, triplet))
-                        explain_move(grid, ((triplet, candidates, Fore.GREEN),
-                                (cells_to_discard, candidates, Fore.RED)))
+                        explain_move(grid, ((triplet, candidates, CellDecor.DEFININGCAND),
+                                (cells_to_discard, candidates, CellDecor.REMOVECAND)))
                     return True
 
     return False
@@ -548,8 +615,8 @@ def solve_pointing(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
-                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
-                                (grid.rows_less_triplet[trinum], [digit], Fore.RED)))
+                        explain_move(grid, ((triplet, [digit], CellDecor.DEFININGCAND),
+                                (grid.rows_less_triplet[trinum], [digit], CellDecor.REMOVECAND)))
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -559,8 +626,8 @@ def solve_pointing(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Pointing', [digit], f'b{triplet[0].boxnum + 1}'))
-                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
-                                (grid.cols_less_triplet[trinum], [digit], Fore.RED)))
+                        explain_move(grid, ((triplet, [digit], CellDecor.DEFININGCAND),
+                                (grid.cols_less_triplet[trinum], [digit], CellDecor.REMOVECAND)))
                     return True
 
     return False
@@ -577,8 +644,8 @@ def solve_claiming(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Claiming', [digit], f'r{triplet[0].rownum + 1}'))
-                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
-                                (grid.boxes_less_hortriplet[trinum], [digit], Fore.RED)))
+                        explain_move(grid, ((triplet, [digit], CellDecor.DEFININGCAND),
+                                (grid.boxes_less_hortriplet[trinum], [digit], CellDecor.REMOVECAND)))
                     return True
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
@@ -588,8 +655,8 @@ def solve_claiming(grid, explain):
                     if explain:
                         print_single_history(grid)
                         print(legend_locked_candidates(grid, 'Claiming', [digit], f'c{triplet[0].colnum + 1}'))
-                        explain_move(grid, ((triplet, [digit], Fore.GREEN),
-                                (grid.boxes_less_vertriplet[trinum], [digit], Fore.RED)))
+                        explain_move(grid, ((triplet, [digit], CellDecor.DEFININGCAND),
+                                (grid.boxes_less_vertriplet[trinum], [digit], CellDecor.REMOVECAND)))
                     return True
 
     return False
@@ -619,11 +686,14 @@ def nacked_sets_n(grid, cells, subcells, length, legend, explain):
                     print_single_history(grid)
                     if legend.startswith('Naked'):
                         print(legend_locked_set(grid, legend, candidates, subset))
-                        explain_move(grid, ((subset, candidates, Fore.GREEN), (cells_less_subset, candidates, Fore.RED)))
+                        explain_move(grid, ((subset, candidates, CellDecor.DEFININGCAND),
+                                            (cells_less_subset, candidates, CellDecor.REMOVECAND)))
                     if legend.startswith('Hidden'):
                         allcand = set().union(*(cell.candidates for cell in subcells))
                         print(legend_locked_set(grid, legend, allcand - candidates, cells_less_subset))
-                        explain_move(grid, ((cells_less_subset, ALLCAND - candidates, Fore.GREEN, candidates, Fore.RED),))
+                        explain_move(grid, ((cells_less_subset,
+                                             ALLCAND - candidates, CellDecor.DEFININGCAND,
+                                             candidates, CellDecor.REMOVECAND),))
                 return True
     return False
 
@@ -736,8 +806,8 @@ def solve_basicfish(grid, explain, order, name):
                         subset = cellunionx(*defrows)
                         print_single_history(grid)
                         print(legend_basic_fish(grid, name, [digit], subset, 'H'))
-                        explain_move(grid, ((subset, [digit], Fore.GREEN),
-                                (cells_to_discard, [digit], Fore.RED)))
+                        explain_move(grid, ((subset, [digit], CellDecor.DEFININGCAND),
+                                (cells_to_discard, [digit], CellDecor.REMOVECAND)))
                     return True
 
         cols = []
@@ -760,8 +830,8 @@ def solve_basicfish(grid, explain, order, name):
                         subset = cellunionx(*defrows)
                         print_single_history(grid)
                         print(legend_basic_fish(grid, name, [digit], subset, 'V'))
-                        explain_move(grid, ((subset, [digit], Fore.GREEN),
-                                (cells_to_discard, [digit], Fore.RED)))
+                        explain_move(grid, ((subset, [digit], CellDecor.DEFININGCAND),
+                                (cells_to_discard, [digit], CellDecor.REMOVECAND)))
                     return True
     return False
 
@@ -801,9 +871,9 @@ def solve_coloring_trap(grid, explain):
                 if explain:
                     print_single_history(grid)
                     print(legend_simple_coloring(grid, 'Simple color trap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_green, [digit], Fore.GREEN),
-                                        (cluster_blue, [digit], Fore.YELLOW),
-                                        (common, [digit], Fore.RED)))
+                    explain_move(grid, ((cluster_green, [digit], CellDecor.COLOR1),
+                                        (cluster_blue, [digit], CellDecor.COLOR2),
+                                        (common, [digit], CellDecor.REMOVECAND)))
                 return True
 
     return False
@@ -823,8 +893,8 @@ def solve_coloring_wrap(grid, explain):
                 if explain:
                     print_single_history(grid)
                     print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_green, [digit], Fore.GREEN),
-                                        (cluster_blue, [digit], Fore.RED)))
+                    explain_move(grid, ((cluster_green, [digit], CellDecor.COLOR1),
+                                        (cluster_blue, [digit], CellDecor.REMOVECAND)))
                 return True
 
             if color_contradiction(cluster_green):
@@ -832,8 +902,8 @@ def solve_coloring_wrap(grid, explain):
                 if explain:
                     print_single_history(grid)
                     print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_blue, [digit], Fore.GREEN),
-                                        (cluster_green, [digit], Fore.RED)))
+                    explain_move(grid, ((cluster_blue, [digit], CellDecor.COLOR1),
+                                        (cluster_green, [digit], CellDecor.REMOVECAND)))
                 return True
 
     return False
@@ -882,9 +952,6 @@ def solve_multi_coloring_type_1(grid, explain):
             clusters_data.append((cluster, cluster_blue, cluster_green,
                                   peers_cluster_blue, peers_cluster_green, common))
 
-            if common:
-                print(cluster)
-
         for clusters_data1, clusters_data2 in itertools.combinations(clusters_data, 2):
             _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, _ = clusters_data1
             _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, _ = clusters_data2
@@ -920,11 +987,11 @@ def solve_multi_coloring_type_1(grid, explain):
                 print(legend_multi_coloring(grid, 'Multi color type 1', digit,
                           cluster_green1, cluster_blue1,
                           cluster_green2, cluster_blue2))
-                explain_move(grid, ((cluster_blue1, [digit], Fore.GREEN),
-                                    (cluster_green1, [digit], Fore.BLUE),
-                                    (cluster_blue2, [digit], Fore.YELLOW),
-                                    (cluster_green2, [digit], Fore.MAGENTA),
-                                    (to_be_removed, [digit], Fore.RED)))
+                explain_move(grid, ((cluster_blue1, [digit], CellDecor.COLOR1),
+                                    (cluster_green1, [digit], CellDecor.COLOR2),
+                                    (cluster_blue2, [digit], CellDecor.COLOR3),
+                                    (cluster_green2, [digit], CellDecor.COLOR4),
+                                    (to_be_removed, [digit], CellDecor.REMOVECAND)))
             return True
 
     return False
@@ -989,11 +1056,11 @@ def solve_multi_coloring_type_2(grid, explain):
                 if cluster_blue2 == to_be_removed: cluster_blue2 = {}
                 if cluster_green2 == to_be_removed: cluster_green2 = {}
 
-                explain_move(grid, ((cluster_blue1, [digit], Fore.GREEN),
-                                    (cluster_green1, [digit], Fore.BLUE),
-                                    (cluster_blue2, [digit], Fore.YELLOW),
-                                    (cluster_green2, [digit], Fore.MAGENTA),
-                                    (to_be_removed, [digit], Fore.RED)))
+                explain_move(grid, ((cluster_blue1, [digit], CellDecor.COLOR1),
+                                    (cluster_green1, [digit], CellDecor.COLOR2),
+                                    (cluster_blue2, [digit], CellDecor.COLOR3),
+                                    (cluster_green2, [digit], CellDecor.COLOR4),
+                                    (to_be_removed, [digit], CellDecor.REMOVECAND)))
             return True
 
     return False
@@ -1066,7 +1133,12 @@ def colorize(grid, digit, cluster):
     first_cell = list(cluster)[0]
     colorize_cell(first_cell, cluster_blue, cluster_green)
 
-    return cluster_blue, cluster_green
+    if not cluster_blue or not cluster_green:
+        return cluster_blue, cluster_green
+    elif min(cluster_blue) < min(cluster_green):
+        return cluster_blue, cluster_green
+    else:
+        return cluster_green, cluster_blue
 
 
 def multi_peers(grid, digit, cluster):
@@ -1082,26 +1154,26 @@ def multi_peers(grid, digit, cluster):
 def solve_XY_wing(grid, explain):
     for cell in grid.cells:
         if cell.is_pair():
-            cand1, cand2 = list(cell.candidates)
+            cand1, cand2 = sorted(cell.candidates)
             pairpeers = (peer for peer in cell.peers if peer.is_pair())
             for wing1, wing2 in itertools.combinations(pairpeers, 2):
                 if wing1 in wing2.peers:
                     # cell, wing1, wing2 in the same house: not a xy-wing
                     continue
                 wings_inter = wing1.candidates.intersection(wing2.candidates)
-                if len(wings_inter) != 1 or list(wings_inter)[0] in cell.candidates:
+                if len(wings_inter) != 1 or min(wings_inter) in cell.candidates:
                     continue
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
-                    digit = list(wings_inter)[0]
+                    digit = min(wings_inter)
 
                     if discard_candidates(grid, [digit], cellinter(wing1.peers, wing2.peers), 'XY-wing'):
                         if explain:
                             print_single_history(grid)
                             print(legend_xy_wing(grid, 'XY-wing', [cand1, cand2, digit], [cell, wing1, wing2]))
-                            explain_move(grid, (([cell, wing1, wing2], cell.candidates, Fore.GREEN),
-                                    ((wing1, wing2), ALLCAND - cell.candidates, Fore.BLUE),
-                                    (cellinter(wing1.peers, wing2.peers), [digit], Fore.RED)))
+                            explain_move(grid, (([cell, wing1, wing2], cell.candidates, CellDecor.COLOR1),
+                                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
+                                    (cellinter(wing1.peers, wing2.peers), [digit], CellDecor.REMOVECAND)))
                         return True
     else:
         return False
@@ -1146,8 +1218,8 @@ def solve_XY_chain_v1(grid, explain):
                                 print(legend_xy_chain(grid, 'XY-chain', digit, cellchain, candchain))
                                 L = []
                                 for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
-                                    L.append(([cell], [cand1], Fore.BLUE, [cand2], Fore.GREEN))
-                                L.append((discarded_at_last_move(grid)[digit], [digit], Fore.RED))
+                                    L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
+                                L.append((discarded_at_last_move(grid)[digit], [digit], CellDecor.REMOVECAND))
                                 explain_move(grid, L)
                             return True
 
@@ -1378,8 +1450,9 @@ def solve(grid, techniques, explain):
 #
 
 
-def solvegrid(sgrid, techniques, explain):
+def solvegrid(options, sgrid, techniques, explain):
     grid = Grid()
+    grid.decorate = options.decorate
     grid.input(sgrid)
     if not explain:
         print(grid.output())
@@ -1390,64 +1463,65 @@ def solvegrid(sgrid, techniques, explain):
     return True, None
 
 
-def solveclipboard(clipformat, techniques, explain):
+def solveclipboard(options, clipformat, techniques, explain):
     if clipformat == 'ss':
         grid = Grid()
+        grid.decorate = options.decorate
         content = clipboard.paste()
         load_ss_clipboard(grid, content)
+    if not explain:
+        print(grid.output())
         grid.dump()
-        solve(grid, techniques, explain)
+    solve(grid, techniques, explain)
+    if not explain:
         grid.dump()
     return True, None
 
 
-def testfile(filename, randnum, techniques, explain, logfile=None):
+def testfile(options, filename, techniques, explain):
     verbose = False
     grid = Grid()
+    grid.decorate = options.decorate
     success = True
     ngrids = 0
     solved = 0
     with open(filename) as f:
         grids = f.readlines()
 
-    if randnum and randnum < len(grids):
-        grids = random.sample(grids, randnum)
+    if options.first and options.first < len(grids):
+        grids = grids[:options.first]
+
+    if options.random and options.random < len(grids):
+        grids = random.sample(grids, options.random)
 
     t0 = time.time()
 
-    try:
-        if logfile:
-            stdout = sys.stdout
-            sys.stdout = open(logfile, 'wt')
-        for line in grids:
-            input, output, _ = line.strip().split(None, 2)
-            ngrids += 1
-            grid.input(input)
-            solve(grid, techniques, explain)
-            if output != grid.output():
-                if verbose:
-                    print('-' * 20)
-                    print('\n'.join((input, output, grid.output())))
-                success = False
-            else:
-                solved += 1
-    finally:
-        if logfile:
-            sys.stdout = stdout
+    for line in grids:
+        input, output, _ = line.strip().split(None, 2)
+        ngrids += 1
+        grid.input(input)
+        solve(grid, techniques, explain)
+        if output != grid.output():
+            if verbose:
+                print('-' * 20)
+                print('\n'.join((input, output, grid.output())))
+            success = False
+        else:
+            solved += 1
 
     timing = time.time() - t0
     print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {timing:0.3}')
     return success, timing
 
 
-def testdir(dirname, randnum, techniques, explain):
+def testdir(options, dirname, techniques, explain):
     tested = 0
     succeeded = 0
     timing_dir = 0
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
-            success, timing = testfile(filename, randnum, techniques, explain)
+            success, timing = testfile(options, filename, techniques, explain)
             if success:
                 succeeded += 1
             timing_dir += timing
@@ -1457,20 +1531,85 @@ def testdir(dirname, randnum, techniques, explain):
     return success, timing_dir
 
 
-def testbatch(args):
+def testbatch(options):
     success = True
     timing_batch = 0
-    with open(args.batch) as batch:
+
+    with open(options.batch) as batch:
         for line in batch:
             if line.strip() and line[0] != ';':
                 testargs = line.strip()
+                testoptions = parse_command_line(testargs)
 
-                success, timing = main(testargs)
+                # propagate batch options
+                if options.first:
+                    testoptions.first = options.first
+                if options.random:
+                    testoptions.random = options.random
+                if options.explain:
+                    testoptions.explain = options.explain
+                if options.decorate:
+                    testoptions.decorate = options.decorate
+
+                success, timing = main_args(testoptions)
                 if not success:
                     break
                 timing_batch += timing
+
     print(f'BATCH OK Time: {timing_batch:0.3}' if success else 'TEST FAILURE')
     return success, timing_batch
+
+
+def compare_output(options):
+    compare = options.compare
+    reference = options.reference
+    options.compare = None
+    options.reference = None
+    t0 = time.time()
+
+    with io.StringIO() as buf, redirect_stdout(buf):
+        main_args(options)
+        output = buf.getvalue()
+
+    if reference:
+        with open(reference, 'wt') as f:
+            print(output, end='', file=f)
+        res = True
+
+    if compare:
+        output = output.splitlines(True)
+
+        with open(compare) as f:
+            reference = f.readlines()
+
+        # remove lines with timing
+        reference = [_ for _ in reference if 'Time' not in _]
+        output = [_ for _ in output if 'Time' not in _]
+
+        res, diff = list_compare('ref', 'res', reference, output)
+        print(f'COMPARE OK' if res else 'COMPARE FAILURE')
+        if not res:
+            for _ in diff[0:20]:
+                print(_, end='')
+
+    return res, time.time() - t0
+
+
+def list_compare(tag1, tag2, list1, list2):
+
+    # make sure both lists have same length
+    maxlen = max(len(list1), len(list2))
+    list1.extend(['extra'] * (maxlen - len(list1)))
+    list2.extend(['extra'] * (maxlen - len(list2)))
+
+    diff = list()
+    res = True
+    for i, (x, y) in enumerate(zip(list1, list2)):
+        if x != y:
+            diff.append('line %s %d: %s' % (tag1, i + 1, x))
+            diff.append('line %s %d: %s' % (tag2, i + 1, y))
+            res = False
+    return res, diff
 
 
 def parse_command_line(argstring=None):
@@ -1488,13 +1627,23 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('-b', '--batch', help='test batch',
                         action='store', default=None)
-    parser.add_argument('-r', '--random', help='test N random grids from file',
+    parser.add_argument('--reference', help='make file reference for comparison',
+                        action='store', default=None)
+    parser.add_argument('--compare', help='compare test output with file argument',
+                        action='store', default=None)
+    parser.add_argument('--random', help='test N random grids from file',
+                        type=int,
+                        action='store', default=None)
+    parser.add_argument('--first', help='test N first grids from file',
                         type=int,
                         action='store', default=None)
     parser.add_argument('--techniques', help='techniques',
                         action='store', default='ssts')
-    parser.add_argument('-e', '--explain', help='explain techniques',
+    parser.add_argument('--explain', help='explain techniques',
                         action='store_true', default=False)
+    parser.add_argument('--decorate', help='candidate decor when tracing grid',
+                        choices=['color', 'char'],
+                        action='store', default=None)
 
     if argstring is None:
         args = parser.parse_args()
@@ -1505,21 +1654,27 @@ def parse_command_line(argstring=None):
 
 def main(argstring=None):
     options = parse_command_line(argstring)
+    return main_args(options)
 
-    if options.solve:
-        return solvegrid(options.solve, options.techniques, options.explain)
+
+def main_args(options):
+    if options.compare or options.reference:
+        return compare_output(options)
+
+    elif options.solve:
+        return solvegrid(options, options.solve, options.techniques, options.explain)
+
+    elif options.clipboard:
+        return solveclipboard(options, options.format, options.techniques, options.explain)
 
     elif options.testfile:
-        return testfile(options.testfile, options.random, options.techniques, options.explain)
+        return testfile(options, options.testfile, options.techniques, options.explain)
 
     elif options.testdir:
-        return testdir(options.testdir, options.random, options.techniques, options.explain)
+        return testdir(options, options.testdir, options.techniques, options.explain)
 
     elif options.batch:
         return testbatch(options)
-
-    elif options.clipboard:
-        return solveclipboard(options.format, options.techniques, options.explain)
 
     else:
         grid = Grid()
