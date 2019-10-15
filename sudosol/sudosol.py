@@ -571,27 +571,6 @@ def apply_remove_candidates(grid, caption, remove_cells):
 # Locked sets
 
 
-def apply_locked_sets(grid, caption, explain, candidates, define_set, remove_set):
-    remove_cells = candidates_cells(grid, candidates, remove_set)
-    if remove_cells:
-        if explain:
-            remove_set2 = set().union(*(cells for cand, cells in remove_cells.items()))
-            print_single_history(grid, at_top=True)
-            print(describe_locked_set(caption, candidates, define_set, remove_cells))
-            grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
-                       (remove_set2, candidates, CellDecor.REMOVECAND)))
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
-
-
-def describe_locked_set(legend, defcands, defset, remset):
-    return '%s: %s in %s => %s' % (legend,
-        ','.join(f'{_}' for _ in sorted(defcands)),
-        packed_coordinates(defset),
-        discarded_text(remset))
-
-
 def solve_locked_pairs(grid, explain):
 
     for trinum, triplet in enumerate(grid.horizontal_triplets):
@@ -636,33 +615,28 @@ def solve_locked_triples(grid, explain):
     return False
 
 
-# Locked candidates
-
-
-def apply_locked_candidates(grid, caption, flavor, explain, candidates, subset, cells_to_discard):
-    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+def apply_locked_sets(grid, caption, explain, candidates, define_set, remove_set):
+    remove_cells = candidates_cells(grid, candidates, remove_set)
     if remove_cells:
         if explain:
+            remove_set2 = set().union(*(cells for cand, cells in remove_cells.items()))
             print_single_history(grid, at_top=True)
-            print(describe_locked_candidates(caption, flavor, candidates, subset, remove_cells))
-            grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
-                        (cells_to_discard, candidates, CellDecor.REMOVECAND)))
+            print(describe_locked_set(caption, candidates, define_set, remove_cells))
+            grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
+                       (remove_set2, candidates, CellDecor.REMOVECAND)))
         apply_remove_candidates(grid, caption, remove_cells)
         return True
     return False
 
 
-def describe_locked_candidates(caption, flavor, defcands, defset, remset):
-    if flavor == 'b':
-        defunit = f'b{defset[0].boxnum + 1}'
-    elif flavor == 'r':
-        defunit = f'r{defset[0].rownum + 1}'
-    elif flavor == 'c':
-        defunit = f'c{defset[0].colnum + 1}'
-    return '%s: %s in %s => %s' % (caption,
+def describe_locked_set(legend, defcands, defset, remset):
+    return '%s: %s in %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(defcands)),
-        defunit,
+        packed_coordinates(defset),
         discarded_text(remset))
+
+
+# Locked candidates
 
 
 def solve_pointing(grid, explain):
@@ -709,6 +683,32 @@ def solve_claiming(grid, explain):
                     return True
 
     return False
+
+
+def apply_locked_candidates(grid, caption, flavor, explain, candidates, subset, cells_to_discard):
+    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+    if remove_cells:
+        if explain:
+            print_single_history(grid, at_top=True)
+            print(describe_locked_candidates(caption, flavor, candidates, subset, remove_cells))
+            grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
+                        (cells_to_discard, candidates, CellDecor.REMOVECAND)))
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
+
+
+def describe_locked_candidates(caption, flavor, defcands, defset, remset):
+    if flavor == 'b':
+        defunit = f'b{defset[0].boxnum + 1}'
+    elif flavor == 'r':
+        defunit = f'r{defset[0].rownum + 1}'
+    elif flavor == 'c':
+        defunit = f'c{defset[0].colnum + 1}'
+    return '%s: %s in %s => %s' % (caption,
+        ','.join(f'{_}' for _ in sorted(defcands)),
+        defunit,
+        discarded_text(remset))
 
 
 # Locked sets
@@ -777,7 +777,6 @@ def solve_hidden_set(grid, cells, length, legend, explain):
         len_hidden_set = len(subcells) - len_naked_set
         if len_hidden_set == length:
             if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain):
-                #print(grid.history[-1])
                 return True
     return False
 
@@ -841,13 +840,7 @@ def solve_basicfish(grid, explain, order, name):
                     for cell in grid.cols[colnum]:
                         if cell.rownum not in rowsnum:
                             cells_to_discard.append(cell)
-                if discard_candidates(grid, [digit], cells_to_discard, name):
-                    if explain:
-                        subset = cellunionx(*defrows)
-                        print_single_history(grid)
-                        print(legend_basic_fish(grid, name, [digit], subset, 'H'))
-                        explain_move(grid, ((subset, [digit], CellDecor.DEFININGCAND),
-                                (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+                if apply_basicfish(grid, name, explain, [digit], defrows, cells_to_discard, 'H'):
                     return True
 
         cols = []
@@ -856,29 +849,35 @@ def solve_basicfish(grid, explain, order, name):
             if 1 < len(colcells) <= order:
                 cols.append(colcells)
 
-        for defrows in itertools.combinations(cols, order):
-            colsnum = [col[0].colnum for col in defrows]
-            rowsnum = {cell.rownum for col in defrows for cell in col}
+        for defcols in itertools.combinations(cols, order):
+            colsnum = [col[0].colnum for col in defcols]
+            rowsnum = {cell.rownum for col in defcols for cell in col}
             if len(rowsnum) == order:
                 cells_to_discard = []
                 for rownum in rowsnum:
                     for cell in grid.rows[rownum]:
                         if cell.colnum not in colsnum:
                             cells_to_discard.append(cell)
-                if discard_candidates(grid, [digit], cells_to_discard, name):
-                    if explain:
-                        subset = cellunionx(*defrows)
-                        print_single_history(grid)
-                        print(legend_basic_fish(grid, name, [digit], subset, 'V'))
-                        explain_move(grid, ((subset, [digit], CellDecor.DEFININGCAND),
-                                (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+                if apply_basicfish(grid, name, explain, [digit], defcols, cells_to_discard, 'V'):
                     return True
     return False
 
 
-def legend_basic_fish(grid, legend, defcands, subset, dir):
-    discarded = discarded_at_last_move_text(grid)
+def apply_basicfish(grid, caption, explain, candidates, defunits, cells_to_discard, flavor):
+    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+    if remove_cells:
+        if explain:
+            subset = cellunionx(*defunits)
+            print_single_history(grid, at_top=True)
+            print(describe_basic_fish(grid, caption, candidates, subset, flavor, remove_cells))
+            grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
+                       (cells_to_discard, candidates, CellDecor.REMOVECAND)))
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
 
+
+def describe_basic_fish(grid, legend, defcands, subset, dir, remove_cells):
     rows = {cell.rownum + 1 for cell in subset}
     cols = {cell.colnum + 1 for cell in subset}
     srows = ''.join(f'{_}' for _ in sorted(list(rows)))
@@ -887,7 +886,7 @@ def legend_basic_fish(grid, legend, defcands, subset, dir):
     return '%s: %s %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(defcands)),
         defcells,
-        discarded)
+        discarded_text(remove_cells))
 
 
 # coloring
