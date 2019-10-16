@@ -1,6 +1,6 @@
 # sudosol
 
-# [![Build Status](https://travis-ci.org/GillesArcas/sudosol.svg?branch=master)](https://travis-ci.org/GillesArcas/sudosol)[![Coverage Status](https://coveralls.io/repos/github/GillesArcas/sudosol/badge.svg?branch=master)](https://coveralls.io/github/GillesArcas/sudosol?branch=master)
+# [![Build Status](https://travis-ci.org/GillesArcas/sudosol.svg?branch=master)](https://travis-ci.org/GillesArcas/sudosol)[![Coverage Status](https://coveralls.io/repos/github/GillesArcas/sudosol/badge.png?branch=master)](https://coveralls.io/github/GillesArcas/sudosol?branch=master)[![Coverage Status](https://coveralls.io/repos/github/GillesArcas/sudosol/badge.svg?branch=master)](https://coveralls.io/github/GillesArcas/sudosol?branch=master)
 
 sudosol is a sudoku solver using only human techniques. Currently, sudosol implements the techniques from Simple Sudoku program (Simple Sudoku Technique Set, ssts). These techniques are:
 
@@ -9,6 +9,11 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 - X-wings and swordfishes,
 - XY-wings,
 - simple coloring and multi coloring.
+
+More techniques are being implemented, either equivalent to Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
+
+- locked pairs and triples,
+- XY-chains.
 
 Tests make sure each technique is handled correctly.
 
