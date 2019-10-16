@@ -1143,7 +1143,6 @@ def check_cluster(grid, clusters, cell, digit):
         new_cluster.add(cell)
         clusters.append(new_cluster)
         conjs = grid.conjugates(cell, digit)
-        #print(1, cell, conjs)
         for conj in conjs:
             check_cluster_conj(grid, new_cluster, conj, digit)
 
@@ -1158,7 +1157,6 @@ def check_cluster_conj(grid, cluster, conj, digit):
     else:
         cluster.add(conj)
         conjs = grid.conjugates(conj, digit)
-        #print(2, conj, conjs)
         for conj in conjs:
             check_cluster_conj(grid, cluster, conj, digit)
 
