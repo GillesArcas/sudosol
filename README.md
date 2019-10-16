@@ -12,7 +12,7 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 
 More techniques are being implemented, either equivalent of Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
 
-- locked pairs and tripple,
+- locked pairs and triples,
 - XY-chains.
 
 Tests make sure each technique is handled correctly.
