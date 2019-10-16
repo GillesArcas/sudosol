@@ -1025,17 +1025,10 @@ def solve_multi_coloring_type_1(grid, explain):
                     break
 
         if to_be_removed:
-            discard_candidates(grid, [digit], to_be_removed, 'multi color type 1')
-            if explain:
-                print_single_history(grid)
-                print(legend_multi_coloring(grid, 'Multi color type 1', digit,
-                          cluster_green1, cluster_blue1,
-                          cluster_green2, cluster_blue2))
-                explain_move(grid, ((cluster_blue1, [digit], CellDecor.COLOR1),
-                                    (cluster_green1, [digit], CellDecor.COLOR2),
-                                    (cluster_blue2, [digit], CellDecor.COLOR3),
-                                    (cluster_green2, [digit], CellDecor.COLOR4),
-                                    (to_be_removed, [digit], CellDecor.REMOVECAND)))
+            apply_multicolor(grid, 'Multi color type 1', explain, digit,
+                            cluster_blue1, cluster_green1,
+                            cluster_blue2, cluster_green2,
+                            to_be_removed)
             return True
 
     return False
@@ -1088,36 +1081,46 @@ def solve_multi_coloring_type_2(grid, explain):
                 break
 
         if to_be_removed:
-            discard_candidates(grid, [digit], to_be_removed, 'multi color type 2')
-            if explain:
-                print_single_history(grid)
-                print(legend_multi_coloring(grid, 'Multi color type 2', digit,
-                          cluster_green1, cluster_blue1,
-                          cluster_green2, cluster_blue2))
-
-                explain_move(grid, ((cluster_blue1, [digit], CellDecor.COLOR1),
-                                    (cluster_green1, [digit], CellDecor.COLOR2),
-                                    (cluster_blue2, [digit], CellDecor.COLOR3),
-                                    (cluster_green2, [digit], CellDecor.COLOR4),
-                                    (to_be_removed, [digit], CellDecor.REMOVECAND)))
+            apply_multicolor(grid, 'Multi color type 2', explain, digit,
+                            cluster_blue1, cluster_green1,
+                            cluster_blue2, cluster_green2,
+                            to_be_removed)
             return True
 
     return False
 
 
-def legend_multi_coloring(grid, legend, digit,
-                          cluster_green1, cluster_blue1,
-                          cluster_green2, cluster_blue2):
+def apply_multicolor(grid, caption, explain, digit,
+                     cluster_blue1, cluster_green1,
+                     cluster_blue2, cluster_green2,
+                     cells_to_discard):
+    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    if explain:
+        print_single_history(grid, at_top=True)
+        print(describe_multi_coloring(caption, digit,
+                    cluster_blue1, cluster_green1,
+                    cluster_blue2, cluster_green2, remove_cells))
+        grid.dump(((cluster_blue1, [digit], CellDecor.COLOR1),
+                   (cluster_green1, [digit], CellDecor.COLOR2),
+                   (cluster_blue2, [digit], CellDecor.COLOR3),
+                   (cluster_green2, [digit], CellDecor.COLOR4),
+                   (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+    apply_remove_candidates(grid, caption, remove_cells)
+    return True
+
+
+def describe_multi_coloring(caption, digit,
+                            cluster_blue1, cluster_green1,
+                            cluster_blue2, cluster_green2,
+                            remove_cells):
     """multi coloring is limited to two clusters.
     """
-    discarded = discarded_at_last_move_text(grid)
-
-    return '%s: %d (%s) / (%s), (%s) / (%s) => %s' % (legend, digit,
-        packed_coordinates(cluster_green1),
+    return '%s: %d (%s) / (%s), (%s) / (%s) => %s' % (caption, digit,
         packed_coordinates(cluster_blue1),
-        packed_coordinates(cluster_green2),
+        packed_coordinates(cluster_green1),
         packed_coordinates(cluster_blue2),
-        discarded)
+        packed_coordinates(cluster_green2),
+        discarded_text(remove_cells))
 
 
 # Clusters
