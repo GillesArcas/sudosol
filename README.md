@@ -10,6 +10,11 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 - XY-wings,
 - simple coloring and multi coloring.
 
+More techniques are being implemented, either equivalent of Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
+
+- locked pairs and tripple,
+- XY-chains.
+
 Tests make sure each technique is handled correctly.
 
 sudosol requires python >= 3.6.
