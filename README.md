@@ -10,7 +10,7 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 - XY-wings,
 - simple coloring and multi coloring.
 
-More techniques are being implemented, either equivalent of Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
+More techniques are being implemented, either equivalent to Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
 
 - locked pairs and triples,
 - XY-chains.
