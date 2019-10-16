@@ -434,6 +434,12 @@ def candidate_cells(dict_candidate_cells):
             yield candidate, cell
 
 
+def apply_remove_candidates(grid, caption, remove_cells):
+    grid.push((caption, 'discard', remove_cells))
+    for candidate, cell in candidate_cells(remove_cells):
+        cell.candidates.discard(candidate)
+
+
 def packed_coordinates(cells):
     """Make a string of packed coordinates (ex: r4c89,r5c89) from a list of cells.
     """
@@ -560,12 +566,6 @@ def explain_move(grid, colorspec):
     for digit, cells in discarded.items():
         for cell in cells:
             cell.candidates.discard(digit)
-
-
-def apply_remove_candidates(grid, caption, remove_cells):
-    grid.push((caption, 'discard', remove_cells))
-    for candidate, cell in candidate_cells(remove_cells):
-        cell.candidates.discard(candidate)
 
 
 # Locked sets
@@ -889,7 +889,7 @@ def describe_basic_fish(grid, legend, defcands, subset, dir, remove_cells):
         discarded_text(remove_cells))
 
 
-# coloring
+# Simple coloring
 
 
 def solve_coloring_trap(grid, explain):
@@ -903,19 +903,32 @@ def solve_coloring_trap(grid, explain):
 
             peers_cluster_blue = multi_peers(grid, digit, cluster_blue) - cluster_blue
             peers_cluster_green = multi_peers(grid, digit, cluster_green) - cluster_green
-            common = cellinter(peers_cluster_blue, peers_cluster_green)
+            cells_to_discard = cellinter(peers_cluster_blue, peers_cluster_green)
 
-            if common:
-                discard_candidates(grid, [digit], common, 'color trap')
-                if explain:
-                    print_single_history(grid)
-                    print(legend_simple_coloring(grid, 'Simple color trap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_green, [digit], CellDecor.COLOR1),
-                                        (cluster_blue, [digit], CellDecor.COLOR2),
-                                        (common, [digit], CellDecor.REMOVECAND)))
+            if cells_to_discard:
+                apply_colortrap(grid, 'Simple color trap', explain, digit, cluster_blue, cluster_green, cells_to_discard)
                 return True
 
     return False
+
+
+def apply_colortrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
+    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    if explain:
+        print_single_history(grid, at_top=True)
+        print(describe_simple_coloring(grid, caption, digit, cluster_green, cluster_blue, remove_cells))
+        grid.dump(((cluster_green, [digit], CellDecor.COLOR1),
+                    (cluster_blue, [digit], CellDecor.COLOR2),
+                    (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+    apply_remove_candidates(grid, caption, remove_cells)
+    return True
+
+
+def describe_simple_coloring(grid, caption, digit, cluster_green, cluster_blue, remove_cells):
+    return '%s: %d (%s) / (%s) => %s' % (caption, digit,
+        packed_coordinates(cluster_green),
+        packed_coordinates(cluster_blue),
+        discarded_text(remove_cells))
 
 
 def solve_coloring_wrap(grid, explain):
@@ -928,24 +941,26 @@ def solve_coloring_wrap(grid, explain):
             cluster_blue, cluster_green = colorize(grid, digit, cluster)
 
             if color_contradiction(cluster_blue):
-                discard_candidates(grid, [digit], cluster_blue, 'color wrap')
-                if explain:
-                    print_single_history(grid)
-                    print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_green, [digit], CellDecor.COLOR1),
-                                        (cluster_blue, [digit], CellDecor.REMOVECAND)))
+                apply_colorwrap(grid, 'Simple color wrap', explain, digit, cluster_blue, cluster_green, cluster_blue)
                 return True
 
             if color_contradiction(cluster_green):
-                discard_candidates(grid, [digit], cluster_green, 'color wrap')
-                if explain:
-                    print_single_history(grid)
-                    print(legend_simple_coloring(grid, 'Simple color wrap', digit, cluster_green, cluster_blue))
-                    explain_move(grid, ((cluster_blue, [digit], CellDecor.COLOR1),
-                                        (cluster_green, [digit], CellDecor.REMOVECAND)))
+                apply_colorwrap(grid, 'Simple color wrap', explain, digit, cluster_blue, cluster_green, cluster_green)
                 return True
 
     return False
+
+
+def apply_colorwrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
+    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    if explain:
+        print_single_history(grid, at_top=True)
+        print(describe_simple_coloring(grid, caption, digit, cluster_blue, cluster_green, remove_cells))
+        grid.dump(((cluster_blue, [digit], CellDecor.COLOR1),
+                    (cluster_green, [digit], CellDecor.COLOR2),
+                    (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+    apply_remove_candidates(grid, caption, remove_cells)
+    return True
 
 
 def color_contradiction(same_color):
@@ -963,13 +978,7 @@ def color_contradiction(same_color):
     return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
 
 
-def legend_simple_coloring(grid, legend, digit, cluster_green, cluster_blue):
-    discarded = discarded_at_last_move_text(grid)
-
-    return '%s: %d (%s) / (%s) => %s' % (legend, digit,
-        packed_coordinates(cluster_green),
-        packed_coordinates(cluster_blue),
-        discarded)
+# Multi  coloring
 
 
 def solve_multi_coloring_type_1(grid, explain):
@@ -1111,7 +1120,7 @@ def legend_multi_coloring(grid, legend, digit,
         discarded)
 
 
-# clusters
+# Clusters
 
 
 def make_clusters(grid, digit):
