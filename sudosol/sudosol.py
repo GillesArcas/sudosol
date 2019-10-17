@@ -82,13 +82,11 @@ class Cell:
         """
         return set(peer for peer in self.row if digit in peer.candidates)
 
-
     def same_digit_in_col(self, digit):
         """return all cells in self col with digit as candidate (possibly
         including self)
         """
         return set(peer for peer in self.col if digit in peer.candidates)
-
 
     def same_digit_in_box(self, digit):
         """return all cells in self box with digit as candidate (possibly
@@ -417,7 +415,7 @@ def discard_candidates(grid, candidates, cells, caption):
         return False
 
 
-def candidates_cells(grid, candidates, cells):
+def candidates_cells(candidates, cells):
     """Test which candidates are in a list of cells. Return a dict candidate-cells.
     """
     result = defaultdict(set)
@@ -616,7 +614,7 @@ def solve_locked_triples(grid, explain):
 
 
 def apply_locked_sets(grid, caption, explain, candidates, define_set, remove_set):
-    remove_cells = candidates_cells(grid, candidates, remove_set)
+    remove_cells = candidates_cells(candidates, remove_set)
     if remove_cells:
         if explain:
             remove_set2 = set().union(*(cells for cand, cells in remove_cells.items()))
@@ -686,7 +684,7 @@ def solve_claiming(grid, explain):
 
 
 def apply_locked_candidates(grid, caption, flavor, explain, candidates, subset, cells_to_discard):
-    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+    remove_cells = candidates_cells(candidates, cells_to_discard)
     if remove_cells:
         if explain:
             print_single_history(grid, at_top=True)
@@ -715,7 +713,7 @@ def describe_locked_candidates(caption, flavor, defcands, defset, remset):
 
 
 def apply_naked_set(grid, caption, explain, candidates, subset, cells_to_discard, subcells):
-    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+    remove_cells = candidates_cells(candidates, cells_to_discard)
     if remove_cells:
         if explain:
             print_single_history(grid, at_top=True)
@@ -864,12 +862,12 @@ def solve_basicfish(grid, explain, order, name):
 
 
 def apply_basicfish(grid, caption, explain, candidates, defunits, cells_to_discard, flavor):
-    remove_cells = candidates_cells(grid, candidates, cells_to_discard)
+    remove_cells = candidates_cells(candidates, cells_to_discard)
     if remove_cells:
         if explain:
             subset = cellunionx(*defunits)
             print_single_history(grid, at_top=True)
-            print(describe_basic_fish(grid, caption, candidates, subset, flavor, remove_cells))
+            print(describe_basic_fish(caption, candidates, subset, flavor, remove_cells))
             grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
                        (cells_to_discard, candidates, CellDecor.REMOVECAND)))
         apply_remove_candidates(grid, caption, remove_cells)
@@ -877,7 +875,7 @@ def apply_basicfish(grid, caption, explain, candidates, defunits, cells_to_disca
     return False
 
 
-def describe_basic_fish(grid, legend, defcands, subset, dir, remove_cells):
+def describe_basic_fish(legend, defcands, subset, dir, remove_cells):
     rows = {cell.rownum + 1 for cell in subset}
     cols = {cell.colnum + 1 for cell in subset}
     srows = ''.join(f'{_}' for _ in sorted(list(rows)))
@@ -899,10 +897,10 @@ def solve_coloring_trap(grid, explain):
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         for cluster in clusters:
-            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+            cluster_blue, cluster_green = colorize(digit, cluster)
 
-            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) - cluster_blue
-            peers_cluster_green = multi_peers(grid, digit, cluster_green) - cluster_green
+            peers_cluster_blue = multi_peers(digit, cluster_blue) - cluster_blue
+            peers_cluster_green = multi_peers(digit, cluster_green) - cluster_green
             cells_to_discard = cellinter(peers_cluster_blue, peers_cluster_green)
 
             if cells_to_discard:
@@ -913,10 +911,10 @@ def solve_coloring_trap(grid, explain):
 
 
 def apply_colortrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
-    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
         print_single_history(grid, at_top=True)
-        print(describe_simple_coloring(grid, caption, digit, cluster_green, cluster_blue, remove_cells))
+        print(describe_simple_coloring(caption, digit, cluster_green, cluster_blue, remove_cells))
         grid.dump(((cluster_green, [digit], CellDecor.COLOR1),
                     (cluster_blue, [digit], CellDecor.COLOR2),
                     (cells_to_discard, [digit], CellDecor.REMOVECAND)))
@@ -924,7 +922,7 @@ def apply_colortrap(grid, caption, explain, digit, cluster_blue, cluster_green, 
     return True
 
 
-def describe_simple_coloring(grid, caption, digit, cluster_green, cluster_blue, remove_cells):
+def describe_simple_coloring(caption, digit, cluster_green, cluster_blue, remove_cells):
     return '%s: %d (%s) / (%s) => %s' % (caption, digit,
         packed_coordinates(cluster_green),
         packed_coordinates(cluster_blue),
@@ -938,7 +936,7 @@ def solve_coloring_wrap(grid, explain):
     for digit in ALLDIGITS:
         clusters = make_clusters(grid, digit)
         for cluster in clusters:
-            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+            cluster_blue, cluster_green = colorize(digit, cluster)
 
             if color_contradiction(cluster_blue):
                 apply_colorwrap(grid, 'Simple color wrap', explain, digit, cluster_blue, cluster_green, cluster_blue)
@@ -952,10 +950,10 @@ def solve_coloring_wrap(grid, explain):
 
 
 def apply_colorwrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
-    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
         print_single_history(grid, at_top=True)
-        print(describe_simple_coloring(grid, caption, digit, cluster_blue, cluster_green, remove_cells))
+        print(describe_simple_coloring(caption, digit, cluster_blue, cluster_green, remove_cells))
         grid.dump(((cluster_blue, [digit], CellDecor.COLOR1),
                     (cluster_green, [digit], CellDecor.COLOR2),
                     (cells_to_discard, [digit], CellDecor.REMOVECAND)))
@@ -991,10 +989,10 @@ def solve_multi_coloring_type_1(grid, explain):
         to_be_removed = None
 
         for cluster in clusters:
-            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+            cluster_blue, cluster_green = colorize(digit, cluster)
 
-            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) #- cluster_blue
-            peers_cluster_green = multi_peers(grid, digit, cluster_green) #- cluster_green
+            peers_cluster_blue = multi_peers(digit, cluster_blue) #- cluster_blue
+            peers_cluster_green = multi_peers(digit, cluster_green) #- cluster_green
             common = cellinter(peers_cluster_blue, peers_cluster_green)
 
             clusters_data.append((cluster, cluster_blue, cluster_green,
@@ -1043,10 +1041,10 @@ def solve_multi_coloring_type_2(grid, explain):
         clusters_data = []
         to_be_removed = None
         for cluster in clusters:
-            cluster_blue, cluster_green = colorize(grid, digit, cluster)
+            cluster_blue, cluster_green = colorize(digit, cluster)
 
-            peers_cluster_blue = multi_peers(grid, digit, cluster_blue) #- cluster_blue
-            peers_cluster_green = multi_peers(grid, digit, cluster_green) #- cluster_green
+            peers_cluster_blue = multi_peers(digit, cluster_blue) #- cluster_blue
+            peers_cluster_green = multi_peers(digit, cluster_green) #- cluster_green
             common = cellinter(peers_cluster_blue, peers_cluster_green)
 
             clusters_data.append((cluster, cluster_blue, cluster_green,
@@ -1094,7 +1092,7 @@ def apply_multicolor(grid, caption, explain, digit,
                      cluster_blue1, cluster_green1,
                      cluster_blue2, cluster_green2,
                      cells_to_discard):
-    remove_cells = candidates_cells(grid, [digit], cells_to_discard)
+    remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
         print_single_history(grid, at_top=True)
         print(describe_multi_coloring(caption, digit,
@@ -1161,7 +1159,7 @@ def check_cluster_conj(grid, cluster, conj, digit):
             check_cluster_conj(grid, cluster, conj, digit)
 
 
-def colorize(grid, digit, cluster):
+def colorize(digit, cluster):
 
     def colorize_cell(cell, colorset, conjcolorset):
         if cell not in colorset and cell not in conjcolorset:
@@ -1181,7 +1179,7 @@ def colorize(grid, digit, cluster):
         return cluster_green, cluster_blue
 
 
-def multi_peers(grid, digit, cluster):
+def multi_peers(digit, cluster):
     digit_peers = set()
     for cell in cluster:
         digit_peers = cellunion(digit_peers, set(c for c in cell.peers if digit in c.candidates))
