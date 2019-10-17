@@ -1204,26 +1204,34 @@ def solve_XY_wing(grid, explain):
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
                     digit = min(wings_inter)
-
-                    if discard_candidates(grid, [digit], cellinter(wing1.peers, wing2.peers), 'XY-wing'):
-                        if explain:
-                            print_single_history(grid)
-                            print(legend_xy_wing(grid, 'XY-wing', [cand1, cand2, digit], [cell, wing1, wing2]))
-                            explain_move(grid, (([cell, wing1, wing2], cell.candidates, CellDecor.COLOR1),
-                                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
-                                    (cellinter(wing1.peers, wing2.peers), [digit], CellDecor.REMOVECAND)))
+                    cells_to_discard = cellinter(wing1.peers, wing2.peers)
+                    if apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], cells_to_discard):
                         return True
     else:
         return False
 
 
-def legend_xy_wing(grid, legend, digits, cells):
-    discarded = discarded_at_last_move_text(grid)
+def apply_xy_wing(grid, caption, explain, candidates, defcells, cells_to_discard):
+    cand1, cand2, digit = candidates
+    remove_cells = candidates_cells([digit], cells_to_discard)
+    if remove_cells:
+        if explain:
+            cell, wing1, wing2 = defcells
+            print_single_history(grid, at_top=True)
+            print(describe_xy_wing(caption, candidates, defcells, remove_cells))
+            grid.dump(((defcells, cell.candidates, CellDecor.COLOR1),
+                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
+                    (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
 
-    return '%s: %s in %s => %s' % (legend,
+
+def describe_xy_wing(caption, digits, cells, remove_cells):
+    return '%s: %s in %s => %s' % (caption,
         '/'.join(f'{_}' for _ in digits),
         packed_coordinates(cells),
-        discarded)
+        discarded_text(remove_cells))
 
 
 # xy-chains
