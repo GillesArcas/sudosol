@@ -96,6 +96,17 @@ class Cell:
         """
         return set(peer for peer in self.box if digit in peer.candidates)
 
+    def conjugates(self, digit):
+        rowpeers = self.same_digit_in_row(digit)
+        colpeers = self.same_digit_in_col(digit)
+        boxpeers = self.same_digit_in_box(digit)
+        conj = set()
+        conj = conj.union(rowpeers if len(rowpeers) == 2 else set())
+        conj = conj.union(colpeers if len(colpeers) == 2 else set())
+        conj = conj.union(boxpeers if len(boxpeers) == 2 else set())
+        conj.discard(self)
+        return conj
+
 
 class Grid:
     def __init__(self):
@@ -213,17 +224,6 @@ class Grid:
 
     def solved(self):
         return all(cell.value is not None for cell in self.cells)
-
-    def conjugates(self, cell, digit):
-        rowpeers = cell.same_digit_in_row(digit)
-        colpeers = cell.same_digit_in_col(digit)
-        boxpeers = cell.same_digit_in_box(digit)
-        conj = set()
-        conj = conj.union(rowpeers if len(rowpeers) == 2 else set())
-        conj = conj.union(colpeers if len(colpeers) == 2 else set())
-        conj = conj.union(boxpeers if len(boxpeers) == 2 else set())
-        conj.discard(cell)
-        return conj
 
     def dump(self, decor=None):
         if self.decorate == 'color':
@@ -1142,7 +1142,7 @@ def check_cluster(grid, clusters, cell, digit):
         new_cluster = set()
         new_cluster.add(cell)
         clusters.append(new_cluster)
-        conjs = grid.conjugates(cell, digit)
+        conjs = cell.conjugates(digit)
         for conj in conjs:
             check_cluster_conj(grid, new_cluster, conj, digit)
 
@@ -1156,7 +1156,7 @@ def check_cluster_conj(grid, cluster, conj, digit):
         pass
     else:
         cluster.add(conj)
-        conjs = grid.conjugates(conj, digit)
+        conjs = conj.conjugates(digit)
         for conj in conjs:
             check_cluster_conj(grid, cluster, conj, digit)
 
@@ -1166,7 +1166,7 @@ def colorize(grid, digit, cluster):
     def colorize_cell(cell, colorset, conjcolorset):
         if cell not in colorset and cell not in conjcolorset:
             colorset.add(cell)
-            for conj in grid.conjugates(cell, digit):
+            for conj in cell.conjugates(digit):
                 colorize_cell(conj, conjcolorset, colorset)
 
     cluster_blue, cluster_green = set(), set()
