@@ -1204,26 +1204,34 @@ def solve_XY_wing(grid, explain):
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
                     digit = min(wings_inter)
-
-                    if discard_candidates(grid, [digit], cellinter(wing1.peers, wing2.peers), 'XY-wing'):
-                        if explain:
-                            print_single_history(grid)
-                            print(legend_xy_wing(grid, 'XY-wing', [cand1, cand2, digit], [cell, wing1, wing2]))
-                            explain_move(grid, (([cell, wing1, wing2], cell.candidates, CellDecor.COLOR1),
-                                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
-                                    (cellinter(wing1.peers, wing2.peers), [digit], CellDecor.REMOVECAND)))
+                    cells_to_discard = cellinter(wing1.peers, wing2.peers)
+                    if apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], cells_to_discard):
                         return True
     else:
         return False
 
 
-def legend_xy_wing(grid, legend, digits, cells):
-    discarded = discarded_at_last_move_text(grid)
+def apply_xy_wing(grid, caption, explain, candidates, defcells, cells_to_discard):
+    cand1, cand2, digit = candidates
+    remove_cells = candidates_cells([digit], cells_to_discard)
+    if remove_cells:
+        if explain:
+            cell, wing1, wing2 = defcells
+            print_single_history(grid, at_top=True)
+            print(describe_xy_wing(caption, candidates, defcells, remove_cells))
+            grid.dump(((defcells, cell.candidates, CellDecor.COLOR1),
+                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
+                    (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
 
-    return '%s: %s in %s => %s' % (legend,
+
+def describe_xy_wing(caption, digits, cells, remove_cells):
+    return '%s: %s in %s => %s' % (caption,
         '/'.join(f'{_}' for _ in digits),
         packed_coordinates(cells),
-        discarded)
+        discarded_text(remove_cells))
 
 
 # xy-chains
@@ -1247,28 +1255,36 @@ def solve_XY_chain_v1(grid, explain):
             for j in range(len(pairs)):
                 for adjacency1 in adjacency[i][k]:
                     for adjacency2 in adjacency[k][j]:
-                        if test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions):
-                            if explain:
-                                link = adjacency[i][j][-1]
-                                cellchain, candchain = link
-                                digit = candchain[0]
-                                print_single_history(grid)
-                                print(legend_xy_chain(grid, 'XY-chain', digit, cellchain, candchain))
-                                L = []
-                                for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
-                                    L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
-                                L.append((discarded_at_last_move(grid)[digit], [digit], CellDecor.REMOVECAND))
-                                explain_move(grid, L)
+                        cells_to_discard = test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions)
+                        if cells_to_discard:
+                            apply_xy_chain(grid, 'XY-chain', explain, adjacency[i][j][-1], cells_to_discard)
                             return True
 
     if all_solutions:
         for i in range(len(pairs)):
             for j in range(len(pairs)):
                 for chain in adjacency[i][j]:
-                    if test_xy_remove(grid, *chain):
+                    cells_to_discard = test_xy_remove(grid, *chain)
+                    if cells_to_discard:
+                        apply_xy_chain(grid, 'XY-chain', explain, chain, cells_to_discard)
                         return True
 
     return False
+
+
+def apply_xy_chain(grid, caption, explain, link, cells_to_discard):
+    cellchain, candchain = link
+    digit = candchain[0]
+    remove_cells = candidates_cells([digit], cells_to_discard)
+    if explain:
+        print_single_history(grid, at_top=True)
+        print(describe_xy_chain('XY-chain', digit, cellchain, candchain, remove_cells))
+        L = []
+        for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
+            L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
+        L.append((remove_cells[digit], [digit], CellDecor.REMOVECAND))
+        grid.dump(L)
+    apply_remove_candidates(grid, caption, remove_cells)
 
 
 def xy_links(grid):
@@ -1326,9 +1342,10 @@ def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
 
     adjacency.append([cellchain, candchain])
 
-    if len(adjacency) == 4:
-        for index, x in enumerate(adjacency):
-            print(index, x)
+    # TODO: why never 4 paths from one cell to another
+    # if len(adjacency) == 4:
+    #     for index, x in enumerate(adjacency):
+    #         print(index, x)
 
     if all_solutions:
         return False
@@ -1342,13 +1359,11 @@ def test_xy_remove(grid, cellchain, candchain):
         to_be_removed = cellinter(cellchain[0].peers, cellchain[-1].peers)
         to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
         to_be_removed = [cell for cell in to_be_removed if cell not in cellchain]
-        if to_be_removed:
-            discard_candidates(grid, [digit], to_be_removed, 'XY-chain')
-            return True
+        return to_be_removed
     return False
 
 
-def legend_xy_chain(grid, legend, digit, cellchain, candchain):
+def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
     l = []
     l.append('%d-' % candchain[0])
     for index, cell in enumerate(cellchain[:-1]):
@@ -1357,7 +1372,7 @@ def legend_xy_chain(grid, legend, digit, cellchain, candchain):
     l.append(cellchain[-1].strcoord())
     l.append('-%d' % candchain[-1])
     return '%s: %d %s => %s' % (
-                legend, digit, ' '.join(l), discarded_at_last_move_text(grid))
+                caption, digit, ' '.join(l), discarded_text(remove_cells))
 
 
 def solve_XY_chain_v2(grid, explain):
