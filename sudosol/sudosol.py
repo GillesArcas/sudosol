@@ -399,22 +399,6 @@ def load_ss_clipboard(grid, content):
 # Helpers
 
 
-def discard_candidates(grid, candidates, cells, caption):
-    """Discard candidates in a list of cells. Update grid history.
-    """
-    discarded = defaultdict(set)
-    for cell in cells:
-        for candidate in candidates:
-            if candidate in cell.candidates:
-                cell.discard(candidate)
-                discarded[candidate].add(cell)
-    if discarded:
-        grid.push((caption, 'discard', discarded))
-        return True
-    else:
-        return False
-
-
 def candidates_cells(candidates, cells):
     """Test which candidates are in a list of cells. Return a dict candidate-cells.
     """
@@ -466,17 +450,6 @@ def discarded_at_last_move(grid):
     return discarded
 
 
-def discarded_at_last_move_text(grid):
-    """Return candidates discarded at last move (from history) in text
-    explanation format (e.g. 'r45c8<>3, r4c89<>5').
-    """
-    discarded = discarded_at_last_move(grid)
-    list_coord = []
-    for digit, cells in discarded.items():
-        list_coord.append(f'{packed_coordinates(cells)}<>{digit}')
-    return ', '.join(list_coord)
-
-
 def discarded_text(cand_cells_dict):
     """Return candidates discarded in text
     explanation format (e.g. 'r45c8<>3, r4c89<>5').
@@ -487,7 +460,7 @@ def discarded_text(cand_cells_dict):
     return ', '.join(list_coord)
 
 
-def single_history(grid, at_top=False):
+def single_history(grid, at_top):
     if at_top:
         start = len(grid.history) - 1
     else:
@@ -508,7 +481,7 @@ def single_history(grid, at_top=False):
     return '\n'.join(hist)
 
 
-def print_single_history(grid, at_top=False):
+def print_single_history(grid, at_top):
     singlehistory = single_history(grid, at_top)
     if singlehistory:
         print(singlehistory)
@@ -547,23 +520,6 @@ def solve_hidden_candidate(grid, explain):
                 # avoid to loop on candidates from initial cell state
                 break
     return grid_modified
-
-
-# Helpers
-
-
-def explain_move(grid, colorspec):
-    _, _, discarded = grid.history[-1]
-
-    for digit, cells in discarded.items():
-        for cell in cells:
-            cell.candidates.add(digit)
-
-    grid.dump(colorspec)
-
-    for digit, cells in discarded.items():
-        for cell in cells:
-            cell.candidates.discard(digit)
 
 
 # Locked sets
@@ -1441,7 +1397,7 @@ def solve(grid, techniques, explain):
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
     if explain:
-        print_single_history(grid)
+        print_single_history(grid, at_top=False)
         grid.dump()
 
 
