@@ -460,14 +460,13 @@ def discarded_text(cand_cells_dict):
     return ', '.join(list_coord)
 
 
-def single_history(grid, at_top):
-    if at_top:
-        start = len(grid.history) - 1
-    else:
-        start = len(grid.history) - 2
+def single_history(grid):
+    start = len(grid.history) - 1
+
     i = start
     while i >= 0 and grid.history[i][0] in ('Naked single', 'Hidden single'):
         i -= 1
+
     i += 1
     hist = []
     while i <= start:
@@ -478,11 +477,12 @@ def single_history(grid, at_top):
             i += 1
         for k in range(0, len(ldesc), 10):
             hist.append('%-13s: ' % tech + ', '.join(ldesc[k:k + 10]))
+
     return '\n'.join(hist)
 
 
-def print_single_history(grid, at_top):
-    singlehistory = single_history(grid, at_top)
+def print_single_history(grid):
+    singlehistory = single_history(grid)
     if singlehistory:
         print(singlehistory)
         print()
@@ -574,7 +574,7 @@ def apply_locked_sets(grid, caption, explain, candidates, define_set, remove_set
     if remove_cells:
         if explain:
             remove_set2 = set().union(*(cells for cand, cells in remove_cells.items()))
-            print_single_history(grid, at_top=True)
+            print_single_history(grid)
             print(describe_locked_set(caption, candidates, define_set, remove_cells))
             grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
                        (remove_set2, candidates, CellDecor.REMOVECAND)))
@@ -643,7 +643,7 @@ def apply_locked_candidates(grid, caption, flavor, explain, candidates, subset, 
     remove_cells = candidates_cells(candidates, cells_to_discard)
     if remove_cells:
         if explain:
-            print_single_history(grid, at_top=True)
+            print_single_history(grid)
             print(describe_locked_candidates(caption, flavor, candidates, subset, remove_cells))
             grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
                         (cells_to_discard, candidates, CellDecor.REMOVECAND)))
@@ -672,7 +672,7 @@ def apply_naked_set(grid, caption, explain, candidates, subset, cells_to_discard
     remove_cells = candidates_cells(candidates, cells_to_discard)
     if remove_cells:
         if explain:
-            print_single_history(grid, at_top=True)
+            print_single_history(grid)
             if caption.startswith('Naked'):
                 print(describe_locked_set(caption, candidates, subset, remove_cells))
                 grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
@@ -822,7 +822,7 @@ def apply_basicfish(grid, caption, explain, candidates, defunits, cells_to_disca
     if remove_cells:
         if explain:
             subset = cellunionx(*defunits)
-            print_single_history(grid, at_top=True)
+            print_single_history(grid)
             print(describe_basic_fish(caption, candidates, subset, flavor, remove_cells))
             grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
                        (cells_to_discard, candidates, CellDecor.REMOVECAND)))
@@ -869,7 +869,7 @@ def solve_coloring_trap(grid, explain):
 def apply_colortrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
-        print_single_history(grid, at_top=True)
+        print_single_history(grid)
         print(describe_simple_coloring(caption, digit, cluster_green, cluster_blue, remove_cells))
         grid.dump(((cluster_green, [digit], CellDecor.COLOR1),
                     (cluster_blue, [digit], CellDecor.COLOR2),
@@ -908,7 +908,7 @@ def solve_coloring_wrap(grid, explain):
 def apply_colorwrap(grid, caption, explain, digit, cluster_blue, cluster_green, cells_to_discard):
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
-        print_single_history(grid, at_top=True)
+        print_single_history(grid)
         print(describe_simple_coloring(caption, digit, cluster_blue, cluster_green, remove_cells))
         grid.dump(((cluster_blue, [digit], CellDecor.COLOR1),
                     (cluster_green, [digit], CellDecor.COLOR2),
@@ -1050,7 +1050,7 @@ def apply_multicolor(grid, caption, explain, digit,
                      cells_to_discard):
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
-        print_single_history(grid, at_top=True)
+        print_single_history(grid)
         print(describe_multi_coloring(caption, digit,
                     cluster_blue1, cluster_green1,
                     cluster_blue2, cluster_green2, remove_cells))
@@ -1173,7 +1173,7 @@ def apply_xy_wing(grid, caption, explain, candidates, defcells, cells_to_discard
     if remove_cells:
         if explain:
             cell, wing1, wing2 = defcells
-            print_single_history(grid, at_top=True)
+            print_single_history(grid)
             print(describe_xy_wing(caption, candidates, defcells, remove_cells))
             grid.dump(((defcells, cell.candidates, CellDecor.COLOR1),
                     ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
@@ -1233,7 +1233,7 @@ def apply_xy_chain(grid, caption, explain, link, cells_to_discard):
     digit = candchain[0]
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
-        print_single_history(grid, at_top=True)
+        print_single_history(grid)
         print(describe_xy_chain('XY-chain', digit, cellchain, candchain, remove_cells))
         L = []
         for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
@@ -1397,7 +1397,7 @@ def solve(grid, techniques, explain):
     while not grid.solved() and apply_strategy(grid, techniques, explain):
         pass
     if explain:
-        print_single_history(grid, at_top=False)
+        print_single_history(grid)
         grid.dump()
 
 
