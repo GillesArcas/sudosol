@@ -1237,7 +1237,7 @@ def describe_xy_wing(caption, digits, cells, remove_cells):
 # xy-chains
 
 
-def solve_XY_chain_v1(grid, explain):
+def solve_XY_chain(grid, explain):
     all_solutions = False
     pairs, links = xy_links(grid)
 
@@ -1375,62 +1375,7 @@ def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
                 caption, digit, ' '.join(l), discarded_text(remove_cells))
 
 
-def solve_XY_chain_v2(grid, explain):
-    all_solutions = False
-    _, links = xy_links(grid)
-
-    starting_links = defaultdict(list)
-    for link in links:
-        (cell1, _), _ = link
-        starting_links[cell1.cellnum].append(link)
-
-    # init paths of length 1
-    paths = [None, links]
-
-    modified = True
-    numpath = defaultdict(set)
-    while modified:
-        modified = False
-        length = len(paths) - 1
-        paths.append([])
-        for path in paths[length]:
-            cellchain = path[0]
-            candchain = path[1]
-            lastcell = cellchain[-1]
-            for link in starting_links[lastcell.cellnum]:
-                celllink, candlink = link
-                if celllink[1] in cellchain:
-                    pass
-                elif candchain[-2:] == candlink[:2]:
-                    newpath = [cellchain + celllink[1:], candchain + candlink[2:]]
-
-                    cellchain2 = newpath[0]
-                    candchain2 = newpath[1]
-                    cellextr = cellchain2[0].cellnum, cellchain2[-1].cellnum
-                    candextr = candchain2[0], candchain2[-1]
-
-                    if candextr not in numpath[cellextr]:
-                        numpath[cellextr].add(candextr)
-                        if len(numpath[cellextr]) == 4:
-                            print(cellextr, numpath[cellextr])
-
-                        paths[length + 1].append(newpath)
-                        modified = True
-
-                        if not all_solutions:
-                            if test_xy_remove(grid, cellchain, candchain):
-                                return True
-
-    if all_solutions:
-        for length in range(2, len(paths)):
-            for cellchain, candchain in paths[length]:
-                if test_xy_remove(grid, cellchain, candchain):
-                    return True
-
-    return False
-
-
-# solving engine
+# Solving engine
 
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
@@ -1477,7 +1422,7 @@ SOLVER = {
     'mc1' : solve_multi_coloring_type_1,
     'mc2' : solve_multi_coloring_type_2,
     'xy' : solve_XY_wing,
-    'xyc' : solve_XY_chain_v1,
+    'xyc' : solve_XY_chain,
 }
 
 
