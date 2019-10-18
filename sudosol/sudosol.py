@@ -1473,16 +1473,16 @@ def testfile(options, filename, techniques, explain):
 def testdir(options, dirname, techniques, explain):
     tested = 0
     solved = 0
-    timing_dir = 0
+    t0 = time.time()
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
             success, timing = testfile(options, filename, techniques, explain)
             if success:
                 solved += 1
-            timing_dir += timing
 
     success = solved == tested
+    timing_dir = time.time() - t0
     print(f'Test dir : {dirname:20} Result: {success} Solved: {solved}/{tested} Time: {timing_dir:0.3}')
     return success, timing_dir
 
