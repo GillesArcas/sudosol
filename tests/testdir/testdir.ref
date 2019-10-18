@@ -1,8 +1,8 @@
-Test file: tests\testdir\formaterr1.txt Result: False Solved: 0/0 Error: Incorrect line format
-Test file: tests\testdir\formaterr2.txt Result: False Solved: 0/0 Error: Incorrect line format
-Test file: tests\testdir\formaterr3.txt Result: False Solved: 0/0 Error: Incorrect line format
-Test file: tests\testdir\n1.txt Result: True Solved: 10/10 Time: 0.136
-Test file: tests\testdir\n2.txt Result: True Solved: 10/10 Time: 0.174
-Test file: tests\testdir\n3.txt Result: True Solved: 10/10 Time: 0.303
-Test file: tests\testdir\n4.txt Result: True Solved: 10/10 Time: 0.271
-Test dir : tests\testdir        Result: False Solved: 4/7 Time: 0.884
+Test file: tests/testdir/formaterr1.txt Result: False Solved: 0/0 Error: Incorrect line format
+Test file: tests/testdir/formaterr2.txt Result: False Solved: 0/0 Error: Incorrect line format
+Test file: tests/testdir/formaterr3.txt Result: False Solved: 0/0 Error: Incorrect line format
+Test file: tests/testdir/n1.txt Result: True Solved: 10/10 Time: 0.136
+Test file: tests/testdir/n2.txt Result: True Solved: 10/10 Time: 0.174
+Test file: tests/testdir/n3.txt Result: True Solved: 10/10 Time: 0.303
+Test file: tests/testdir/n4.txt Result: True Solved: 10/10 Time: 0.271
+Test dir : tests/testdir        Result: False Solved: 4/7 Time: 0.884

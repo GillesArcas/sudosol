@@ -1475,6 +1475,7 @@ def testdir(options, dirname, techniques, explain):
     solved = 0
     t0 = time.time()
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
+        filename = filename.replace('\\', '/')
         if not filename.startswith('.'):
             tested += 1
             success, timing = testfile(options, filename, techniques, explain)
