@@ -217,9 +217,6 @@ class Grid:
 
         return discarded
 
-    def discard_rc(self, irow, icol, digit):
-        self.cell_rc(irow, icol).discard(digit)
-
     def solved(self):
         return all(cell.value is not None for cell in self.cells)
 
@@ -1450,7 +1447,13 @@ def testfile(options, filename, techniques, explain):
     t0 = time.time()
 
     for line in grids:
-        input, output, _ = line.strip().split(None, 2)
+        try:
+            input, output, _ = line.strip().split(None, 2)
+            if len(input) != 81 or len(output) != 81:
+                raise ValueError
+        except ValueError:
+            print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
+            return False, 0
         ngrids += 1
         grid.input(input)
         solve(grid, techniques, explain)
@@ -1469,18 +1472,18 @@ def testfile(options, filename, techniques, explain):
 
 def testdir(options, dirname, techniques, explain):
     tested = 0
-    succeeded = 0
+    solved = 0
     timing_dir = 0
     for filename in sorted(glob.glob(f'{dirname}/*.txt')):
         if not filename.startswith('.'):
             tested += 1
             success, timing = testfile(options, filename, techniques, explain)
             if success:
-                succeeded += 1
+                solved += 1
             timing_dir += timing
 
-    success = succeeded == tested
-    print(f'Test dir : {dirname:20} Result: {success} Succeeded: {succeeded}/{tested} Time: {timing_dir:0.3}')
+    success = solved == tested
+    print(f'Test dir : {dirname:20} Result: {success} Solved: {solved}/{tested} Time: {timing_dir:0.3}')
     return success, timing_dir
 
 
@@ -1490,7 +1493,7 @@ def testbatch(options):
 
     with open(options.batch) as batch:
         for line in batch:
-            if line.strip() and line[0] != ';':
+            if line.strip() and line[0] not in ';#':
                 testargs = line.strip()
                 testoptions = parse_command_line(testargs)
 
@@ -1536,8 +1539,8 @@ def compare_output(options):
             reference = f.readlines()
 
         # remove lines with timing
-        reference = [_ for _ in reference if 'Time' not in _]
-        output = [_ for _ in output if 'Time' not in _]
+        reference = remove_timing(reference)
+        output = remove_timing(output)
 
         res, diff = list_compare('ref', 'res', reference, output)
         print(f'COMPARE OK' if res else 'COMPARE FAILURE')
@@ -1549,6 +1552,16 @@ def compare_output(options):
                     print(line, file=f, end='')
 
     return res, time.time() - t0
+
+
+def remove_timing(lines):
+    result = []
+    for line in lines:
+        if 'Time' not in line:
+            result.append(line)
+        else:
+            result.append(re.sub('Time: [^ ]+', '', line))
+    return result
 
 
 def list_compare(tag1, tag2, list1, list2):
