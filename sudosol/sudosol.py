@@ -1006,13 +1006,9 @@ def solve_multi_coloring_type_2(grid, explain):
             clusters_data.append((cluster, cluster_blue, cluster_green,
                                   peers_cluster_blue, peers_cluster_green, common))
 
-            if common:
-                # TODO: check why always empty
-                print(cluster)
-
         for clusters_data1, clusters_data2 in itertools.combinations(clusters_data, 2):
-            _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, common1 = clusters_data1
-            _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, common2 = clusters_data2
+            _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, _ = clusters_data1
+            _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, _ = clusters_data2
 
             if (any(cell in peers_cluster_blue2 for cell in cluster_blue1) and
                 any(cell in peers_cluster_green2 for cell in cluster_blue1)):
@@ -1335,7 +1331,7 @@ def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
 
 
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
-STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc1,mc2,h3,xy,h4'
+STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
@@ -1548,7 +1544,7 @@ def compare_output(options):
         if not res:
             for _ in diff[0:20]:
                 print(_, end='')
-            with open('foo.txt', 'wt') as f:
+            with open('tmp.txt', 'wt') as f:
                 for line in output:
                     print(line, file=f, end='')
 
@@ -1559,8 +1555,8 @@ def list_compare(tag1, tag2, list1, list2):
 
     # make sure both lists have same length
     maxlen = max(len(list1), len(list2))
-    list1.extend(['extra'] * (maxlen - len(list1)))
-    list2.extend(['extra'] * (maxlen - len(list2)))
+    list1.extend(['extra\n'] * (maxlen - len(list1)))
+    list2.extend(['extra\n'] * (maxlen - len(list2)))
 
     diff = list()
     res = True
