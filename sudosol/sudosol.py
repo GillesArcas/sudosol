@@ -1135,6 +1135,119 @@ def multi_peers(digit, cluster):
     return digit_peers
 
 
+# x-chains
+
+
+def solve_X_chain(grid, explain):
+    for digit in ALLDIGITS:
+
+        cells, weak_links, strong_links = x_links(grid, digit)
+        if len(strong_links) < 2:
+            continue
+
+        # initialize adjacency matrix
+        adjacency = [None] * len(cells)
+        for i in range(len(cells)):
+            adjacency[i] = [[] for _ in cells]
+        for link in weak_links:
+            cell1, cell2 = link
+            adjacency[cells.index(cell1)][cells.index(cell2)].append(link)
+
+        # transitive closure
+        for k in range(len(cells)):
+            for i in range(len(cells)):
+                for j in range(len(cells)):
+                    if i == j or (i, k) == (k, j):
+                        continue
+                    for chain1 in adjacency[i][k]:
+                        for chain2 in adjacency[k][j]:
+                            cells_to_discard = test_new_xchain(grid, digit, adjacency[i][j], chain1, chain2, strong_links)
+                            if cells_to_discard:
+                                apply_x_chain(grid, digit, 'X-chain', explain, adjacency[i][j][-1], cells_to_discard)
+                                return True
+    return False
+
+
+def x_links(grid, digit):
+    """make list of cells and list of weak and strong links
+    """
+    cells = [cell for cell in grid.cells if digit in cell.candidates]
+    cells = sorted(cells)
+    weak_links = []
+    strong_links = []
+
+    for cell1 in cells:
+        for cell2 in cells:
+            if cell1 == cell2:
+                pass
+            elif cell1 not in cell2.peers:
+                pass
+            else:
+                weak_links.append([cell1, cell2])
+                peers1 = [cell for cell in cell1.peers if digit in cell.candidates]
+                peers2 = [cell for cell in cell2.peers if digit in cell.candidates]
+                peers = cellinter(peers1, peers2)
+                if len(peers) == 0:
+                    strong_links.append((cell1, cell2))
+
+    return cells, weak_links, strong_links
+
+
+def test_new_xchain(grid, digit, adjacency, chain1, chain2, strong_links):
+    if any(x in chain2[1:] for x in chain1):
+        # concatenation would make a loop
+        return None
+    if  tuple(chain1[-2:]) not in strong_links and tuple(chain2[:2]) not in strong_links:
+        # a weak link must be followed by a strong link
+        return None
+
+    chain = chain1 + chain2[1:]
+    adjacency.append(chain)
+
+    if len(chain) < 4 or len(chain) % 2 == 1:
+        return None
+
+    if any(link not in strong_links for link in zip(chain[::2], chain[1::2])):
+        # even links (0-based) must be strong links
+        return None
+
+    return test_x_remove(grid, digit, chain)
+
+
+def test_x_remove(grid, digit, chain):
+    to_be_removed = cellinter(chain[0].peers, chain[-1].peers)
+    to_be_removed = [cell for cell in to_be_removed if digit in cell.candidates]
+    #to_be_removed = [cell for cell in to_be_removed if cell not in chain]
+    return to_be_removed
+
+
+def apply_x_chain(grid, digit, caption, explain, chain, cells_to_discard):
+    remove_cells = candidates_cells([digit], cells_to_discard)
+    if explain:
+        print_single_history(grid)
+        print(describe_x_chain(caption, digit, chain, remove_cells))
+        L = []
+        for cell1, cell2 in zip(chain[::2], chain[1::2]):
+            L.extend((([cell1], [digit], CellDecor.COLOR1),
+                      ([cell2], [digit], CellDecor.COLOR2)))
+        L.append((cells_to_discard, [digit], CellDecor.REMOVECAND))
+        grid.dump(L)
+    apply_remove_candidates(grid, caption, remove_cells)
+
+
+def describe_x_chain(caption, digit, chain, remove_cells):
+    print(chain)
+    l = []
+    for index, cell in enumerate(chain[:-1]):
+        l.append(cell.strcoord())
+        l.append(('=%d=' if index % 2 == 0 else '-%d-') % digit)
+    l.append(chain[-1].strcoord())
+
+    return '%s: %d %s => %s' % (
+                caption, digit, ' '.join(l),
+                discarded_text(remove_cells))
+
+
 # xy-wings
 
 
@@ -1227,7 +1340,7 @@ def apply_xy_chain(grid, caption, explain, link, cells_to_discard):
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
         print_single_history(grid)
-        print(describe_xy_chain('XY-chain', digit, cellchain, candchain, remove_cells))
+        print(describe_xy_chain(caption, digit, cellchain, candchain, remove_cells))
         L = []
         for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
             L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
@@ -1368,10 +1481,11 @@ SOLVER = {
     'bf4': solve_jellyfish,
     'sc1': solve_coloring_trap,
     'sc2': solve_coloring_wrap,
-    'mc1' : solve_multi_coloring_type_1,
-    'mc2' : solve_multi_coloring_type_2,
-    'xy' : solve_XY_wing,
-    'xyc' : solve_XY_chain,
+    'mc1': solve_multi_coloring_type_1,
+    'mc2': solve_multi_coloring_type_2,
+    'xy': solve_XY_wing,
+    'x': solve_X_chain,
+    'xyc': solve_XY_chain,
 }
 
 
@@ -1426,7 +1540,6 @@ def solveclipboard(options, clipformat, techniques, explain):
 
 
 def testfile(options, filename, techniques, explain):
-    verbose = False
     grid = Grid()
     grid.decorate = options.decorate
     success = True
@@ -1447,6 +1560,8 @@ def testfile(options, filename, techniques, explain):
     t0 = time.time()
 
     for line in grids:
+        if line[0] in '#;':
+            continue
         try:
             input, output, _ = line.strip().split(None, 2)
             if len(input) != 81 or len(output) != 81:
@@ -1458,7 +1573,7 @@ def testfile(options, filename, techniques, explain):
         grid.input(input)
         solve(grid, techniques, explain)
         if output != grid.output():
-            if verbose:
+            if options.verbose:
                 print('-' * 20)
                 print('\n'.join((input, output, grid.output())))
             success = False
@@ -1614,6 +1729,8 @@ def parse_command_line(argstring=None):
     parser.add_argument('--decorate', help='candidate decor when tracing grid',
                         choices=['color', 'char'],
                         action='store', default=None)
+    parser.add_argument('--verbose', help='aditional traces',
+                        action='store_true', default=False)
 
     if argstring is None:
         args = parser.parse_args()
