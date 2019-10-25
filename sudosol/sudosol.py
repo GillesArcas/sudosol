@@ -10,6 +10,7 @@ import io
 from collections import defaultdict
 from enum import Enum
 from contextlib import redirect_stdout
+from tqdm import tqdm
 
 import clipboard
 import colorama
@@ -1138,7 +1139,7 @@ def multi_peers(digit, cluster):
 # x-chains
 
 
-def solve_X_chain(grid, explain):
+def solve_X_chain(grid, explain, technique='x'):
     for digit in ALLDIGITS:
 
         cells, weak_links, strong_links = x_links(grid, digit)
@@ -1161,10 +1162,13 @@ def solve_X_chain(grid, explain):
                         continue
                     for chain1 in adjacency[i][k]:
                         for chain2 in adjacency[k][j]:
-                            cells_to_discard = test_new_xchain(grid, digit, adjacency[i][j], chain1, chain2, strong_links)
+                            cells_to_discard = test_new_xchain(grid, digit,
+                                                               adjacency[i][j], chain1, chain2,
+                                                               strong_links, technique)
                             if cells_to_discard:
-                                apply_x_chain(grid, digit, 'X-chain', explain, adjacency[i][j][-1], cells_to_discard)
-                                return True
+                                apply_x_chain(grid, digit, technique, explain,
+                                              adjacency[i][j][-1], cells_to_discard)
+                                return adjacency[i][j][-1]
     return False
 
 
@@ -1193,12 +1197,15 @@ def x_links(grid, digit):
     return cells, weak_links, strong_links
 
 
-def test_new_xchain(grid, digit, adjacency, chain1, chain2, strong_links):
+def test_new_xchain(grid, digit, adjacency, chain1, chain2, strong_links, technique):
     if any(x in chain2[1:] for x in chain1):
         # concatenation would make a loop
         return None
     if  tuple(chain1[-2:]) not in strong_links and tuple(chain2[:2]) not in strong_links:
         # a weak link must be followed by a strong link
+        return None
+
+    if len(chain1) + len(chain2) - 1 > 5 and technique in ('tf', 'sk', '2sk'):
         return None
 
     chain = chain1 + chain2[1:]
@@ -1211,6 +1218,15 @@ def test_new_xchain(grid, digit, adjacency, chain1, chain2, strong_links):
         # even links (0-based) must be strong links
         return None
 
+    if technique == 'sk' and not test_skyscraper(chain):
+        return None
+
+    if technique == '2sk' and not test_2_string_kite(chain):
+        return None
+
+    if technique == 'tf' and not test_turbot_fish(chain):
+        return None
+
     return test_x_remove(grid, digit, chain)
 
 
@@ -1221,31 +1237,65 @@ def test_x_remove(grid, digit, chain):
     return to_be_removed
 
 
-def apply_x_chain(grid, digit, caption, explain, chain, cells_to_discard):
+def apply_x_chain(grid, digit, technique, explain, chain, cells_to_discard):
+    caption = {'x': 'X-chain', 'sk': 'Skyscraper', '2sk': '2 string kite', 'tf': 'Turbotfish'}
     remove_cells = candidates_cells([digit], cells_to_discard)
     if explain:
         print_single_history(grid)
-        print(describe_x_chain(caption, digit, chain, remove_cells))
+        print(describe_x_chain(caption[technique], digit, chain, remove_cells))
         L = []
         for cell1, cell2 in zip(chain[::2], chain[1::2]):
             L.extend((([cell1], [digit], CellDecor.COLOR1),
                       ([cell2], [digit], CellDecor.COLOR2)))
         L.append((cells_to_discard, [digit], CellDecor.REMOVECAND))
         grid.dump(L)
-    apply_remove_candidates(grid, caption, remove_cells)
+    apply_remove_candidates(grid, caption[technique], remove_cells)
 
 
 def describe_x_chain(caption, digit, chain, remove_cells):
-    print(chain)
     l = []
     for index, cell in enumerate(chain[:-1]):
         l.append(cell.strcoord())
         l.append(('=%d=' if index % 2 == 0 else '-%d-') % digit)
     l.append(chain[-1].strcoord())
 
-    return '%s: %d %s => %s' % (
-                caption, digit, ' '.join(l),
-                discarded_text(remove_cells))
+    return '%s: %d %s => %s' % (caption, digit, ' '.join(l), discarded_text(remove_cells))
+
+
+def solve_skyscraper(grid, explain):
+    return solve_X_chain(grid, explain, technique='sk')
+
+
+def test_skyscraper(chain):
+    link1 = chain[0:2]
+    link2 = chain[2:4]
+    if (link1[0].rownum == link1[1].rownum and link2[0].rownum == link2[1].rownum or
+        link1[0].colnum == link1[1].colnum and link2[0].colnum == link2[1].colnum):
+        return True
+    else:
+        return False
+
+
+def solve_2_string_kite(grid, explain):
+    return solve_X_chain(grid, explain, technique='2sk')
+
+
+def test_2_string_kite(chain):
+    link1 = chain[0:2]
+    link2 = chain[2:4]
+    if (link1[0].rownum == link1[1].rownum and link2[0].colnum == link2[1].colnum or
+        link1[0].colnum == link1[1].colnum and link2[0].rownum == link2[1].rownum):
+        return True
+    else:
+        return False
+
+
+def solve_turbot_fish(grid, explain):
+    return solve_X_chain(grid, explain, technique='tf')
+
+
+def test_turbot_fish(chain):
+    return len(chain) == 4
 
 
 # xy-wings
@@ -1440,13 +1490,16 @@ def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
 # Solving engine
 
 
+# Simple Sudoku
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
 STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 
+# Hodoku
+# upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,SK,2SK,TF,ER,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',xyc' #+ '-xy'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,sk,2sk,tf,ER,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',x,xyc'
 
 
 def list_techniques(strategy):
@@ -1483,6 +1536,9 @@ SOLVER = {
     'sc2': solve_coloring_wrap,
     'mc1': solve_multi_coloring_type_1,
     'mc2': solve_multi_coloring_type_2,
+    'sk': solve_skyscraper,
+    '2sk': solve_2_string_kite,
+    'tf': solve_turbot_fish,
     'xy': solve_XY_wing,
     'x': solve_X_chain,
     'xyc': solve_XY_chain,
@@ -1542,12 +1598,15 @@ def solveclipboard(options, clipformat, techniques, explain):
 def testfile(options, filename, techniques, explain):
     grid = Grid()
     grid.decorate = options.decorate
-    success = True
     ngrids = 0
     solved = 0
     with open(filename) as f:
         grids = f.readlines()
 
+    # remove empty lines and full line comments before choosing grids
+    grids = [line for line in grids if line.strip() and line[0] != '#']
+
+    # choose grids
     if options.first:
         if options.first < len(grids):
             grids = grids[:options.first]
@@ -1559,28 +1618,34 @@ def testfile(options, filename, techniques, explain):
 
     t0 = time.time()
 
-    for line in grids:
-        if line[0] in '#;':
-            continue
-        try:
-            input, output, _ = line.strip().split(None, 2)
-            if len(input) != 81 or len(output) != 81:
-                raise ValueError
-        except ValueError:
-            print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
-            return False, 0
-        ngrids += 1
-        grid.input(input)
-        solve(grid, techniques, explain)
-        if output != grid.output():
-            if options.verbose:
-                print('-' * 20)
-                print('\n'.join((input, output, grid.output())))
-            success = False
-        else:
-            solved += 1
+    try:
+        f = open(options.output, 'wt') if options.output else sys.stdout
+        for line in tqdm(grids, disable=True):
+            if '#' in line:
+                line = re.sub('#.*', '', line)
+            try:
+                input, output = line.strip().split(None, 1)
+                if len(input) != 81 or len(output) != 81:
+                    raise ValueError
+            except ValueError:
+                print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
+                return False, 0
+            ngrids += 1
+            grid.input(input)
+            solve(grid, techniques, explain)
+            if output == grid.output():
+                solved += 1
+                if options.trace == 'success':
+                    print(input, output, file=f)
+            else:
+                if options.trace == 'failure':
+                    print(input, output, file=f)
+    finally:
+        if options.output:
+            f.close()
 
     timing = time.time() - t0
+    success = solved == ngrids
     print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {timing:0.3}')
     return success, timing
 
@@ -1729,8 +1794,11 @@ def parse_command_line(argstring=None):
     parser.add_argument('--decorate', help='candidate decor when tracing grid',
                         choices=['color', 'char'],
                         action='store', default=None)
-    parser.add_argument('--verbose', help='aditional traces',
-                        action='store_true', default=False)
+    parser.add_argument('--trace', help='additional traces',
+                        choices=['success', 'failure'],
+                        action='store', default=None)
+    parser.add_argument('--output', help='file to trace on',
+                        action='store', default=None)
 
     if argstring is None:
         args = parser.parse_args()

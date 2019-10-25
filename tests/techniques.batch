@@ -24,6 +24,10 @@
 
 --testf tests/bf4-ssts.txt  --rand 100 --tech ssts,bf4
 
---testf tests/x.txt  --rand 100 --tech ssts,x
+--testf tests/x.txt   --rand 100 --tech ssts,x
+--testf tests/2sk.txt --rand 100 --tech ssts,2sk-sc1,sc2,mc1,mc2
+--testf tests/sk.txt  --rand 100 --tech ssts,sk-sc1,sc2,mc1,mc2
+--testf tests/tf.txt  --rand 100 --tech ssts,tf-sc1,sc2,mc1,mc2
+
 --testf tests/xyc.txt  --rand 100 --tech n1,h1,xyc
 --testf tests/xyc-ssts.txt  --rand 100 --tech ssts,xyc

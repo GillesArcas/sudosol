@@ -6,5 +6,6 @@
 
 # test traces
 --batch tests/techniques.batch --explain --decor char --first 5  --comp tests/trace_grids.txt
+
 ; note: the reference for comparison is obtained with
 ; --batch tests/techniques.batch --explain --decor char --first 5  --ref tests/trace_grids.txt
