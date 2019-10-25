@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 import re
 import itertools
@@ -368,12 +369,11 @@ def load_ss_clipboard(grid, content):
         grid.input(values)
 
     elif len(content) == 43:    # after first move
+        # TODO: should set candidates
         # values
         lines = ''.join(content[16:19] + content[20:23] + content[24:27])
-        print(lines)
         values = lines.replace('|', '')
         values = values.replace(' ', '')
-        print(values)
         grid.input(values)
         # candidates
         lines = content[31:34] + content[35:38] + content[39:42]
@@ -382,7 +382,6 @@ def load_ss_clipboard(grid, content):
             print('bad clipboard (2)')
             exit(1)
         cells = sum(lines, [])
-        print(cells)
         for cell, cand in zip(grid.cells, cells):
             cell.candidates = set(int(_) for _ in cand)
 
@@ -1564,35 +1563,43 @@ def solve(grid, techniques, explain):
         grid.dump()
 
 
-#
+# Commands
 
 
-def solvegrid(options, sgrid, techniques, explain):
+def solvegrid(options, techniques, explain):
+    """
+    Solve a single grid given on a the command line, in the clipboard or
+    a file.
+    """
+    t0 = time.time()
     grid = Grid()
     grid.decorate = options.decorate
-    grid.input(sgrid)
+
+    if re.match(r'[\d.]{81}', options.solve):
+        sgrid = options.solve
+    elif options.solve == 'clipboard':
+        sgrid = clipboard.paste()
+    elif os.path.isfile(options.solve):
+        with open(options.solve) as f:
+            sgrid = f.read()
+    else:
+        return False, None
+
+    if options.format is None:
+        grid.input(sgrid)
+    elif options.format == 'ss':
+        load_ss_clipboard(grid, sgrid)
+    else:
+        print('Unknown format', options.format)
+        return False, None
+
     if not explain:
         print(grid.output())
         grid.dump()
     solve(grid, techniques, explain)
     if not explain:
         grid.dump()
-    return True, None
-
-
-def solveclipboard(options, clipformat, techniques, explain):
-    if clipformat == 'ss':
-        grid = Grid()
-        grid.decorate = options.decorate
-        content = clipboard.paste()
-        load_ss_clipboard(grid, content)
-    if not explain:
-        print(grid.output())
-        grid.dump()
-    solve(grid, techniques, explain)
-    if not explain:
-        grid.dump()
-    return True, None
+    return True, time.time() - t0
 
 
 def testfile(options, filename, techniques, explain):
@@ -1765,12 +1772,10 @@ def list_compare(tag1, tag2, list1, list2):
 def parse_command_line(argstring=None):
     usage = "usage: sudosol ..."
     parser = argparse.ArgumentParser(description=usage, usage=argparse.SUPPRESS)
-    parser.add_argument('-s', '--solve', help='solve str81 argument',
+    parser.add_argument('-s', '--solve', help='solve file or str81 argument',
                         action='store', default=None)
-    parser.add_argument('-c', '--clipboard', help='init grid from clipboard',
-                        action='store_true', default=False)
     parser.add_argument('-f', '--format', help='format',
-                        action='store', default='ss')
+                        action='store', default=None)
     parser.add_argument('-t', '--testfile', help='test file',
                         action='store', default=None)
     parser.add_argument('-T', '--testdir', help='test directory',
@@ -1817,10 +1822,7 @@ def main_args(options):
         return compare_output(options)
 
     elif options.solve:
-        return solvegrid(options, options.solve, options.techniques, options.explain)
-
-    elif options.clipboard:
-        return solveclipboard(options, options.format, options.techniques, options.explain)
+        return solvegrid(options, options.techniques, options.explain)
 
     elif options.testfile:
         return testfile(options, options.testfile, options.techniques, options.explain)
@@ -1832,16 +1834,7 @@ def main_args(options):
         return testbatch(options)
 
     else:
-        grid = Grid()
-        grid.input('........2..6....39..9.7..463....672..5..........4.1.....235....9.1.8...5.3...9...')
-        print(grid.horizontal_triplets)
-        print(grid.vertical_triplets)
-        grid.dump()
-        solve(grid, options.techniques, options.explain)
-        grid.dump()
-        print(grid.output())
-        print()
-        return True, None
+        return False, None
 
 
 if __name__ == '__main__':
