@@ -18,6 +18,7 @@ install:
   - pip install clipboard
   - pip install colorama
   - pip install coveralls
+  - pip install tqdm
 
 script:
   - coverage run sudosol/sudosol.py --batch tests/tests.batch
