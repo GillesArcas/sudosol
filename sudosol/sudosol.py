@@ -56,9 +56,6 @@ class Cell:
         """
         return f'r{self.rownum + 1}c{self.colnum + 1}'
 
-    def __repr__(self):
-        return self.__str__()
-
     def __lt__(self, other):
         return self.rownum < other.rownum or (self.rownum == other.rownum and self.colnum < other.colnum)
 
@@ -183,9 +180,6 @@ class Grid:
         for cell in self.cells:
             cell.reset()
 
-    # def __str__(self):
-    #     pass
-
     def input(self, str81):
         """load a 81 character string
         """
@@ -263,7 +257,7 @@ def colorize_candidates_color(cell, spec_color):
     col_spec ::= [cells, [candidates, color]*]*
     ex:
     (({cell}, [1], CellDecor.COLOR1),
-     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, Fore.CellDecor.COLOR1))
+     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, CellDecor.COLOR1))
 
     cells and candidates are iterables.
     A cell or a candidate may appear several times. The last color spec is taken into accout.
@@ -304,7 +298,7 @@ def colorize_candidates_char(cell, spec_color):
     col_spec ::= [cells, [candidates, color]*]*
     ex:
     (({cell}, [1], CellDecor.COLOR1),
-     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, Fore.CellDecor.COLOR1))
+     ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, CellDecor.COLOR1))
 
     cells and candidates are iterables.
     A cell or a candidate may appear several times. The last color spec is taken into accout.
@@ -1297,6 +1291,88 @@ def test_turbot_fish(chain):
     return len(chain) == 4
 
 
+def solve_empty_rectangle(grid, explain):
+
+    for digit in ALLDIGITS:
+
+        strong_links = []
+        for row in grid.rows:
+            cells = [cell for cell in row if digit in cell.candidates]
+            if len(cells) == 2 and cells[0].boxnum != cells[1].boxnum:
+                strong_links.append(cells)
+
+        for strong_link in strong_links:
+            floornum = strong_link[0].rownum // 3
+            colnum1 = strong_link[0].colnum
+            colnum2 = strong_link[1].colnum
+            for row in grid.rows:
+                if row[0].rownum // 3 != floornum:
+                    if test_empty_rectangle(grid, explain, digit, strong_link, row, colnum1, colnum2):
+                        return True
+                    if test_empty_rectangle(grid, explain, digit, strong_link, row, colnum2, colnum1):
+                        return True
+
+        strong_links = []
+        for col in grid.cols:
+            cells = [cell for cell in col if digit in cell.candidates]
+            if len(cells) == 2 and cells[0].boxnum != cells[1].boxnum:
+                strong_links.append(cells)
+
+        for strong_link in strong_links:
+            towernum = strong_link[0].colnum // 3
+            rownum1 = strong_link[0].rownum
+            rownum2 = strong_link[1].rownum
+            for col in grid.cols:
+                if col[0].colnum // 3 != towernum:
+                    if test_empty_rectangle(grid, explain, digit, strong_link, col, rownum1, rownum2):
+                        return True
+                    if test_empty_rectangle(grid, explain, digit, strong_link, col, rownum2, rownum1):
+                        return True
+
+    return False
+
+
+def test_empty_rectangle(grid, explain, digit, strong_link, line, num1, num2):
+    if digit in line[num1].candidates:
+        pivot = line[num2]
+        if is_empty_rectangle(grid, digit, pivot):
+            apply_empty_rectangle(grid, digit, 'Empty rectangle', explain,
+                strong_link, grid.boxes[pivot.boxnum], line[num1])
+            return True
+    return False
+
+
+def is_empty_rectangle(grid, digit, pivot):
+    rownum = pivot.rownum
+    colnum = pivot.colnum
+    boxnum = pivot.boxnum
+    cells = [cell for cell in grid.boxes[boxnum] if digit in cell.candidates]
+    if cells:
+        for cell in cells:
+            if cell.rownum != rownum and cell.colnum != colnum:
+                return False
+        else:
+            return True
+    return False
+
+
+def apply_empty_rectangle(grid, digit, caption, explain, link, box, cell_to_discard):
+    remove_cells = candidates_cells([digit], [cell_to_discard])
+    if explain:
+        print_single_history(grid)
+        print(describe_empty_rectangle(caption, digit, link, box, remove_cells))
+        colors = [(link, [digit], CellDecor.COLOR1),
+                  (box, [digit], CellDecor.COLOR2),
+                  ([cell_to_discard], [digit], CellDecor.REMOVECAND)]
+        grid.dump(colors)
+    apply_remove_candidates(grid, caption, remove_cells)
+
+
+def describe_empty_rectangle(caption, digit, link, box, remove_cells):
+    return '%s: %d in b%d (%s) => %s' % (
+        caption, digit, box[0].boxnum + 1, packed_coordinates(link), discarded_text(remove_cells))
+
+
 # xy-wings
 
 
@@ -1538,6 +1614,7 @@ SOLVER = {
     'sk': solve_skyscraper,
     '2sk': solve_2_string_kite,
     'tf': solve_turbot_fish,
+    'er': solve_empty_rectangle,
     'xy': solve_XY_wing,
     'x': solve_X_chain,
     'xyc': solve_XY_chain,
