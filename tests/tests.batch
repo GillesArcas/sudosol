@@ -1,6 +1,9 @@
 # test techniques
 --batch tests/techniques.batch
 
+# test unsolvable grid (Arto Inkala, first move requires brute force)
+--solve 8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4.. --tech all --comp tests\inkala.ref --decor char
+
 # test test on directory
 --testd tests/testdir --comp tests/testdir/testdir.ref
 

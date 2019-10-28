@@ -1578,7 +1578,10 @@ STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',x,xyc'
 
 
 def list_techniques(strategy):
+    ALL = ','.join(SOLVER.keys())
+
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
+    strategy = re.sub(r'\ball\b', ALL, strategy)
 
     if '-' not in strategy:
         r = strategy.split(',')
