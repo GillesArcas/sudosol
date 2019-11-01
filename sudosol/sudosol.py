@@ -1424,9 +1424,11 @@ def describe_xy_wing(caption, digits, cells, remove_cells):
 # xy-chains
 
 
-def solve_XY_chain(grid, explain):
+def solve_XY_chain(grid, explain, remote_pair=False):
     all_solutions = False
-    pairs, links = xy_links(grid)
+    pairs, links = xy_links(grid, remote_pair)
+
+    caption = 'Remote pair' if remote_pair else  'XY-chain'
 
     # initialize adjacency matrix
     adjacency = [None] * len(pairs)
@@ -1442,9 +1444,10 @@ def solve_XY_chain(grid, explain):
             for j in range(len(pairs)):
                 for adjacency1 in adjacency[i][k]:
                     for adjacency2 in adjacency[k][j]:
-                        cells_to_discard = test_new_chain(grid, adjacency[i][j], adjacency1, adjacency2, all_solutions)
+                        cells_to_discard = test_new_chain(grid, adjacency[i][j],
+                                                          adjacency1, adjacency2, all_solutions, remote_pair)
                         if cells_to_discard:
-                            apply_xy_chain(grid, 'XY-chain', explain, adjacency[i][j][-1], cells_to_discard)
+                            apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
                             return True
 
     if all_solutions:
@@ -1453,28 +1456,32 @@ def solve_XY_chain(grid, explain):
                 for chain in adjacency[i][j]:
                     cells_to_discard = test_xy_remove(grid, *chain)
                     if cells_to_discard:
-                        apply_xy_chain(grid, 'XY-chain', explain, chain, cells_to_discard)
+                        apply_xy_chain(grid, caption, explain, chain, cells_to_discard, remote_pair)
                         return True
 
     return False
 
 
-def apply_xy_chain(grid, caption, explain, link, cells_to_discard):
+def solve_remote_pair(grid, explain):
+    return solve_XY_chain(grid, explain, remote_pair=True)
+
+
+def apply_xy_chain(grid, caption, explain, link, cells_to_discard, remote_pair):
     cellchain, candchain = link
-    digit = candchain[0]
-    remove_cells = candidates_cells([digit], cells_to_discard)
+    candset = candchain[:2] if remote_pair else candchain[:1]
+    remove_cells = candidates_cells(candset, cells_to_discard)
     if explain:
         print_single_history(grid)
-        print(describe_xy_chain(caption, digit, cellchain, candchain, remove_cells))
+        print(describe_xy_chain(caption, candset, cellchain, candchain, remove_cells))
         L = []
         for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
             L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
-        L.append((remove_cells[digit], [digit], CellDecor.REMOVECAND))
+        L.append((cells_to_discard, candset, CellDecor.REMOVECAND))
         grid.dump(L)
     apply_remove_candidates(grid, caption, remove_cells)
 
 
-def xy_links(grid):
+def xy_links(grid, remote_pair):
     """make list of pairs and list of links; each link is made of the list
     of pairs and the list of candidates
     """
@@ -1493,6 +1500,8 @@ def xy_links(grid):
                 cand1, cand2 = list(pair1.candidates)
                 links.append([[pair1, pair2], [cand1, cand2, cand1]])
                 links.append([[pair1, pair2], [cand2, cand1, cand2]])
+            elif remote_pair:
+                pass
             else:
                 inter = pair1.candidates.intersection(pair2.candidates)
                 if len(inter) == 0:
@@ -1505,7 +1514,7 @@ def xy_links(grid):
     return pairs, links
 
 
-def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
+def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions, remote_pair):
     cellchain1, candchain1 = adjacency1
     cellchain2, candchain2 = adjacency2
     if candchain1[-2:] != candchain2[:2]:
@@ -1536,6 +1545,8 @@ def test_new_chain(grid, adjacency, adjacency1, adjacency2, all_solutions):
 
     if all_solutions:
         return False
+    elif remote_pair:
+        return test_remote_pair_remove(grid, cellchain)
     else:
         return test_xy_remove(grid, cellchain, candchain)
 
@@ -1550,7 +1561,17 @@ def test_xy_remove(grid, cellchain, candchain):
     return False
 
 
-def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
+def test_remote_pair_remove(grid, cellchain):
+    if len(cellchain) % 2 == 0:
+        digits = cellchain[0].candidates
+        to_be_removed = cellinter(cellchain[0].peers, cellchain[-1].peers)
+        to_be_removed = [cell for cell in to_be_removed if digits.intersection(cell.candidates)]
+        to_be_removed = [cell for cell in to_be_removed if cell not in cellchain]
+        return to_be_removed
+    return False
+
+
+def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
     l = []
     l.append('%d-' % candchain[0])
     for index, cell in enumerate(cellchain[:-1]):
@@ -1558,8 +1579,9 @@ def describe_xy_chain(caption, digit, cellchain, candchain, remove_cells):
         l.append('-%d-' % candchain[index + 1])
     l.append(cellchain[-1].strcoord())
     l.append('-%d' % candchain[-1])
-    return '%s: %d %s => %s' % (
-                caption, digit, ' '.join(l), discarded_text(remove_cells))
+    candidates = '/'.join(str(_) for _ in sorted(candset))
+    return '%s: %s %s => %s' % (
+                caption, candidates, ' '.join(l), discarded_text(remove_cells))
 
 
 # Solving engine
@@ -1573,7 +1595,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,sk,2sk,tf,ER,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,sk,2sk,tf,er,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',x,xyc'
 
 
@@ -1620,6 +1642,7 @@ SOLVER = {
     'er': solve_empty_rectangle,
     'xy': solve_XY_wing,
     'x': solve_X_chain,
+    'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
 }
 

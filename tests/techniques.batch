@@ -30,5 +30,6 @@
 --testf tests/tf.txt  --rand 100 --tech ssts,tf-sc1,sc2,mc1,mc2
 --testf tests/er.txt  --rand 100 --tech n1,h1,er
 
---testf tests/xyc.txt  --rand 100 --tech n1,h1,xyc
+--testf tests/rp.txt  --rand 100 --tech ssts,rp-sc1,sc2,mc1,mc2
+--testf tests/xyc.txt --rand 100 --tech n1,h1,xyc
 --testf tests/xyc-ssts.txt  --rand 100 --tech ssts,xyc
