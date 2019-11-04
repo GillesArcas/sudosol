@@ -13,7 +13,7 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 More techniques are being implemented, either equivalent to Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
 
 - locked pairs and triples, turbot fish, skyscraper, 2-string kite, empty rectangle,
-- jellyfish, X-chains, XY-chains.
+- jellyfish, X-chains, XY-chains, BUG+1.
 
 Tests make sure each technique is handled correctly.
 

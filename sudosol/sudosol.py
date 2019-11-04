@@ -1584,6 +1584,77 @@ def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
                 caption, candidates, ' '.join(l), discarded_text(remove_cells))
 
 
+# BUG+1
+
+
+def solve_bug1(grid, explain):
+    digits = defaultdict(set)
+    more_than_2 = None
+    for cell in grid.cells:
+        if len(cell.candidates) == 0:
+            # no candidates, not concerned
+            pass
+        elif len(cell.candidates) == 1:
+            # should be handled with singles
+            return False
+        elif len(cell.candidates) == 2:
+            pass
+        elif len(cell.candidates) == 3:
+            if more_than_2:
+                return False
+            more_than_2 = cell
+        else:
+            # more than three candidates
+            return False
+
+        for candidate in cell.candidates:
+            digits['row', cell.rownum, candidate].add(cell)
+            digits['col', cell.colnum, candidate].add(cell)
+            digits['box', cell.boxnum, candidate].add(cell)
+
+    # search the extra candidates
+    extra = None
+    for candidate in more_than_2.candidates:
+        if (len(digits['row', more_than_2.rownum, candidate]) != 2 or
+            len(digits['col', more_than_2.colnum, candidate]) != 2 or
+            len(digits['box', more_than_2.boxnum, candidate]) != 2):
+            extra = candidate
+            break
+    assert extra
+
+    # remove cells with extra candidate
+    digits['row', more_than_2.rownum, candidate].discard(more_than_2)
+    digits['col', more_than_2.colnum, candidate].discard(more_than_2)
+    digits['box', more_than_2.boxnum, candidate].discard(more_than_2)
+
+    # check all candidates in all rows, cols and boxes
+    if any(len(cells) != 2 for cells in digits.values()):
+        return False
+
+    apply_bug1(grid, 'Bivalue Universal Grave + 1', explain, more_than_2.candidates - {extra}, {}, {more_than_2})
+    return True
+
+
+def apply_bug1(grid, caption, explain, candidates, define_set, remove_set):
+    remove_cells = candidates_cells(candidates, remove_set)
+    if remove_cells:
+        if explain:
+            explain_bug1(grid, caption, candidates, define_set, remove_set, remove_cells)
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
+
+
+def explain_bug1(grid, caption, candidates, define_set, remove_set, remove_cells):
+    print_single_history(grid)
+    print(describe_bug1(caption, candidates, define_set, remove_cells))
+    grid.dump(((remove_set, candidates, CellDecor.REMOVECAND),))
+
+
+def describe_bug1(caption, defcands, defset, remset):
+    return '%s => %s' % (caption, discarded_text(remset))
+
+
 # Solving engine
 
 
@@ -1595,8 +1666,8 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,RP,BUG1,sk,2sk,tf,er,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_SSTS + ',x,xyc'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + 'x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
 def list_techniques(strategy):
@@ -1644,6 +1715,7 @@ SOLVER = {
     'x': solve_X_chain,
     'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
+    'bug1': solve_bug1,
 }
 
 
