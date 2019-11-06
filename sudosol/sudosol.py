@@ -1671,15 +1671,15 @@ def solve_w_wing(grid, explain):
             pairs[frozenset(cell.candidates)].add(cell)
 
     for candidates, cells in pairs.items():
-        for wing1, wing2 in itertools.combinations(cells, 2):
+        for wing1, wing2 in itertools.combinations(sorted(cells), 2):
             if wing1.rownum == wing2.rownum or wing1.colnum == wing2.colnum:
                 continue
-            for candidate in candidates:
+            for candidate in sorted(candidates):
                 peers1 = wing1.same_digit_peers(candidate)
                 peers2 = wing2.same_digit_peers(candidate)
-                for peer in peers1:
-                    inter = cellinter(peer.conjugates(candidate), peers2)
-                    if cellinter(peer.conjugates(candidate), peers2):
+                for peer in sorted(peers1):
+                    inter = sorted(cellinter(peer.conjugates(candidate), peers2))
+                    if inter:
                         if apply_w_wing(grid, 'W-wing',
                             explain, candidates - {candidate}, [wing1, wing2, peer, inter[0]],
                             cellinter(wing1.peers, wing2.peers)):
