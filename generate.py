@@ -1,3 +1,7 @@
+"""
+Generate or solve sudoku grids using hodoku.
+"""
+
 import sys
 import os
 import time
@@ -30,17 +34,21 @@ def main():
 
     name_generated = f'{tech}-{NAME_GENERATED}'
 
-    # check hodoku presence
-    if not os.path.isfile(HODOKU_JAR):
-        print('Error: hodoku.jar not found')
-        exit(1)
-
     # calculate number of existing solutions if any
     try:
         with open(name_out) as f:
             num_existing = len(f.readlines())
     except IOError:
         num_existing = 0
+
+    # check if number wanted is reached
+    if num_existing == numwanted:
+        exit(0)
+
+    # check hodoku presence
+    if not os.path.isfile(HODOKU_JAR):
+        print('Error: hodoku.jar not found')
+        exit(1)
 
     # start hodoku in generate mode
     mode = 1 if enable_ssts else 3
@@ -60,7 +68,7 @@ def main():
                     p.terminate()
                     break
 
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         p.terminate()
         print("Program stopped by user !")
 
