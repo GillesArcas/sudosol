@@ -34,3 +34,4 @@
 --testf tests/xyc.txt --rand 100 --tech n1,h1,xyc
 --testf tests/xyc-ssts.txt  --rand 100 --tech ssts,xyc
 --testf tests/bug1.txt --rand 100 --tech n1,h1,bug1
+--testf tests/w.txt    --rand 100 --tech n1,h1,w

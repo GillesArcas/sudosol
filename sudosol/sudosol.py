@@ -93,6 +93,12 @@ class Cell:
         """
         return set(peer for peer in self.box if digit in peer.candidates)
 
+    def same_digit_peers(self, digit):
+        """return all cells in self peers with digit as candidate (not
+        including self)
+        """
+        return set(peer for peer in self.peers if digit in peer.candidates)
+
     def conjugates(self, digit):
         rowpeers = self.same_digit_in_row(digit)
         colpeers = self.same_digit_in_col(digit)
@@ -1655,6 +1661,63 @@ def describe_bug1(caption, defcands, defset, remset):
     return '%s => %s' % (caption, discarded_text(remset))
 
 
+# W-wing
+
+
+def solve_w_wing(grid, explain):
+    pairs = defaultdict(set)
+    for cell in grid.cells:
+        if len(cell.candidates) == 2:
+            pairs[frozenset(cell.candidates)].add(cell)
+
+    for candidates, cells in pairs.items():
+        for wing1, wing2 in itertools.combinations(cells, 2):
+            if wing1.rownum == wing2.rownum or wing1.colnum == wing2.colnum:
+                continue
+            for candidate in candidates:
+                peers1 = wing1.same_digit_peers(candidate)
+                peers2 = wing2.same_digit_peers(candidate)
+                for peer in peers1:
+                    inter = cellinter(peer.conjugates(candidate), peers2)
+                    if cellinter(peer.conjugates(candidate), peers2):
+                        if apply_w_wing(grid, 'W-wing',
+                            explain, candidates - {candidate}, [wing1, wing2, peer, inter[0]],
+                            cellinter(wing1.peers, wing2.peers)):
+                            return True
+    return False
+
+
+def apply_w_wing(grid, caption, explain, candidates, define_set, remove_set):
+    remove_cells = candidates_cells(candidates, remove_set)
+    if remove_cells:
+        if explain:
+            explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells)
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
+
+
+def explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells):
+    print_single_history(grid)
+    print(describe_w_wing(caption, candidates, define_set, remove_cells))
+    wing1, wing2, _, _ = define_set
+    grid.dump(((define_set, wing1.candidates - candidates, CellDecor.COLOR2),
+               ({wing1, wing2}, candidates, CellDecor.COLOR1),
+               (remove_set, candidates, CellDecor.REMOVECAND),))
+
+
+def describe_w_wing(caption, defcands, defset, remset):
+    # W-Wing: 7/9 in r6c5,r9c9 connected by 9 in r68c8 => r9c5<>7
+    wing1 = defset[0]
+    return '%s: %s in %s connected by %d in %s => %s' % (
+        caption,
+        '/'.join(str(_) for _ in list(defcands) + list(wing1.candidates - defcands)),
+        packed_coordinates(defset[:2]),
+        list(wing1.candidates - defcands)[0],
+        packed_coordinates(defset[2:]),
+        discarded_text(remset))
+
+
 # Solving engine
 
 
@@ -1666,7 +1729,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,W,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + 'x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -1716,6 +1779,7 @@ SOLVER = {
     'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
     'bug1': solve_bug1,
+    'w': solve_w_wing,
 }
 
 

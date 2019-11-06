@@ -4,16 +4,16 @@
 
 sudosol is a sudoku solver using only human techniques. Currently, sudosol implements the techniques from Simple Sudoku program (Simple Sudoku Technique Set, ssts). These techniques are:
 
-- naked and hidden singles, pairs, triples and quads,
-- locked candidates (pointing and claiming),
-- X-wings and swordfishes,
-- XY-wings,
+- naked and hidden single, pair, triple and quad,
+- locked candidate (pointing and claiming),
+- X-wing and swordfish,
+- XY-wing,
 - simple coloring and multi coloring.
 
 More techniques are being implemented, either equivalent to Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
 
-- locked pairs and triples, turbot fish, skyscraper, 2-string kite, empty rectangle,
-- jellyfish, X-chains, XY-chains, BUG+1.
+- locked pair and triple, turbot fish, skyscraper, 2-string kite, empty rectangle,
+- jellyfish, W-wing, X-chain, XY-chain, BUG+1.
 
 Tests make sure each technique is handled correctly.
 
