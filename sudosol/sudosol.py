@@ -355,6 +355,10 @@ def cellunionx(*list_of_list_cells):
     return set.union(*[set(cells) for cells in list_of_list_cells])
 
 
+def cellinterx(*list_of_list_cells):
+    return set.intersection(*[set(cells) for cells in list_of_list_cells])
+
+
 # Loading
 
 
@@ -1385,7 +1389,6 @@ def describe_empty_rectangle(caption, digit, link, box, remove_cells):
 def solve_XY_wing(grid, explain):
     for cell in grid.cells:
         if cell.is_pair():
-            cand1, cand2 = sorted(cell.candidates)
             pairpeers = (peer for peer in cell.peers if peer.is_pair())
             for wing1, wing2 in itertools.combinations(pairpeers, 2):
                 if wing1 in wing2.peers:
@@ -1394,37 +1397,81 @@ def solve_XY_wing(grid, explain):
                 wings_inter = wing1.candidates.intersection(wing2.candidates)
                 if len(wings_inter) != 1 or min(wings_inter) in cell.candidates:
                     continue
+                cand1, cand2 = sorted(cell.candidates)
                 if (cand1 in wing1.candidates and cand2 in wing2.candidates or
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
                     digit = min(wings_inter)
-                    cells_to_discard = cellinter(wing1.peers, wing2.peers)
-                    if apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], cells_to_discard):
+                    remove_set = cellinter(wing1.peers, wing2.peers)
+                    if apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], remove_set):
                         return True
     else:
         return False
 
 
-def apply_xy_wing(grid, caption, explain, candidates, defcells, cells_to_discard):
+def apply_xy_wing(grid, caption, explain, candidates, define_set, remove_set):
     cand1, cand2, digit = candidates
-    remove_cells = candidates_cells([digit], cells_to_discard)
-    if remove_cells:
+    remove_dict = candidates_cells([digit], remove_set)
+    if remove_dict:
         if explain:
-            cell, wing1, wing2 = defcells
-            print_single_history(grid)
-            print(describe_xy_wing(caption, candidates, defcells, remove_cells))
-            grid.dump(((defcells, cell.candidates, CellDecor.COLOR1),
-                    ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
-                    (cells_to_discard, [digit], CellDecor.REMOVECAND)))
-        apply_remove_candidates(grid, caption, remove_cells)
+            explain_xy_wing(grid, caption, candidates, define_set, remove_dict)
+        apply_remove_candidates(grid, caption, remove_dict)
         return True
     return False
 
 
-def describe_xy_wing(caption, digits, cells, remove_cells):
+def explain_xy_wing(grid, caption, candidates, define_set, remove_dict):
+    cand1, cand2, digit = candidates
+    cell, wing1, wing2 = define_set
+    print_single_history(grid)
+    print(describe_xy_wing(caption, candidates, define_set, remove_dict))
+    grid.dump(((define_set, cell.candidates, CellDecor.COLOR1),
+               ((wing1, wing2), ALLCAND - cell.candidates, CellDecor.COLOR2),
+               (remove_dict[digit], [digit], CellDecor.REMOVECAND)))
+
+
+def describe_xy_wing(caption, digits, cells, remove_dict):
     return '%s: %s in %s => %s' % (caption,
-        '/'.join(f'{_}' for _ in digits),
+        '/'.join(str(_) for _ in digits),
         packed_coordinates(cells),
-        discarded_text(remove_cells))
+        discarded_text(remove_dict))
+
+
+# xyz-wings
+
+
+def solve_XYZ_wing(grid, explain):
+    for cell in grid.cells:
+        if len(cell.candidates) == 3:
+            pairpeers = (peer for peer in cell.peers if peer.is_pair())
+            for wing1, wing2 in itertools.combinations(pairpeers, 2):
+                wings_inter = wing1.candidates.intersection(wing2.candidates)
+                wings_union = wing1.candidates.union(wing2.candidates)
+                if len(wings_inter) == 1 and wings_union == cell.candidates:
+                    digit = min(wings_inter)
+                    remove_set = cellinterx(wing1.peers, wing2.peers, cell.peers)
+                    if apply_xyz_wing(grid, 'XYZ-wing', explain, digit, [cell, wing1, wing2], remove_set):
+                        return True
+    else:
+        return False
+
+
+def apply_xyz_wing(grid, caption, explain, digit, define_set, remove_set):
+    remove_dict = candidates_cells([digit], remove_set)
+    if remove_dict:
+        if explain:
+            explain_xyz_wing(grid, caption, digit, define_set, remove_dict)
+        apply_remove_candidates(grid, caption, remove_dict)
+        return True
+    return False
+
+
+def explain_xyz_wing(grid, caption, digit, define_set, remove_dict):
+    cell, _, _ = define_set
+    print_single_history(grid)
+    print(describe_xy_wing(caption, [digit], define_set, remove_dict))
+    grid.dump(((define_set, cell.candidates, CellDecor.COLOR1),
+               (define_set, [digit], CellDecor.COLOR2),
+               (remove_dict[digit], [digit], CellDecor.REMOVECAND)))
 
 
 # xy-chains
@@ -1729,12 +1776,13 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,XYZ,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + 'x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
 def list_techniques(strategy):
     ALL = ','.join(SOLVER.keys())
+    ALL = STRATEGY_SSTS + ','  + ','.join(sorted(set(SOLVER.keys()) - set(STRATEGY_SSTS.split(','))))
 
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
     strategy = re.sub(r'\ball\b', ALL, strategy)
@@ -1775,6 +1823,7 @@ SOLVER = {
     'tf': solve_turbot_fish,
     'er': solve_empty_rectangle,
     'xy': solve_XY_wing,
+    'xyz': solve_XYZ_wing,
     'x': solve_X_chain,
     'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
