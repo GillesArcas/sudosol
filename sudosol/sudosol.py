@@ -1708,6 +1708,54 @@ def describe_bug1(caption, defcands, defset, remset):
     return '%s => %s' % (caption, discarded_text(remset))
 
 
+# Unique rectangle
+
+
+def solve_unique_rectangle_1(grid, explain):
+    pairs = defaultdict(set)
+    for cell in grid.cells:
+        if cell.is_pair():
+            pairs[frozenset(cell.candidates)].add(cell)
+
+    for candidates, cells in pairs.items():
+        for cell1, cell2 in itertools.combinations(sorted(cells), 2):
+            if cell1.rownum == cell2.rownum:
+                for row in grid.rows:
+                    if row[0].rownum != cell1.rownum:
+                        cell3 = row[cell1.colnum]
+                        cell4 = row[cell2.colnum]
+                        if cell3 in cells:
+                            if candidates < cell4.candidates and len(cell4.candidates) > 2:
+                                if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
+                                    cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                                    return apply_unique_rectangle_1(grid, 'Uniqueness test 1', explain,
+                                        candidates, [cell1, cell2, cell3, cell4], [cell4])
+                        if cell4 in cells:
+                            if candidates < cell3.candidates and len(cell3.candidates) > 2:
+                                if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
+                                    cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                                    return apply_unique_rectangle_1(grid, 'Uniqueness test 1', explain,
+                                        candidates, [cell1, cell2, cell3, cell4], [cell3])
+    return False
+
+
+def apply_unique_rectangle_1(grid, caption, explain, candidates, define_set, remove_set):
+    remove_cells = candidates_cells(candidates, remove_set)
+    if remove_cells:
+        if explain:
+            explain_unique_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_cells)
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
+
+
+def explain_unique_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_cells):
+    print_single_history(grid)
+    print(describe_xy_wing(caption, sorted(candidates), define_set, remove_cells))
+    grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
+               (remove_set, candidates, CellDecor.REMOVECAND),))
+
+
 # W-wing
 
 
@@ -1776,7 +1824,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,U1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,U2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -1828,6 +1876,7 @@ SOLVER = {
     'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
     'bug1': solve_bug1,
+    'u1': solve_unique_rectangle_1,
     'w': solve_w_wing,
 }
 
@@ -1915,7 +1964,7 @@ def testfile(options, filename, techniques, explain):
 
     try:
         f = open(options.output, 'wt') if options.output else sys.stdout
-        for line in tqdm(grids, disable=True):
+        for line in tqdm(grids, disable=not options.progressbar):
             if '#' in line:
                 line = re.sub('#.*', '', line)
             try:
@@ -2036,7 +2085,7 @@ def remove_timing(lines):
         if 'Time' not in line:
             result.append(line)
         else:
-            result.append(re.sub('Time: [^ ]+', '', line))
+            result.append(re.sub('Time: [^ \n]+', '', line))
     return result
 
 
@@ -2092,6 +2141,8 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('--output', help='file to trace on',
                         action='store', default=None)
+    parser.add_argument('--progressbar', help='display progress bar when solving file',
+                        action='store_true', default=False)
 
     if argstring is None:
         args = parser.parse_args()
