@@ -524,7 +524,7 @@ def solve_hidden_candidate(grid, explain):
     return grid_modified
 
 
-# Locked sets
+# Locked pairs and triples
 
 
 def solve_locked_pairs(grid, explain):
@@ -532,20 +532,20 @@ def solve_locked_pairs(grid, explain):
     for trinum, triplet in enumerate(grid.horizontal_triplets):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
-                result = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, cells_to_discard)
-                if result:
-                    return True
+                remove_set = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
+                if nb_removed:
+                    return nb_removed
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                cells_to_discard = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
-                result = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, cells_to_discard)
-                if result:
-                    return True
+                remove_set = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
+                if nb_removed:
+                    return nb_removed
 
-    return False
+    return 0
 
 
 def solve_locked_triples(grid, explain):
@@ -554,42 +554,44 @@ def solve_locked_triples(grid, explain):
         if all(len(cell.candidates) > 0 for cell in triplet):
             candidates = set().union(*(cell.candidates for cell in triplet))
             if len(candidates) == 3:
-                cells_to_discard = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
-                result = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, cells_to_discard)
-                if result:
-                    return True
+                remove_set = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
+                if nb_removed:
+                    return nb_removed
 
     for trinum, triplet in enumerate(grid.vertical_triplets):
         if all(len(cell.candidates) > 0 for cell in triplet):
             candidates = set().union(*(cell.candidates for cell in triplet))
             if len(candidates) == 3:
-                cells_to_discard = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
-                result = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, cells_to_discard)
-                if result:
-                    return True
+                remove_set = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
+                if nb_removed:
+                    return nb_removed
 
-    return False
+    return 0
 
 
 def apply_locked_sets(grid, caption, explain, candidates, define_set, remove_set):
-    remove_cells = candidates_cells(candidates, remove_set)
-    if remove_cells:
+    remove_dict = candidates_cells(candidates, remove_set)
+    if remove_dict:
         if explain:
-            remove_set2 = set().union(*(cells for cand, cells in remove_cells.items()))
-            print_single_history(grid)
-            print(describe_locked_set(caption, candidates, define_set, remove_cells))
-            grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
-                       (remove_set2, candidates, CellDecor.REMOVECAND)))
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
+            explain_locked_sets(grid, caption, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
 
 
-def describe_locked_set(legend, defcands, defset, remset):
+def explain_locked_sets(grid, caption, candidates, define_set, remove_set, remove_dict):
+    print_single_history(grid)
+    print(describe_locked_set(caption, candidates, define_set, remove_dict))
+    grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
+                (remove_set, candidates, CellDecor.REMOVECAND)))
+
+
+def describe_locked_set(legend, candidates, define_set, remove_dict):
     return '%s: %s in %s => %s' % (legend,
-        ','.join(f'{_}' for _ in sorted(defcands)),
-        packed_coordinates(defset),
-        discarded_text(remset))
+        ','.join(f'{_}' for _ in sorted(candidates)),
+        packed_coordinates(define_set),
+        discarded_text(remove_dict))
 
 
 # Locked candidates
@@ -602,20 +604,20 @@ def solve_pointing(grid, explain):
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum])):
-                result = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
+                nb_removed = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
                                                  grid.rows_less_triplet[trinum])
-                if result:
-                    return True
+                if nb_removed:
+                    return nb_removed
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum])):
-                result = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
+                nb_removed = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
                                                  grid.cols_less_triplet[trinum])
-                if result:
-                    return True
+                if nb_removed:
+                    return nb_removed
 
-    return False
+    return 0
 
 
 def solve_claiming(grid, explain):
@@ -625,82 +627,52 @@ def solve_claiming(grid, explain):
         for trinum, triplet in enumerate(grid.horizontal_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.rows_less_triplet[trinum])):
-                result = apply_locked_candidates(grid, 'Claiming', 'r', explain, [digit], triplet,
+                nb_removed = apply_locked_candidates(grid, 'Claiming', 'r', explain, [digit], triplet,
                                                  grid.boxes_less_hortriplet[trinum])
-                if result:
-                    return True
+                if nb_removed:
+                    return nb_removed
 
         for trinum, triplet in enumerate(grid.vertical_triplets):
             if (candidate_in_cells(digit, triplet) and
                 not candidate_in_cells(digit, grid.cols_less_triplet[trinum])):
-                result = apply_locked_candidates(grid, 'Claiming', 'c', explain, [digit], triplet,
+                nb_removed = apply_locked_candidates(grid, 'Claiming', 'c', explain, [digit], triplet,
                                                  grid.boxes_less_vertriplet[trinum])
-                if result:
-                    return True
+                if nb_removed:
+                    return nb_removed
 
-    return False
+    return 0
 
 
-def apply_locked_candidates(grid, caption, flavor, explain, candidates, subset, cells_to_discard):
-    remove_cells = candidates_cells(candidates, cells_to_discard)
-    if remove_cells:
+def apply_locked_candidates(grid, caption, flavor, explain, candidates, define_set, remove_set):
+    remove_dict = candidates_cells(candidates, remove_set)
+    if remove_dict:
         if explain:
-            print_single_history(grid)
-            print(describe_locked_candidates(caption, flavor, candidates, subset, remove_cells))
-            grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
-                        (cells_to_discard, candidates, CellDecor.REMOVECAND)))
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
+            explain_locked_candidates(grid, caption, flavor, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
 
 
-def describe_locked_candidates(caption, flavor, defcands, defset, remset):
+def explain_locked_candidates(grid, caption, flavor, candidates, define_set, remove_set, remove_dict):
+    print_single_history(grid)
+    print(describe_locked_candidates(caption, flavor, candidates, define_set, remove_dict))
+    grid.dump(((define_set, candidates, CellDecor.DEFININGCAND),
+               (remove_set, candidates, CellDecor.REMOVECAND)))
+
+
+def describe_locked_candidates(caption, flavor, candidates, define_set, remove_dict):
     if flavor == 'b':
-        defunit = f'b{defset[0].boxnum + 1}'
+        defunit = f'b{define_set[0].boxnum + 1}'
     elif flavor == 'r':
-        defunit = f'r{defset[0].rownum + 1}'
+        defunit = f'r{define_set[0].rownum + 1}'
     elif flavor == 'c':
-        defunit = f'c{defset[0].colnum + 1}'
+        defunit = f'c{define_set[0].colnum + 1}'
     return '%s: %s in %s => %s' % (caption,
-        ','.join(f'{_}' for _ in sorted(defcands)),
+        ','.join(f'{_}' for _ in sorted(candidates)),
         defunit,
-        discarded_text(remset))
+        discarded_text(remove_dict))
 
 
 # Locked sets
-
-
-def apply_naked_set(grid, caption, explain, candidates, subset, cells_to_discard, subcells):
-    remove_cells = candidates_cells(candidates, cells_to_discard)
-    if remove_cells:
-        if explain:
-            print_single_history(grid)
-            if caption.startswith('Naked'):
-                print(describe_locked_set(caption, candidates, subset, remove_cells))
-                grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
-                           (cells_to_discard, candidates, CellDecor.REMOVECAND)))
-            if caption.startswith('Hidden'):
-                allcand = set().union(*(cell.candidates for cell in subcells))
-                print(describe_locked_set(caption, allcand - candidates, cells_to_discard, remove_cells))
-                grid.dump(((cells_to_discard,
-                            ALLCAND - candidates, CellDecor.DEFININGCAND,
-                            candidates, CellDecor.REMOVECAND),))
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
-
-
-def nacked_sets_n(grid, cells, subcells, length, legend, explain):
-    if subcells is None:
-        subcells = [cell for cell in cells if len(cell.candidates) > 1]
-    for subset in itertools.combinations(subcells, length):
-        candidates = set().union(*(cell.candidates for cell in subset))
-        if len(candidates) == length:
-            cells_less_subset = [cell for cell in subcells if cell not in subset]
-            result = apply_naked_set(grid, legend, explain, candidates, subset, cells_less_subset, subcells)
-            if result:
-                return True
-    return False
 
 
 def solve_nacked_pairs(grid, explain):
@@ -727,14 +699,40 @@ def solve_nacked_quads(grid, explain):
     )
 
 
-def solve_hidden_set(grid, cells, length, legend, explain):
-    subcells = [cell for cell in cells if len(cell.candidates) > 1]
-    for len_naked_set in range(5, 10 - length):
-        len_hidden_set = len(subcells) - len_naked_set
-        if len_hidden_set == length:
-            if nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain):
-                return True
-    return False
+def nacked_sets_n(grid, cells, subcells, length, legend, explain):
+    if subcells is None:
+        subcells = [cell for cell in cells if len(cell.candidates) > 1]
+    for subset in itertools.combinations(subcells, length):
+        candidates = set().union(*(cell.candidates for cell in subset))
+        if len(candidates) == length:
+            cells_less_subset = [cell for cell in subcells if cell not in subset]
+            nb_removed = apply_naked_set(grid, legend, explain, candidates, subset, cells_less_subset, subcells)
+            if nb_removed:
+                return nb_removed
+    return 0
+
+
+def apply_naked_set(grid, caption, explain, candidates, subset, remove_set, subcells):
+    remove_dict = candidates_cells(candidates, remove_set)
+    if remove_dict:
+        if explain:
+            explain_naked_set(grid, caption, candidates, subset, remove_set, subcells, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_naked_set(grid, caption, candidates, subset, remove_set, subcells, remove_dict):
+    print_single_history(grid)
+    if caption.startswith('Naked'):
+        print(describe_locked_set(caption, candidates, subset, remove_dict))
+        grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
+                    (remove_set, candidates, CellDecor.REMOVECAND)))
+    if caption.startswith('Hidden'):
+        allcand = set().union(*(cell.candidates for cell in subcells))
+        print(describe_locked_set(caption, allcand - candidates, remove_set, remove_dict))
+        grid.dump(((remove_set,
+                    ALLCAND - candidates, CellDecor.DEFININGCAND,
+                    candidates, CellDecor.REMOVECAND),))
 
 
 def solve_hidden_pair(grid, explain):
@@ -759,6 +757,17 @@ def solve_hidden_quad(grid, explain):
         any(solve_hidden_set(grid, col, 4, 'Hidden quadruple', explain) for col in grid.cols) or
         any(solve_hidden_set(grid, box, 4, 'Hidden quadruple', explain) for box in grid.boxes)
     )
+
+
+def solve_hidden_set(grid, cells, length, legend, explain):
+    subcells = [cell for cell in cells if len(cell.candidates) > 1]
+    for len_naked_set in range(5, 10 - length):
+        len_hidden_set = len(subcells) - len_naked_set
+        if len_hidden_set == length:
+            nb_removed = nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain)
+            if nb_removed:
+                return nb_removed
+    return 0
 
 
 # Basic fishes
