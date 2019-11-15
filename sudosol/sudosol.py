@@ -1638,6 +1638,63 @@ def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
                 caption, candidates, ' '.join(l), discarded_text(remove_cells))
 
 
+# W-wing
+
+
+def solve_w_wing(grid, explain):
+    pairs = defaultdict(set)
+    for cell in grid.cells:
+        if len(cell.candidates) == 2:
+            pairs[frozenset(cell.candidates)].add(cell)
+
+    for candidates, cells in pairs.items():
+        for wing1, wing2 in itertools.combinations(sorted(cells), 2):
+            if wing1.rownum == wing2.rownum or wing1.colnum == wing2.colnum:
+                continue
+            for candidate in sorted(candidates):
+                peers1 = wing1.same_digit_peers(candidate)
+                peers2 = wing2.same_digit_peers(candidate)
+                for peer in sorted(peers1):
+                    inter = sorted(cellinter(peer.conjugates(candidate), peers2))
+                    if inter:
+                        if apply_w_wing(grid, 'W-wing',
+                            explain, candidates - {candidate}, [wing1, wing2, peer, inter[0]],
+                            cellinter(wing1.peers, wing2.peers)):
+                            return True
+    return False
+
+
+def apply_w_wing(grid, caption, explain, candidates, define_set, remove_set):
+    remove_cells = candidates_cells(candidates, remove_set)
+    if remove_cells:
+        if explain:
+            explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells)
+        apply_remove_candidates(grid, caption, remove_cells)
+        return True
+    return False
+
+
+def explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells):
+    print_single_history(grid)
+    print(describe_w_wing(caption, candidates, define_set, remove_cells))
+    wing1, wing2, _, _ = define_set
+    grid.dump(((define_set, wing1.candidates - candidates, CellDecor.COLOR2),
+               ({wing1, wing2}, candidates, CellDecor.COLOR1),
+               (remove_set, candidates, CellDecor.REMOVECAND),))
+
+
+def describe_w_wing(caption, defcands, defset, remset):
+    # W-Wing: 7/9 in r6c5,r9c9 connected by 9 in r68c8 => r9c5<>7
+    wing1 = defset[0]
+    return '%s: %s in %s connected by %d in %s => %s' % (
+        caption,
+        '/'.join(str(_) for _ in list(defcands) + list(wing1.candidates - defcands)),
+        packed_coordinates(defset[:2]),
+        list(wing1.candidates - defcands)[0],
+        packed_coordinates(defset[2:]),
+        discarded_text(remset))
+
+
 # BUG+1
 
 
@@ -1650,16 +1707,16 @@ def solve_bug1(grid, explain):
             pass
         elif len(cell.candidates) == 1:
             # should be handled with singles
-            return False
+            return 0
         elif len(cell.candidates) == 2:
             pass
         elif len(cell.candidates) == 3:
             if more_than_2:
-                return False
+                return 0
             more_than_2 = cell
         else:
             # more than three candidates
-            return False
+            return 0
 
         for candidate in cell.candidates:
             digits['row', cell.rownum, candidate].add(cell)
@@ -1683,30 +1740,29 @@ def solve_bug1(grid, explain):
 
     # check all candidates in all rows, cols and boxes
     if any(len(cells) != 2 for cells in digits.values()):
-        return False
+        return 0
 
-    apply_bug1(grid, 'Bivalue Universal Grave + 1', explain, more_than_2.candidates - {extra}, {}, {more_than_2})
-    return True
+    return apply_bug1(grid, 'Bivalue Universal Grave + 1', explain,
+                      more_than_2.candidates - {extra}, {}, {more_than_2})
 
 
 def apply_bug1(grid, caption, explain, candidates, define_set, remove_set):
-    remove_cells = candidates_cells(candidates, remove_set)
-    if remove_cells:
+    remove_dict = candidates_cells(candidates, remove_set)
+    if remove_dict:
         if explain:
-            explain_bug1(grid, caption, candidates, define_set, remove_set, remove_cells)
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
+            explain_bug1(grid, caption, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
 
 
-def explain_bug1(grid, caption, candidates, define_set, remove_set, remove_cells):
+def explain_bug1(grid, caption, candidates, define_set, remove_set, remove_dict):
     print_single_history(grid)
-    print(describe_bug1(caption, candidates, define_set, remove_cells))
+    print(describe_bug1(caption, candidates, define_set, remove_dict))
     grid.dump(((remove_set, candidates, CellDecor.REMOVECAND),))
 
 
-def describe_bug1(caption, defcands, defset, remset):
-    return '%s => %s' % (caption, discarded_text(remset))
+def describe_bug1(caption, candidates, define_set, remove_dict):
+    return '%s => %s' % (caption, discarded_text(remove_dict))
 
 
 # Unique rectangle
@@ -1819,63 +1875,6 @@ def explain_uniqueness_test_2(grid, caption, candidates, define_set, remove_set,
                (remove_set, extra, CellDecor.REMOVECAND),))
 
 
-# W-wing
-
-
-def solve_w_wing(grid, explain):
-    pairs = defaultdict(set)
-    for cell in grid.cells:
-        if len(cell.candidates) == 2:
-            pairs[frozenset(cell.candidates)].add(cell)
-
-    for candidates, cells in pairs.items():
-        for wing1, wing2 in itertools.combinations(sorted(cells), 2):
-            if wing1.rownum == wing2.rownum or wing1.colnum == wing2.colnum:
-                continue
-            for candidate in sorted(candidates):
-                peers1 = wing1.same_digit_peers(candidate)
-                peers2 = wing2.same_digit_peers(candidate)
-                for peer in sorted(peers1):
-                    inter = sorted(cellinter(peer.conjugates(candidate), peers2))
-                    if inter:
-                        if apply_w_wing(grid, 'W-wing',
-                            explain, candidates - {candidate}, [wing1, wing2, peer, inter[0]],
-                            cellinter(wing1.peers, wing2.peers)):
-                            return True
-    return False
-
-
-def apply_w_wing(grid, caption, explain, candidates, define_set, remove_set):
-    remove_cells = candidates_cells(candidates, remove_set)
-    if remove_cells:
-        if explain:
-            explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells)
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
-
-
-def explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells):
-    print_single_history(grid)
-    print(describe_w_wing(caption, candidates, define_set, remove_cells))
-    wing1, wing2, _, _ = define_set
-    grid.dump(((define_set, wing1.candidates - candidates, CellDecor.COLOR2),
-               ({wing1, wing2}, candidates, CellDecor.COLOR1),
-               (remove_set, candidates, CellDecor.REMOVECAND),))
-
-
-def describe_w_wing(caption, defcands, defset, remset):
-    # W-Wing: 7/9 in r6c5,r9c9 connected by 9 in r68c8 => r9c5<>7
-    wing1 = defset[0]
-    return '%s: %s in %s connected by %d in %s => %s' % (
-        caption,
-        '/'.join(str(_) for _ in list(defcands) + list(wing1.candidates - defcands)),
-        packed_coordinates(defset[:2]),
-        list(wing1.candidates - defcands)[0],
-        packed_coordinates(defset[2:]),
-        discarded_text(remset))
-
-
 # Solving engine
 
 
@@ -1891,7 +1890,7 @@ STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
-def list_techniques(strategy):
+def make_list_techniques(strategy):
     ALL = ','.join(SOLVER.keys())
     ALL = STRATEGY_SSTS + ','  + ','.join(sorted(set(SOLVER.keys()) - set(STRATEGY_SSTS.split(','))))
 
@@ -1945,19 +1944,20 @@ SOLVER = {
 }
 
 
-def apply_strategy(grid, strategy, explain):
-    for solver in list_techniques(strategy):
-        if SOLVER[solver](grid, explain):
+def apply_strategy(grid, list_techniques, explain):
+    for technique in list_techniques:
+        if SOLVER[technique](grid, explain):
             return True
     else:
         return False
 
 
 def solve(grid, techniques, explain):
+    list_techniques = make_list_techniques(techniques)
     if explain:
         print(grid.output())
         grid.dump()
-    while not grid.solved() and apply_strategy(grid, techniques, explain):
+    while not grid.solved() and apply_strategy(grid, list_techniques, explain):
         pass
     if explain:
         print_single_history(grid)
