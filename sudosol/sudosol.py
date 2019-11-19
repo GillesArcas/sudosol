@@ -99,6 +99,15 @@ class Cell:
         """
         return set(peer for peer in self.peers if digit in peer.candidates)
 
+    def alone_in_row(self, digit):
+        return next((False for peer in self.row if digit in peer.candidates and peer != self), True)
+
+    def alone_in_col(self, digit):
+        return next((False for peer in self.col if digit in peer.candidates and peer != self), True)
+
+    def alone_in_box(self, digit):
+        return next((False for peer in self.box if digit in peer.candidates and peer != self), True)
+
     def conjugates(self, digit):
         rowpeers = self.same_digit_in_row(digit)
         colpeers = self.same_digit_in_col(digit)
@@ -503,7 +512,7 @@ def solve_single_candidate(grid, explain):
             value = list(cell.candidates)[0]
             discarded = grid.set_value(cell, value)
             grid.push(('Naked single', 'value', cell, value, discarded))
-            return True
+            return 10
     return 0
 
 
@@ -513,15 +522,13 @@ def solve_single_candidate(grid, explain):
 def solve_hidden_candidate(grid, explain):
     # hidden singles
     for cell in grid.cells:
-        cands = cell.candidates
-        for cand in cands:
-            rowcells = cell.same_digit_in_row(cand)
-            colcells = cell.same_digit_in_col(cand)
-            boxcells = cell.same_digit_in_box(cand)
-            if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
+        for cand in cell.candidates:
+            if (cell.alone_in_row(cand) or
+                cell.alone_in_col(cand) or
+                cell.alone_in_box(cand)):
                 discarded = grid.set_value(cell, cand)
                 grid.push(('Hidden single', 'value', cell, cand, discarded))
-                return 33
+                return 10
     return 0
 
 
