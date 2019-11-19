@@ -186,6 +186,9 @@ class Grid:
         for cell in self.cells:
             cell.reset()
 
+    def units(self):
+        return itertools.chain(self.rows, self.cols, self.boxes)
+
     def input(self, str81):
         """load a 81 character string
         """
@@ -236,7 +239,7 @@ class Grid:
                 print(hborder)
             line = []
             for j, cell in enumerate(self.rows[i]):
-                line.append('%s%-9s' % ('|' if j % 3 == 0  else ' ', colorize_candidates(cell, decor)))
+                line.append('%s%-9s' % ('|' if j % 3 == 0 else ' ', colorize_candidates(cell, decor)))
             print(''.join(line) + '|')
         print(hborder)
         print()
@@ -269,7 +272,7 @@ def colorize_candidates_color(cell, spec_color):
     A cell or a candidate may appear several times. The last color spec is taken into accout.
     """
     if not cell.candidates:
-        res = CellDecorColor[CellDecor.VALUE] + str(cell.value)  + Fore.RESET
+        res = CellDecorColor[CellDecor.VALUE] + str(cell.value) + Fore.RESET
         # manual padding as colorama information fools format padding
         res += ' ' * (9 - 1)
         return res
@@ -489,6 +492,7 @@ def print_single_history(grid):
         print(singlehistory)
         print()
 
+
 # Singles
 
 
@@ -500,7 +504,7 @@ def solve_single_candidate(grid, explain):
             discarded = grid.set_value(cell, value)
             grid.push(('Naked single', 'value', cell, value, discarded))
             return True
-    return False
+    return 0
 
 
 # Single digit techniques
@@ -508,7 +512,6 @@ def solve_single_candidate(grid, explain):
 
 def solve_hidden_candidate(grid, explain):
     # hidden singles
-    grid_modified = False
     for cell in grid.cells:
         cands = cell.candidates
         for cand in cands:
@@ -516,12 +519,10 @@ def solve_hidden_candidate(grid, explain):
             colcells = cell.same_digit_in_col(cand)
             boxcells = cell.same_digit_in_box(cand)
             if len(rowcells) == 1 or len(colcells) == 1 or len(boxcells) == 1:
-                grid_modified = True
                 discarded = grid.set_value(cell, cand)
                 grid.push(('Hidden single', 'value', cell, cand, discarded))
-                # avoid to loop on candidates from initial cell state
-                break
-    return grid_modified
+                return 33
+    return 0
 
 
 # Locked pairs and triples
@@ -675,28 +676,26 @@ def describe_locked_candidates(caption, flavor, candidates, define_set, remove_d
 # Locked sets
 
 
+def first(iter):
+    for n in iter:
+        if n:
+            return n
+    return 0
+
+
 def solve_nacked_pairs(grid, explain):
-    return (
-        any(nacked_sets_n(grid, row, None, 2, 'Naked pair', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 2, 'Naked pair', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 2, 'Naked pair', explain) for box in grid.boxes)
-    )
+    nb_removed = (nacked_sets_n(grid, x, None, 2, 'Naked pair', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def solve_nacked_triples(grid, explain):
-    return (
-        any(nacked_sets_n(grid, row, None, 3, 'Naked triple', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 3, 'Naked triple', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 3, 'Naked triple', explain) for box in grid.boxes)
-    )
+    nb_removed = (nacked_sets_n(grid, x, None, 3, 'Naked triple', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def solve_nacked_quads(grid, explain):
-    return (
-        any(nacked_sets_n(grid, row, None, 4, 'Naked quadruple', explain) for row in grid.rows) or
-        any(nacked_sets_n(grid, col, None, 4, 'Naked quadruple', explain) for col in grid.cols) or
-        any(nacked_sets_n(grid, box, None, 4, 'Naked quadruple', explain) for box in grid.boxes)
-    )
+    nb_removed = (nacked_sets_n(grid, x, None, 4, 'Naked quadruple', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def nacked_sets_n(grid, cells, subcells, length, legend, explain):
@@ -736,27 +735,18 @@ def explain_naked_set(grid, caption, candidates, subset, remove_set, subcells, r
 
 
 def solve_hidden_pair(grid, explain):
-    return (
-        any(solve_hidden_set(grid, row, 2, 'Hidden pair', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 2, 'Hidden pair', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 2, 'Hidden pair', explain) for box in grid.boxes)
-    )
+    nb_removed = (solve_hidden_set(grid, x, 2, 'Hidden pair', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def solve_hidden_triple(grid, explain):
-    return (
-        any(solve_hidden_set(grid, row, 3, 'Hidden triple', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 3, 'Hidden triple', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 3, 'Hidden triple', explain) for box in grid.boxes)
-    )
+    nb_removed = (solve_hidden_set(grid, x, 3, 'Hidden triple', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def solve_hidden_quad(grid, explain):
-    return (
-        any(solve_hidden_set(grid, row, 4, 'Hidden quadruple', explain) for row in grid.rows) or
-        any(solve_hidden_set(grid, col, 4, 'Hidden quadruple', explain) for col in grid.cols) or
-        any(solve_hidden_set(grid, box, 4, 'Hidden quadruple', explain) for box in grid.boxes)
-    )
+    nb_removed = (solve_hidden_set(grid, x, 4, 'Hidden quadruple', explain) for x in grid.units())
+    return next((x for x in nb_removed if x), 0)
 
 
 def solve_hidden_set(grid, cells, length, legend, explain):
@@ -774,7 +764,7 @@ def solve_hidden_set(grid, cells, length, legend, explain):
 
 
 def solve_X_wing(grid, explain):
-     return solve_basicfish(grid, explain, 2, 'X-wing')
+    return solve_basicfish(grid, explain, 2, 'X-wing')
 
 
 def solve_swordfish(grid, explain):
@@ -985,7 +975,7 @@ def solve_multi_coloring_type_1(grid, explain):
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
                 to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
                 if to_be_removed:
-                   break
+                    break
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
                 to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
@@ -1194,10 +1184,9 @@ def solve_X_chain(grid, explain, technique='x'):
                                                                adjacency[i][j], chain1, chain2,
                                                                strong_links, technique)
                             if cells_to_discard:
-                                apply_x_chain(grid, digit, technique, explain,
+                                return apply_x_chain(grid, digit, technique, explain,
                                               adjacency[i][j][-1], cells_to_discard)
-                                return adjacency[i][j][-1]
-    return False
+    return 0
 
 
 def x_links(grid, digit):
@@ -1229,7 +1218,7 @@ def test_new_xchain(grid, digit, adjacency, chain1, chain2, strong_links, techni
     if any(x in chain2[1:] for x in chain1):
         # concatenation would make a loop
         return None
-    if  tuple(chain1[-2:]) not in strong_links and tuple(chain2[:2]) not in strong_links:
+    if tuple(chain1[-2:]) not in strong_links and tuple(chain2[:2]) not in strong_links:
         # a weak link must be followed by a strong link
         return None
 
@@ -1267,17 +1256,21 @@ def test_x_remove(grid, digit, chain):
 
 def apply_x_chain(grid, digit, technique, explain, chain, cells_to_discard):
     caption = {'x': 'X-chain', 'sk': 'Skyscraper', '2sk': '2 string kite', 'tf': 'Turbotfish'}
-    remove_cells = candidates_cells([digit], cells_to_discard)
+    remove_dict = candidates_cells([digit], cells_to_discard)
     if explain:
-        print_single_history(grid)
-        print(describe_x_chain(caption[technique], digit, chain, remove_cells))
-        L = []
-        for cell1, cell2 in zip(chain[::2], chain[1::2]):
-            L.extend((([cell1], [digit], CellDecor.COLOR1),
-                      ([cell2], [digit], CellDecor.COLOR2)))
-        L.append((cells_to_discard, [digit], CellDecor.REMOVECAND))
-        grid.dump(L)
-    apply_remove_candidates(grid, caption[technique], remove_cells)
+        explain_x_chain(grid, caption, digit, technique, chain, cells_to_discard, remove_dict)
+    return apply_remove_candidates(grid, caption[technique], remove_dict)
+
+
+def explain_x_chain(grid, caption, digit, technique, chain, cells_to_discard, remove_dict):
+    print_single_history(grid)
+    print(describe_x_chain(caption[technique], digit, chain, remove_dict))
+    L = []
+    for cell1, cell2 in zip(chain[::2], chain[1::2]):
+        L.extend((([cell1], [digit], CellDecor.COLOR1),
+                    ([cell2], [digit], CellDecor.COLOR2)))
+    L.append((cells_to_discard, [digit], CellDecor.REMOVECAND))
+    grid.dump(L)
 
 
 def describe_x_chain(caption, digit, chain, remove_cells):
@@ -1342,10 +1335,12 @@ def solve_empty_rectangle(grid, explain):
             colnum2 = strong_link[1].colnum
             for row in grid.rows:
                 if row[0].rownum // 3 != floornum:
-                    if test_empty_rectangle(grid, explain, digit, strong_link, row, colnum1, colnum2):
-                        return True
-                    if test_empty_rectangle(grid, explain, digit, strong_link, row, colnum2, colnum1):
-                        return True
+                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum1, colnum2)
+                    if nb_removed:
+                        return nb_removed
+                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum2, colnum1)
+                    if nb_removed:
+                        return nb_removed
 
         strong_links = []
         for col in grid.cols:
@@ -1359,22 +1354,23 @@ def solve_empty_rectangle(grid, explain):
             rownum2 = strong_link[1].rownum
             for col in grid.cols:
                 if col[0].colnum // 3 != towernum:
-                    if test_empty_rectangle(grid, explain, digit, strong_link, col, rownum1, rownum2):
-                        return True
-                    if test_empty_rectangle(grid, explain, digit, strong_link, col, rownum2, rownum1):
-                        return True
+                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, col, rownum1, rownum2)
+                    if nb_removed:
+                        return nb_removed
+                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, col, rownum2, rownum1)
+                    if nb_removed:
+                        return nb_removed
 
-    return False
+    return 0
 
 
 def test_empty_rectangle(grid, explain, digit, strong_link, line, num1, num2):
     if digit in line[num1].candidates:
         pivot = line[num2]
         if is_empty_rectangle(grid, digit, pivot):
-            apply_empty_rectangle(grid, digit, 'Empty rectangle', explain,
+            return apply_empty_rectangle(grid, digit, 'Empty rectangle', explain,
                 strong_link, grid.boxes[pivot.boxnum], line[num1])
-            return True
-    return False
+    return 0
 
 
 def is_empty_rectangle(grid, digit, pivot):
@@ -1392,20 +1388,24 @@ def is_empty_rectangle(grid, digit, pivot):
 
 
 def apply_empty_rectangle(grid, digit, caption, explain, link, box, cell_to_discard):
-    remove_cells = candidates_cells([digit], [cell_to_discard])
+    remove_dict = candidates_cells([digit], [cell_to_discard])
     if explain:
-        print_single_history(grid)
-        print(describe_empty_rectangle(caption, digit, link, box, remove_cells))
-        colors = [(link, [digit], CellDecor.COLOR1),
-                  (box, [digit], CellDecor.COLOR2),
-                  ([cell_to_discard], [digit], CellDecor.REMOVECAND)]
-        grid.dump(colors)
-    apply_remove_candidates(grid, caption, remove_cells)
+        explain_empty_rectangle(grid, digit, caption, link, box, cell_to_discard, remove_dict)
+    return apply_remove_candidates(grid, caption, remove_dict)
 
 
-def describe_empty_rectangle(caption, digit, link, box, remove_cells):
+def explain_empty_rectangle(grid, digit, caption, link, box, cell_to_discard, remove_dict):
+    print_single_history(grid)
+    print(describe_empty_rectangle(caption, digit, link, box, remove_dict))
+    colors = [(link, [digit], CellDecor.COLOR1),
+                (box, [digit], CellDecor.COLOR2),
+                ([cell_to_discard], [digit], CellDecor.REMOVECAND)]
+    grid.dump(colors)
+
+
+def describe_empty_rectangle(caption, digit, link, box, remove_dict):
     return '%s: %d in b%d (%s) => %s' % (
-        caption, digit, box[0].boxnum + 1, packed_coordinates(link), discarded_text(remove_cells))
+        caption, digit, box[0].boxnum + 1, packed_coordinates(link), discarded_text(remove_dict))
 
 
 # xy-wings
@@ -1427,10 +1427,10 @@ def solve_XY_wing(grid, explain):
                     cand1 in wing2.candidates and cand2 in wing1.candidates):
                     digit = min(wings_inter)
                     remove_set = cellinter(wing1.peers, wing2.peers)
-                    if apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], remove_set):
-                        return True
-    else:
-        return False
+                    nb_removed = apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], remove_set)
+                    if nb_removed:
+                        return nb_removed
+    return 0
 
 
 def apply_xy_wing(grid, caption, explain, candidates, define_set, remove_set):
@@ -1439,9 +1439,8 @@ def apply_xy_wing(grid, caption, explain, candidates, define_set, remove_set):
     if remove_dict:
         if explain:
             explain_xy_wing(grid, caption, candidates, define_set, remove_dict)
-        apply_remove_candidates(grid, caption, remove_dict)
-        return True
-    return False
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
 
 
 def explain_xy_wing(grid, caption, candidates, define_set, remove_dict):
@@ -1474,10 +1473,10 @@ def solve_XYZ_wing(grid, explain):
                 if len(wings_inter) == 1 and wings_union == cell.candidates:
                     digit = min(wings_inter)
                     remove_set = cellinterx(wing1.peers, wing2.peers, cell.peers)
-                    if apply_xyz_wing(grid, 'XYZ-wing', explain, digit, [cell, wing1, wing2], remove_set):
-                        return True
-    else:
-        return False
+                    nb_removed = apply_xyz_wing(grid, 'XYZ-wing', explain, digit, [cell, wing1, wing2], remove_set)
+                    if nb_removed:
+                        return nb_removed
+    return 0
 
 
 def apply_xyz_wing(grid, caption, explain, digit, define_set, remove_set):
@@ -1485,9 +1484,8 @@ def apply_xyz_wing(grid, caption, explain, digit, define_set, remove_set):
     if remove_dict:
         if explain:
             explain_xyz_wing(grid, caption, digit, define_set, remove_dict)
-        apply_remove_candidates(grid, caption, remove_dict)
-        return True
-    return False
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
 
 
 def explain_xyz_wing(grid, caption, digit, define_set, remove_dict):
@@ -1506,7 +1504,7 @@ def solve_XY_chain(grid, explain, remote_pair=False):
     all_solutions = False
     pairs, links = xy_links(grid, remote_pair)
 
-    caption = 'Remote pair' if remote_pair else  'XY-chain'
+    caption = 'Remote pair' if remote_pair else 'XY-chain'
 
     # initialize adjacency matrix
     adjacency = [None] * len(pairs)
@@ -1525,8 +1523,7 @@ def solve_XY_chain(grid, explain, remote_pair=False):
                         cells_to_discard = test_new_chain(grid, adjacency[i][j],
                                                           adjacency1, adjacency2, all_solutions, remote_pair)
                         if cells_to_discard:
-                            apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
-                            return True
+                            return apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
 
     if all_solutions:
         for i in range(len(pairs)):
@@ -1534,10 +1531,9 @@ def solve_XY_chain(grid, explain, remote_pair=False):
                 for chain in adjacency[i][j]:
                     cells_to_discard = test_xy_remove(grid, *chain)
                     if cells_to_discard:
-                        apply_xy_chain(grid, caption, explain, chain, cells_to_discard, remote_pair)
-                        return True
+                        return apply_xy_chain(grid, caption, explain, chain, cells_to_discard, remote_pair)
 
-    return False
+    return 0
 
 
 def solve_remote_pair(grid, explain):
@@ -1547,16 +1543,10 @@ def solve_remote_pair(grid, explain):
 def apply_xy_chain(grid, caption, explain, link, cells_to_discard, remote_pair):
     cellchain, candchain = link
     candset = candchain[:2] if remote_pair else candchain[:1]
-    remove_cells = candidates_cells(candset, cells_to_discard)
+    remove_dict = candidates_cells(candset, cells_to_discard)
     if explain:
-        print_single_history(grid)
-        print(describe_xy_chain(caption, candset, cellchain, candchain, remove_cells))
-        L = []
-        for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
-            L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
-        L.append((cells_to_discard, candset, CellDecor.REMOVECAND))
-        grid.dump(L)
-    apply_remove_candidates(grid, caption, remove_cells)
+        explain_xy_chain(grid, caption, link, cells_to_discard, remote_pair, remove_dict)
+    return apply_remove_candidates(grid, caption, remove_dict)
 
 
 def xy_links(grid, remote_pair):
@@ -1649,6 +1639,18 @@ def test_remote_pair_remove(grid, cellchain):
     return False
 
 
+def explain_xy_chain(grid, caption, link, cells_to_discard, remote_pair, remove_dict):
+    cellchain, candchain = link
+    candset = candchain[:2] if remote_pair else candchain[:1]
+    print_single_history(grid)
+    print(describe_xy_chain(caption, candset, cellchain, candchain, remove_dict))
+    L = []
+    for cell, cand1, cand2 in zip(cellchain, candchain[:-1], candchain[1:]):
+        L.append(([cell], [cand1], CellDecor.COLOR1, [cand2], CellDecor.COLOR2))
+    L.append((cells_to_discard, candset, CellDecor.REMOVECAND))
+    grid.dump(L)
+
+
 def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
     l = []
     l.append('%d-' % candchain[0])
@@ -1681,11 +1683,12 @@ def solve_w_wing(grid, explain):
                 for peer in sorted(peers1):
                     inter = sorted(cellinter(peer.conjugates(candidate), peers2))
                     if inter:
-                        if apply_w_wing(grid, 'W-wing',
+                        nb_removed = apply_w_wing(grid, 'W-wing',
                             explain, candidates - {candidate}, [wing1, wing2, peer, inter[0]],
-                            cellinter(wing1.peers, wing2.peers)):
-                            return True
-    return False
+                            cellinter(wing1.peers, wing2.peers))
+                        if nb_removed:
+                            return nb_removed
+    return 0
 
 
 def apply_w_wing(grid, caption, explain, candidates, define_set, remove_set):
@@ -1693,9 +1696,8 @@ def apply_w_wing(grid, caption, explain, candidates, define_set, remove_set):
     if remove_cells:
         if explain:
             explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells)
-        apply_remove_candidates(grid, caption, remove_cells)
-        return True
-    return False
+        return apply_remove_candidates(grid, caption, remove_cells)
+    return 0
 
 
 def explain_w_wing(grid, caption, candidates, define_set, remove_set, remove_cells):
