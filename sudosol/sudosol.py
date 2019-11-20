@@ -72,6 +72,12 @@ class Cell:
         """
         self.candidates.discard(digit)
 
+    def mrownum(self):
+        return self.rownum
+
+    def mcolnum(self):
+        return self.colnum
+
     def is_pair(self):
         return len(self.candidates) == 2
 
@@ -369,6 +375,14 @@ def cellunionx(*list_of_list_cells):
 
 def cellinterx(*list_of_list_cells):
     return set.intersection(*[set(cells) for cells in list_of_list_cells])
+
+
+def bivaluedict(grid):
+    pairs = defaultdict(set)
+    for cell in grid.cells:
+        if cell.is_pair():
+            pairs[frozenset(cell.candidates)].add(cell)
+    return pairs
 
 
 # Loading
@@ -681,13 +695,6 @@ def describe_locked_candidates(caption, flavor, candidates, define_set, remove_d
 
 
 # Locked sets
-
-
-def first(iter):
-    for n in iter:
-        if n:
-            return n
-    return 0
 
 
 def solve_nacked_pairs(grid, explain):
@@ -1675,10 +1682,7 @@ def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
 
 
 def solve_w_wing(grid, explain):
-    pairs = defaultdict(set)
-    for cell in grid.cells:
-        if len(cell.candidates) == 2:
-            pairs[frozenset(cell.candidates)].add(cell)
+    pairs = bivaluedict(grid)
 
     for candidates, cells in pairs.items():
         for wing1, wing2 in itertools.combinations(sorted(cells), 2):
@@ -1802,10 +1806,7 @@ def describe_bug1(caption, candidates, define_set, remove_dict):
 
 
 def solve_uniqueness_test_1(grid, explain):
-    pairs = defaultdict(set)
-    for cell in grid.cells:
-        if cell.is_pair():
-            pairs[frozenset(cell.candidates)].add(cell)
+    pairs = bivaluedict(grid)
 
     for candidates, cells in pairs.items():
         for cell1, cell2 in itertools.combinations(sorted(cells), 2):
@@ -1846,47 +1847,41 @@ def explain_uniqueness_test_1(grid, caption, candidates, define_set, remove_set,
 
 
 def solve_uniqueness_test_2(grid, explain):
-    pairs = defaultdict(set)
-    for cell in grid.cells:
-        if cell.is_pair():
-            pairs[frozenset(cell.candidates)].add(cell)
+    pairs = bivaluedict(grid)
 
     for candidates, cells in pairs.items():
         for cell1, cell2 in itertools.combinations(sorted(cells), 2):
-            if cell1.rownum == cell2.rownum:
-                for row in grid.rows:
-                    if row[0].rownum != cell1.rownum:
-                        cell3 = row[cell1.colnum]
-                        cell4 = row[cell2.colnum]
-                        nb_removed = solve_uniqueness_test_2_on_cells(grid, explain, candidates,
-                                                                        cell1, cell2, cell3, cell4)
-                        if nb_removed:
-                            return nb_removed
-            if cell1.colnum == cell2.colnum:
-                for col in grid.cols:
-                    if col[0].colnum != cell1.colnum:
-                        cell3 = col[cell1.rownum]
-                        cell4 = col[cell2.rownum]
-                        nb_removed = solve_uniqueness_test_2_on_cells(grid, explain, candidates,
-                                                                        cell1, cell2, cell3, cell4)
-                        if nb_removed:
-                            return nb_removed
+            nb_removed = solve_uniqueness_test_2_on_unit(
+                grid, explain, candidates, cell1, cell2, grid.rows, Cell.mrownum, Cell.mcolnum
+            )
+            if nb_removed:
+                return nb_removed
+            nb_removed = solve_uniqueness_test_2_on_unit(
+                grid, explain, candidates, cell1, cell2, grid.cols, Cell.mcolnum, Cell.mrownum
+            )
+            if nb_removed:
+                return nb_removed
     return 0
 
 
-def solve_uniqueness_test_2_on_cells(grid, explain, candidates, cell1, cell2, cell3, cell4):
-    if (candidates < cell3.candidates and
-        len(cell3.candidates) == 3 and
-        cell3.candidates == cell4.candidates):
-        if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-            cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
-            extra = min(cell3.candidates - candidates)
-            remove_set  = cellinter(cell3.same_digit_peers(extra),
-                                   cell4.same_digit_peers(extra))
-            nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 2', explain,
-                [candidates, [extra]], [cell1, cell2, cell3, cell4], remove_set)
-            if nb_removed:
-                return nb_removed
+def solve_uniqueness_test_2_on_unit(grid, explain, candidates, cell1, cell2, rows, rownum, colnum):
+    if rownum(cell1) == rownum(cell2):
+        for row in rows:
+            if rownum(row[0]) != rownum(cell1):
+                cell3 = row[colnum(cell1)]
+                cell4 = row[colnum(cell2)]
+                if (candidates < cell3.candidates and
+                    len(cell3.candidates) == 3 and
+                    cell3.candidates == cell4.candidates):
+                    if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
+                        cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                        extra = min(cell3.candidates - candidates)
+                        remove_set  = cellinter(cell3.same_digit_peers(extra),
+                                                cell4.same_digit_peers(extra))
+                        nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 2', explain,
+                            [candidates, [extra]], [cell1, cell2, cell3, cell4], remove_set)
+                        if nb_removed:
+                            return nb_removed
     return 0
 
 
@@ -1908,6 +1903,83 @@ def explain_uniqueness_test_2(grid, caption, candidates, define_set, remove_set,
                (remove_set, extra, CellDecor.REMOVECAND),))
 
 
+def solve_uniqueness_test_3(grid, explain):
+    pairs = bivaluedict(grid)
+    for candidates, cells in pairs.items():
+        for cell1, cell2 in itertools.combinations(sorted(cells), 2):
+            nb_removed = solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, grid.rows, Cell.mrownum, Cell.mcolnum)
+            if nb_removed:
+                return nb_removed
+            nb_removed = solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, grid.cols, Cell.mcolnum, Cell.mrownum)
+            if nb_removed:
+                return nb_removed
+    return 0
+
+
+def solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, rows, rownum, colnum):
+    if rownum(cell1) == rownum(cell2):
+        for row in rows:
+            if rownum(row[0]) != rownum(cell1):
+                cell3 = row[colnum(cell1)]
+                cell4 = row[colnum(cell2)]
+                if candidates < cell3.candidates and candidates < cell4.candidates:
+                    if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
+                        cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+
+                        nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, row)
+                        if nb_removed:
+                            return nb_removed
+
+                        if cell3.boxnum == cell4.boxnum:
+                            nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, grid.boxes[cell3.boxnum])
+                            if nb_removed:
+                                return nb_removed
+    return 0
+
+
+def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, target):
+    # will search for subset in target
+    subcells = {cell for cell in target if len(cell.candidates) > 1}
+    subcells.discard(cell3)
+    subcells.discard(cell4)
+    # the additional candidates in rectangle
+    extra = cellunion(cell3.candidates, cell4.candidates) - candidates
+    for length in range(2, 7):
+        if length >= len(extra):
+            for subset in itertools.combinations(subcells, length - 1):
+                setcandidates = set().union(*(cell.candidates for cell in subset))
+                setcandidates = setcandidates.union(extra)
+                if len(setcandidates) == length:
+                    # found a subset, completed with the extra candidates, it forms a naked subset of length length
+                    cells_less_subset = [cell for cell in subcells if cell not in subset]
+                    nb_removed = apply_naked_set_u3(
+                        grid, 'Uniqueness test 3', explain, [candidates, setcandidates],
+                        [cell1, cell2, cell3, cell4], subset, cells_less_subset
+                    )
+                    if nb_removed:
+                        return nb_removed
+    return 0
+
+
+def apply_naked_set_u3(grid, caption, explain, candidates, define_set, subset, remove_set):
+    defcand, extra = candidates
+    remove_dict = candidates_cells(extra, remove_set)
+    if remove_dict:
+        if explain:
+            explain_uniqueness_test_3(grid, caption, candidates, define_set, subset, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_uniqueness_test_3(grid, caption, candidates, define_set, subset, remove_set, remove_dict):
+    defcand, extra = candidates
+    print_single_history(grid)
+    print(describe_xy_wing(caption, sorted(defcand), define_set, remove_dict))
+    grid.dump(((define_set, defcand, CellDecor.DEFININGCAND),
+               (define_set + list(subset), extra, CellDecor.COLOR3),
+               (remove_set, extra, CellDecor.REMOVECAND),))
+
+
 # Solving engine
 
 
@@ -1919,7 +1991,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,U3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -1973,6 +2045,7 @@ SOLVER = {
     'bug1': solve_bug1,
     'u1': solve_uniqueness_test_1,
     'u2': solve_uniqueness_test_2,
+    'u3': solve_uniqueness_test_3,
     'w': solve_w_wing,
 }
 
