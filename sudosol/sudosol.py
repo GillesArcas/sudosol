@@ -204,13 +204,41 @@ class Grid:
     def units(self):
         return itertools.chain(self.rows, self.cols, self.boxes)
 
-    def input(self, str81):
+    @classmethod
+    def valid_input_string(cls, str):
+        if re.match(r'[\d.]{81}', str):
+            return True
+        elif re.match(r'(\d{1,9},){80}\d{1,9}', str):
+            return True
+        else:
+            return False
+
+    def input(self, str):
+        if re.match(r'[\d.]{81}', str):
+            self.inputstr81(str)
+        elif re.match(r'(\d{1,9},){80}\d{1,9}', str):
+            self.inputcand(str)
+        else:
+            raise ValueError
+
+    def inputstr81(self, str81):
         """load a 81 character string
         """
         self.reset()
         for index, char in enumerate(str81):
             if char not in '.0':
                 self.set_value(self.cells[index], int(char))
+
+    def inputcand(self, strcand):
+        """load a list of candidates (comma separated), a single candidate is
+        considered as a value
+        """
+        self.reset()
+        for index, candidates in enumerate(strcand.split(',')):
+            if len(candidates) == 1:
+                self.set_value(self.cells[index], int(candidates[0]))
+            else:
+                self.cells[index].candidates = set(int(_) for _ in candidates)
 
     def output(self):
         """return a 81 character string
@@ -2115,6 +2143,8 @@ def solvegrid(options, techniques, explain):
 
     if re.match(r'[\d.]{81}', options.solve):
         sgrid = options.solve
+    elif re.match(r'(\d{1,9},){80}\d{1,9}', options.solve):
+        sgrid = options.solve
     elif options.solve == 'clipboard':
         sgrid = clipboard.paste()
     elif os.path.isfile(options.solve):
@@ -2124,7 +2154,10 @@ def solvegrid(options, techniques, explain):
         return False, None
 
     if options.format is None:
-        grid.input(sgrid)
+        if len(sgrid) == 81:
+            grid.input(sgrid)
+        else:
+            grid.inputcand(sgrid)
     elif options.format == 'ss':
         load_ss_clipboard(grid, sgrid)
     else:
@@ -2170,13 +2203,14 @@ def testfile(options, filename, techniques, explain):
                 line = re.sub('#.*', '', line)
             try:
                 input, output = line.strip().split(None, 1)
-                if len(input) != 81 or len(output) != 81:
+                if Grid.valid_input_string(input) and Grid.valid_input_string(output):
+                    grid.input(input)
+                else:
                     raise ValueError
             except ValueError:
                 print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
                 return False, 0
             ngrids += 1
-            grid.input(input)
             solve(grid, techniques, explain)
             if output == grid.output():
                 solved += 1
