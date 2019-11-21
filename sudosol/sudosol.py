@@ -483,7 +483,7 @@ def discarded_text(cand_cells_dict):
     explanation format (e.g. 'r45c8<>3, r4c89<>5').
     """
     list_coord = []
-    for digit, cells in cand_cells_dict.items():
+    for digit, cells in sorted(cand_cells_dict.items()):
         list_coord.append(f'{packed_coordinates(cells)}<>{digit}')
     return ', '.join(list_coord)
 
@@ -1817,14 +1817,12 @@ def solve_uniqueness_test_1(grid, explain):
                         cell4 = row[cell2.colnum]
                         if cell3 in cells:
                             if candidates < cell4.candidates and len(cell4.candidates) > 2:
-                                if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-                                    cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                                if in_two_boxes(cell1, cell2, cell3):
                                     return apply_uniqueness_test_1(grid, 'Uniqueness test 1', explain,
                                         candidates, [cell1, cell2, cell3, cell4], [cell4])
                         if cell4 in cells:
                             if candidates < cell3.candidates and len(cell3.candidates) > 2:
-                                if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-                                    cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                                if in_two_boxes(cell1, cell2, cell3):
                                     return apply_uniqueness_test_1(grid, 'Uniqueness test 1', explain,
                                         candidates, [cell1, cell2, cell3, cell4], [cell3])
     return False
@@ -1870,11 +1868,8 @@ def solve_uniqueness_test_2_on_unit(grid, explain, candidates, cell1, cell2, row
             if rownum(row[0]) != rownum(cell1):
                 cell3 = row[colnum(cell1)]
                 cell4 = row[colnum(cell2)]
-                if (candidates < cell3.candidates and
-                    len(cell3.candidates) == 3 and
-                    cell3.candidates == cell4.candidates):
-                    if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-                        cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
+                if in_two_boxes(cell1, cell2, cell3):
+                    if candidates < cell3.candidates and len(cell3.candidates) == 3 and cell3.candidates == cell4.candidates:
                         extra = min(cell3.candidates - candidates)
                         remove_set  = cellinter(cell3.same_digit_peers(extra),
                                                 cell4.same_digit_peers(extra))
@@ -1922,14 +1917,11 @@ def solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, row
             if rownum(row[0]) != rownum(cell1):
                 cell3 = row[colnum(cell1)]
                 cell4 = row[colnum(cell2)]
-                if candidates < cell3.candidates and candidates < cell4.candidates:
-                    if (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-                        cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum):
-
+                if in_two_boxes(cell1, cell2, cell3):
+                    if candidates < cell3.candidates and candidates < cell4.candidates:
                         nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, row)
                         if nb_removed:
                             return nb_removed
-
                         if cell3.boxnum == cell4.boxnum:
                             nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, grid.boxes[cell3.boxnum])
                             if nb_removed:
@@ -1980,6 +1972,44 @@ def explain_uniqueness_test_3(grid, caption, candidates, define_set, subset, rem
                (remove_set, extra, CellDecor.REMOVECAND),))
 
 
+def solve_uniqueness_test_4(grid, explain):
+    pairs = bivaluedict(grid)
+    for candidates, cells in pairs.items():
+        for cell1, cell2 in itertools.combinations(sorted(cells), 2):
+            nb_removed = solve_uniqueness_test_4_on_unit(grid, explain, candidates, cell1, cell2, grid.rows, Cell.mrownum, Cell.mcolnum)
+            if nb_removed:
+                return nb_removed
+            nb_removed = solve_uniqueness_test_4_on_unit(grid, explain, candidates, cell1, cell2, grid.cols, Cell.mcolnum, Cell.mrownum)
+            if nb_removed:
+                return nb_removed
+    return 0
+
+
+def solve_uniqueness_test_4_on_unit(grid, explain, candidates, cell1, cell2, rows, rownum, colnum):
+    if rownum(cell1) == rownum(cell2):
+        for row in rows:
+            if rownum(row[0]) != rownum(cell1):
+                cell3 = row[colnum(cell1)]
+                cell4 = row[colnum(cell2)]
+                if in_two_boxes(cell1, cell2, cell3):
+                    if candidates < cell3.candidates and candidates < cell4.candidates:
+                        for candidate in list(candidates):
+                            peers = cellinter(cell3.same_digit_peers(candidate),
+                                              cell4.same_digit_peers(candidate))
+                            if not peers:
+                                extra = list(candidates - {candidate})[0]
+                                nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 4', explain,
+                                            [candidates, [extra]], [cell1, cell2, cell3, cell4], [cell3, cell4])
+                                if nb_removed:
+                                    return nb_removed
+    return 0
+
+
+def in_two_boxes(cell1, cell2, cell3):
+    return (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
+            cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum)
+
+
 # Solving engine
 
 
@@ -1991,7 +2021,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,U4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2046,6 +2076,7 @@ SOLVER = {
     'u1': solve_uniqueness_test_1,
     'u2': solve_uniqueness_test_2,
     'u3': solve_uniqueness_test_3,
+    'u4': solve_uniqueness_test_4,
     'w': solve_w_wing,
 }
 
