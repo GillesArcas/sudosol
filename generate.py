@@ -6,6 +6,7 @@ import sys
 import os
 import time
 import subprocess
+import re
 
 
 def tailf(fname):
@@ -31,6 +32,7 @@ def main():
     name_out = sys.argv[2]
     numwanted = int(sys.argv[3])
     enable_ssts = len(sys.argv) == 5 and sys.argv[4] == 'ssts'
+    enable_x = len(sys.argv) == 5 and sys.argv[4] == 'x'
 
     name_generated = f'{tech}-{NAME_GENERATED}'
 
@@ -51,7 +53,7 @@ def main():
         exit(1)
 
     # start hodoku in generate mode
-    mode = 1 if enable_ssts else 3
+    mode = 0 if enable_x else 1 if enable_ssts else 3
     comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:{mode} /o {name_generated}'
     p = subprocess.Popen(comm.split())
     time.sleep(1)
@@ -131,8 +133,81 @@ def main2():
     os.remove(NAME_SOLVED)
 
 
+def main3():
+    """Take a file generated for some technique and generate the file focus on
+    the positions before and after apllication of the technique. Before and after
+    positions are represented as the lists of candidates. Requires the full
+    captions associated with the technique as an argument.
+    """
+    assert sys.argv[1] == 'step'
+    name_in = sys.argv[2]
+    name_out = sys.argv[3]
+    caption = sys.argv[4]
+
+    TMP1 = 'tmp1.txt'
+    TMP2 = 'tmp2.txt'
+
+    # check hodoku presence
+    if not os.path.isfile(HODOKU_JAR):
+        print('Error: hodoku.jar not found')
+        exit(1)
+
+    # make sure there is only one value string in line
+    with open(name_in) as f, open(TMP1, 'wt') as g:
+        for line in f:
+            x = line.split()
+            print(x[0], file=g)
+
+    # solve grids with full solution and pencilmarks for all techniques (some
+    # are rejected by hodoku). List of techniques generated from java -jar hodoku.jar -lt
+    listtech = '2sk,aic,ach,axy,axz,ar1,ar2,bug1,bf,cnl,db,dnl,d2sk,der,er,fff4,fff7,fff5,fff3,fff6,fff2,fbf4,fbf7,fmf4,fmf7,fmf5,fmf3,fmf6,fmf2,fbf5,fbf3,fbf6,fbf2,fc,fcc,fcv,fn,fnc,fnv,ff4,ff7,ff5,ff3,ff6,ff2,fh,gu,gaic,gcnl,gdnl,gnl,h2,h4,hr,h1,h3,in,bf4,kf,kf1,kf2,bf7,lc,lc1,lc2,l2,l3,mc,mc1,mc2,mf4,mf7,mf5,mf3,mf6,mf2,n2,n4,n1,n3,nl,rp,sbf4,sbf7,sbf5,sbf3,sbf6,sbf2,sc,sc1,sc2,sk,bf5,sdc,bf3,td,ts,tf,u1,u2,u3,u4,u5,u6,w,bf6,x,bf2,xyc,xy,xyz'
+    comm = f'java -jar {HODOKU_JAR} /bs {TMP1} /vp /vg c:{listtech} /o {TMP2}'
+    subprocess.check_output(comm)
+
+    with open(name_out, 'wt') as file_out:
+        for rec in getrecord(TMP2):
+            rec = pack_pencilmarks(rec)
+            res = before_after_tech(caption, rec)
+            if res:
+                print(res[0], res[1], '#', rec[0], file=file_out)
+
+    # clean
+    os.remove(TMP1)
+    os.remove(TMP2)
+
+
+def getrecord(filename):
+    rec = []
+    with open(filename) as f:
+        for line in f:
+            m = re.match(r'([.0-9]{81})', line)
+            if m:
+                if rec:
+                    yield rec
+                rec = []
+            rec.append(line)
+        if rec:
+            yield rec
+
+
+def pack_pencilmarks(rec):
+    def repl_pencilmarks(matchobj):
+        return','.join(re.findall('[0-9]+', matchobj.group(0)))
+    return re.sub(r"(   \.---[^A-Z]+---')", repl_pencilmarks, ''.join(rec), flags=re.DOTALL).splitlines()
+
+
+def before_after_tech(tech, rec):
+    m = re.search(r'((?:[1-9]+,){80}[1-9]+)\s*%s[^\n]*\s*((?:[1-9]+,){80}[1-9]+)' % tech, '\n'.join(rec), flags=re.DOTALL)
+    if m:
+        return m.group(1), m.group(2)
+    else:
+        return None
+
+
 if __name__ == '__main__':
     if sys.argv[1] == 'solve':
         main2()
+    elif sys.argv[1] == 'step':
+        main3()
     else:
         main()
