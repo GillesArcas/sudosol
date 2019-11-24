@@ -2054,17 +2054,29 @@ def solve_uniqueness_test_5(grid, explain):
             for cell2, cell3 in itertools.product(cell2s, cell3s):
                 if cell2.candidates == cell3.candidates:
                     cell4 = cell3.row[cell2.colnum]
-                    if cell4.candidates == candidates or cell4.candidates == cell2.candidates or\
-                        (len(cell4.candidates) == 2 and cell4.candidates < cell2.candidates and cell4.candidates != candidates):
-                        extracand = list(cell2.candidates - candidates)[0]
-                        remove_set = cellinterx(cell2.same_digit_peers(extracand),
-                                                cell3.same_digit_peers(extracand),
-                                                cell4.same_digit_peers(extracand))
-                        nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 5', explain,
-                                    [candidates, [extracand]], [cell1, cell2, cell3, cell4], remove_set)
-                        if nb_removed:
-                            return nb_removed
+                    if in_two_boxes(cell1, cell2, cell3):
+                        if cell4.candidates == candidates or cell4.candidates == cell2.candidates:
+                            extracand = list(cell2.candidates - candidates)[0]
+                            remove_set = cellinterx(cell2.same_digit_peers(extracand),
+                                                    cell3.same_digit_peers(extracand),
+                                                    cell4.same_digit_peers(extracand))
+                            nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 5', explain,
+                                        [candidates, [extracand]], [cell1, cell2, cell3, cell4], remove_set)
+                            if nb_removed:
+                                return nb_removed
     return 0
+
+
+def solve_uniqueness_test_6(grid, explain):
+    pairs = bivaluedict(grid)
+    for candidates, cells in pairs.items():
+        for cell1, cell2 in itertools.combinations(sorted(cells), 2):
+            if cell1.rownum != cell2.rownum and cell1.colnum != cell2.colnum:
+                cell3 = grid.cell1.row[cell2.colnum]
+                cell4 = grid.cell2.row[cell1.colnum]
+                if in_two_boxes(cell1, cell2, cell3):
+                    if cell3.candidates > candidates and cell4.candidates > candidates:
+                        pass
 
 
 def in_two_boxes(cell1, cell2, cell3):
@@ -2083,7 +2095,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
