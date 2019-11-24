@@ -2072,16 +2072,27 @@ def solve_uniqueness_test_6(grid, explain):
     for candidates, cells in pairs.items():
         for cell1, cell2 in itertools.combinations(sorted(cells), 2):
             if cell1.rownum != cell2.rownum and cell1.colnum != cell2.colnum:
-                cell3 = grid.cell1.row[cell2.colnum]
-                cell4 = grid.cell2.row[cell1.colnum]
+                cell3 = cell1.row[cell2.colnum]
+                cell4 = cell2.row[cell1.colnum]
                 if in_two_boxes(cell1, cell2, cell3):
                     if cell3.candidates > candidates and cell4.candidates > candidates:
-                        pass
+                        for candidate in list(candidates):
+                            if (len(cell1.same_digit_in_row(candidate)) == 2 and
+                                len(cell2.same_digit_in_row(candidate)) == 2 and
+                                len(cell1.same_digit_in_col(candidate)) == 2 and
+                                len(cell2.same_digit_in_col(candidate)) == 2):
+                                nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 6', explain,
+                                            [candidates, [candidate]], [cell1, cell2, cell3, cell4], [cell3, cell4])
+                                if nb_removed:
+                                    return nb_removed
+    return 0
 
 
-def in_two_boxes(cell1, cell2, cell3):
-    return (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
-            cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum)
+def in_two_boxes(*cells):
+    boxnum = set()
+    for cell in cells:
+        boxnum.add(cell.boxnum)
+    return len(boxnum) == 2
 
 
 # Solving engine
@@ -2152,6 +2163,7 @@ SOLVER = {
     'u3': solve_uniqueness_test_3,
     'u4': solve_uniqueness_test_4,
     'u5': solve_uniqueness_test_5,
+    'u6': solve_uniqueness_test_6,
     'w': solve_w_wing,
 }
 
