@@ -230,7 +230,7 @@ class Grid:
                 self.set_value(self.cells[index], int(char))
 
     def inputcand(self, strcand):
-        """load a list of candidates (comma separated), a single candidate is
+        """load a comma separated list of candidates, a single candidate is
         considered as a value
         """
         self.reset()
@@ -244,6 +244,12 @@ class Grid:
         """return a 81 character string
         """
         return ''.join(str(cell.value) if cell.value else '.' for cell in self.cells)
+
+    def outputcand(self):
+        """return a comma separated list of candidates, a value is considered
+         as a single candidate
+        """
+        return ','.join(str(cell.value) if cell.value else ''.join(str(_) for _ in sorted(cell.candidates)) for cell in self.cells)
 
     def cell_rc(self, irow, icol):
         return self.rows[irow][icol]
@@ -1788,6 +1794,10 @@ def solve_bug1(grid, explain):
             digits['col', cell.colnum, candidate].add(cell)
             digits['box', cell.boxnum, candidate].add(cell)
 
+    # no cell with more than two candidates (grid already solved for instance)
+    if more_than_2 is None:
+        return 0
+
     # search the extra candidates
     extra = None
     for candidate in more_than_2.candidates:
@@ -2033,6 +2043,30 @@ def solve_uniqueness_test_4_on_unit(grid, explain, candidates, cell1, cell2, row
     return 0
 
 
+def solve_uniqueness_test_5(grid, explain):
+    pairs = bivaluedict(grid)
+    for candidates, cells in pairs.items():
+        for cell1 in cells:
+            cell2s = [cell for cell in cell1.row
+                if candidates < cell.candidates and len(cell.candidates) == 3]
+            cell3s = [cell for cell in cell1.col
+                if candidates < cell.candidates and len(cell.candidates) == 3]
+            for cell2, cell3 in itertools.product(cell2s, cell3s):
+                if cell2.candidates == cell3.candidates:
+                    cell4 = cell3.row[cell2.colnum]
+                    if cell4.candidates == candidates or cell4.candidates == cell2.candidates or\
+                        (len(cell4.candidates) == 2 and cell4.candidates < cell2.candidates and cell4.candidates != candidates):
+                        extracand = list(cell2.candidates - candidates)[0]
+                        remove_set = cellinterx(cell2.same_digit_peers(extracand),
+                                                cell3.same_digit_peers(extracand),
+                                                cell4.same_digit_peers(extracand))
+                        nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 5', explain,
+                                    [candidates, [extracand]], [cell1, cell2, cell3, cell4], remove_set)
+                        if nb_removed:
+                            return nb_removed
+    return 0
+
+
 def in_two_boxes(cell1, cell2, cell3):
     return (cell1.boxnum == cell2.boxnum and cell1.boxnum != cell3.boxnum or
             cell1.boxnum != cell2.boxnum and cell1.boxnum == cell3.boxnum)
@@ -2049,7 +2083,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,U5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,U6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2105,6 +2139,7 @@ SOLVER = {
     'u2': solve_uniqueness_test_2,
     'u3': solve_uniqueness_test_3,
     'u4': solve_uniqueness_test_4,
+    'u5': solve_uniqueness_test_5,
     'w': solve_w_wing,
 }
 
@@ -2117,14 +2152,14 @@ def apply_strategy(grid, list_techniques, explain):
         return False
 
 
-def solve(grid, techniques, explain):
+def solve(grid, options, techniques, explain):
     list_techniques = make_list_techniques(techniques)
     if explain:
         print(grid.output())
         grid.dump()
-    while not grid.solved() and apply_strategy(grid, list_techniques, explain):
+    while not grid.solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
         pass
-    if explain:
+    if explain and not options.step:
         print_single_history(grid)
         grid.dump()
 
@@ -2167,7 +2202,7 @@ def solvegrid(options, techniques, explain):
     if not explain:
         print(grid.output())
         grid.dump()
-    solve(grid, techniques, explain)
+    solve(grid, options, techniques, explain)
     if not explain:
         grid.dump()
     return True, time.time() - t0
@@ -2211,8 +2246,8 @@ def testfile(options, filename, techniques, explain):
                 print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
                 return False, 0
             ngrids += 1
-            solve(grid, techniques, explain)
-            if output == grid.output():
+            solve(grid, options, techniques, explain)
+            if output == grid.output() or output == grid.outputcand():
                 solved += 1
                 if options.trace == 'success':
                     print(input, output, file=f)
@@ -2366,6 +2401,8 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('--techniques', help='techniques',
                         action='store', default='ssts')
+    parser.add_argument('--step', help='apply a single step from the given technique set',
+                        action='store_true', default=False)
     parser.add_argument('--explain', help='explain techniques',
                         action='store_true', default=False)
     parser.add_argument('--decorate', help='candidate decor when tracing grid',

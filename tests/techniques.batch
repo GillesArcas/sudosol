@@ -38,5 +38,6 @@
 --testf tests/u2.txt   --rand 100 --tech n1,h1,u2
 --testf tests/u3.txt   --rand 100 --tech n1,h1,u3
 --testf tests/u4.txt   --rand 100 --tech ssts,u4
+--testf tests/u5.txt   --rand 100 --tech u5
 --testf tests/w.txt    --rand 100 --tech n1,h1,w
 --testf tests/xyz.txt  --rand 100 --tech n1,h1,xyz
