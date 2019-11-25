@@ -1573,7 +1573,7 @@ def solve_XY_chain(grid, explain, remote_pair=False):
                         if cells_to_discard:
                             return apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
 
-    if all_solutions:
+    if all_solutions:  # not used
         for i in range(len(pairs)):
             for j in range(len(pairs)):
                 for chain in adjacency[i][j]:
@@ -2046,7 +2046,7 @@ def solve_uniqueness_test_4_on_unit(grid, explain, candidates, cell1, cell2, row
 def solve_uniqueness_test_5(grid, explain):
     pairs = bivaluedict(grid)
     for candidates, cells in pairs.items():
-        for cell1 in cells:
+        for cell1 in sorted(cells):
             cell2s = [cell for cell in cell1.row
                 if candidates < cell.candidates and len(cell.candidates) == 3]
             cell3s = [cell for cell in cell1.col
@@ -2088,6 +2088,27 @@ def solve_uniqueness_test_6(grid, explain):
     return 0
 
 
+def solve_hidden_rectangle(grid, explain):
+    pairs = bivaluedict(grid)
+    for candidates, cells in pairs.items():
+        for cell1 in sorted(cells):
+            cell2s = [cell for cell in cell1.row if candidates < cell.candidates]
+            cell3s = [cell for cell in cell1.col if candidates < cell.candidates]
+            for cell2, cell3 in itertools.product(cell2s, cell3s):
+                if in_two_boxes(cell1, cell2, cell3):
+                    cell4 = cell3.row[cell2.colnum]
+                    if cell4.candidates >= candidates:
+                        for candidate in list(candidates):
+                            if (len(cell4.same_digit_in_row(candidate)) == 2 and
+                                len(cell4.same_digit_in_col(candidate)) == 2):
+                                extracand = list(cell1.candidates - {candidate})[0]
+                                nb_removed = apply_uniqueness_test_2(grid, 'Hidden rectangle', explain,
+                                            [candidates, [extracand]], [cell1, cell2, cell3, cell4], [cell4])
+                                if nb_removed:
+                                    return nb_removed
+    return 0
+
+
 def in_two_boxes(*cells):
     boxnum = set()
     for cell in cells:
@@ -2106,7 +2127,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,HR,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2164,6 +2185,7 @@ SOLVER = {
     'u4': solve_uniqueness_test_4,
     'u5': solve_uniqueness_test_5,
     'u6': solve_uniqueness_test_6,
+    'hr': solve_hidden_rectangle,
     'w': solve_w_wing,
 }
 
