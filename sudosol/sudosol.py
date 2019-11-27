@@ -30,6 +30,7 @@ ALLDIGITS = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 class Cell:
     def __init__(self, cellnum):
+        self.given = False
         self.value = None
         self.candidates = set(range(1, 10))
         self.cellnum = cellnum
@@ -60,10 +61,12 @@ class Cell:
         return self.rownum < other.rownum or (self.rownum == other.rownum and self.colnum < other.colnum)
 
     def reset(self):
+        self.given = False
         self.value = None
         self.candidates = set(range(1, 10))
 
-    def set_value(self, digit):
+    def set_value(self, digit, given=False):
+        self.given = given
         self.value = digit
         self.candidates = set()
 
@@ -204,52 +207,83 @@ class Grid:
     def units(self):
         return itertools.chain(self.rows, self.cols, self.boxes)
 
-    @classmethod
-    def valid_input_string(cls, str):
-        if re.match(r'[\d.]{81}', str):
-            return True
-        elif re.match(r'(\d{1,9},){80}\d{1,9}', str):
-            return True
-        else:
-            return False
-
     def input(self, str):
-        if re.match(r'[\d.]{81}', str):
-            self.inputstr81(str)
-        elif re.match(r'(\d{1,9},){80}\d{1,9}', str):
-            self.inputcand(str)
+        if re.match(r'^[\d.]{81}$', str):
+            self.input_s81(str)
+        elif re.match(r'^([1-9]{1,9},){80}\d{1,9}$', str):
+            self.input_csv(str)
+        elif re.match(r'^([gvc][1-9]{1,9}){81}$', str):
+            self.input_gvc(str)
         else:
             raise ValueError
 
-    def inputstr81(self, str81):
-        """load a 81 character string
+    def input_s81(self, str81):
+        """load a 81 character string of given values
         """
         self.reset()
         for index, char in enumerate(str81):
             if char not in '.0':
-                self.set_value(self.cells[index], int(char))
+                self.set_value(self.cells[index], int(char), given=True)
 
-    def inputcand(self, strcand):
+    def input_csv(self, strcand):
         """load a comma separated list of candidates, a single candidate is
-        considered as a value
+        considered as a given value
         """
         self.reset()
         for index, candidates in enumerate(strcand.split(',')):
             if len(candidates) == 1:
-                self.set_value(self.cells[index], int(candidates[0]))
+                self.set_value(self.cells[index], int(candidates[0]), given=True)
             else:
                 self.cells[index].candidates = set(int(_) for _ in candidates)
 
-    def output(self):
+    def input_gvc(self, str):
+        """load a given-value-candidates string ([gvc][1-9]{1,9}){81}
+        """
+        self.reset()
+        for index, s in enumerate(re.findall(r'[gvc][1-9]{1,9}', str)):
+            if s[0] == 'g':
+                self.set_value(self.cells[index], int(s[1]), given=True)
+            elif s[0] == 'v':
+                self.set_value(self.cells[index], int(s[1]), given=False)
+            else:
+                self.cells[index].candidates = set(int(_) for _ in s[1:])
+
+    def output_s81(self):
         """return a 81 character string
         """
         return ''.join(str(cell.value) if cell.value else '.' for cell in self.cells)
 
-    def outputcand(self):
+    def output_csv(self):
         """return a comma separated list of candidates, a value is considered
          as a single candidate
         """
         return ','.join(str(cell.value) if cell.value else ''.join(str(_) for _ in sorted(cell.candidates)) for cell in self.cells)
+
+    def output_gvc(self):
+        """return a given-value-candidates string ([gvc][1-9]{1,9}){81}
+        """
+        lst = []
+        for cell in self.cells:
+            if cell.given:
+                lst.append(f'g{cell.value}')
+            elif cell.value:
+                lst.append(f'v{cell.value}')
+            else:
+                lst.append('c' + ''.join(str(_) for _ in sorted(cell.candidates)))
+        return ''.join(lst)
+
+    def compare_string(self, ref):
+        if re.match(r'^[\d.]{81}$', ref):
+            return self.output_s81() == ref
+        elif re.match(r'^([1-9]{1,9},){80}\d{1,9}$', ref):
+            return self.output_csv() == ref
+        elif re.match(r'^([gvc][1-9]{1,9}){81}$', ref):
+            str = self.output_gvc()
+            str = re.sub(r'c([1-9]([gvc]|$))', r'v\1', str)
+            ref = re.sub(r'c([1-9]([gvc]|$))', r'v\1', ref)
+            return str == ref
+        else:
+            raise ValueError
 
     def cell_rc(self, irow, icol):
         return self.rows[irow][icol]
@@ -257,12 +291,12 @@ class Grid:
     def box_rc(self, irow, icol):
         return self.boxes[(irow // 3) * 3 + icol // 3]
 
-    def set_value(self, cell, digit):
+    def set_value(self, cell, digit, given=False):
 
         discarded = defaultdict(set)
         for candidate in cell.candidates:
             discarded[candidate].add(cell)
-        cell.set_value(digit)
+        cell.set_value(digit, given=given)
 
         for peer in cell.peers:
             if digit in peer.candidates:
@@ -297,10 +331,11 @@ class Grid:
         self.history.append(item)
 
 
-CellDecor = Enum('CellDecor', 'VALUE DEFAULTCAND DEFININGCAND REMOVECAND COLOR1 COLOR2 COLOR3 COLOR4')
+CellDecor = Enum('CellDecor', 'VALUE GIVEN DEFAULTCAND DEFININGCAND REMOVECAND COLOR1 COLOR2 COLOR3 COLOR4')
 
 CellDecorColor = {
-    CellDecor.VALUE: Fore.BLUE,
+    CellDecor.GIVEN: Fore.BLUE,
+    CellDecor.VALUE: Fore.CYAN,
     CellDecor.DEFAULTCAND: Fore.WHITE,
     CellDecor.DEFININGCAND: Fore.GREEN,
     CellDecor.REMOVECAND: Fore.RED,
@@ -321,7 +356,8 @@ def colorize_candidates_color(cell, spec_color):
     A cell or a candidate may appear several times. The last color spec is taken into accout.
     """
     if not cell.candidates:
-        res = CellDecorColor[CellDecor.VALUE] + str(cell.value) + Fore.RESET
+        decor = CellDecor.GIVEN if cell.given else CellDecor.VALUE
+        res = CellDecorColor[decor] + str(cell.value) + Fore.RESET
         # manual padding as colorama information fools format padding
         res += ' ' * (9 - 1)
         return res
@@ -340,7 +376,8 @@ def colorize_candidates_color(cell, spec_color):
 
 
 CellDecorChar = {
-    CellDecor.VALUE: '.',
+    CellDecor.GIVEN: '.',
+    CellDecor.VALUE: '+',
     CellDecor.DEFAULTCAND: '',
     CellDecor.DEFININGCAND: '!',
     CellDecor.REMOVECAND: 'x',
@@ -362,7 +399,8 @@ def colorize_candidates_char(cell, spec_color):
     A cell or a candidate may appear several times. The last color spec is taken into accout.
     """
     if not cell.candidates:
-        return str(cell.value) + CellDecorChar[CellDecor.VALUE]
+        decor = CellDecor.GIVEN if cell.given else CellDecor.VALUE
+        return str(cell.value) + CellDecorChar[decor]
 
     if spec_color is None:
         res = str(cell)
@@ -2116,6 +2154,38 @@ def in_two_boxes(*cells):
     return len(boxnum) == 2
 
 
+def solve_avoidable_rectangle_1(grid, explain):
+    for cell1 in grid.cells:
+        if cell1.value and not cell1.given:
+            cell2s = [cell for cell in cell1.row if cell != cell1 and cell.value and not cell.given]
+            cell3s = [cell for cell in cell1.col if cell != cell1 and cell.value and not cell.given]
+            for cell2, cell3 in itertools.product(cell2s, cell3s):
+                if cell2.value == cell3.value:
+                    if in_two_boxes(cell1, cell2, cell3):
+                        cell4 = cell3.row[cell2.colnum]
+                        if cell1.value in cell4.candidates:
+                            return apply_uniqueness_test_2(grid, 'Avoidable rectangle type 1', explain,
+                                            [[cell1.value, cell2.value], [cell1.value]], [cell1, cell2, cell3, cell4], [cell4])
+    return 0
+
+
+def apply_avoidable_rectangle_1(grid, caption, explain, candidates, define_set, remove_set):
+    defcand, extra = candidates
+    remove_dict = candidates_cells(extra, remove_set)
+    if remove_dict:
+        if explain:
+            explain_avoidable_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_avoidable_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_dict):
+    defcand, extra = candidates
+    print_single_history(grid)
+    print(describe_xy_wing(caption, sorted(defcand), define_set, remove_dict))
+    grid.dump(((remove_set, extra, CellDecor.REMOVECAND),))
+
+
 # Solving engine
 
 
@@ -2127,7 +2197,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,AR1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2136,6 +2206,8 @@ def make_list_techniques(strategy):
     ALL = STRATEGY_SSTS + ','  + ','.join(sorted(set(SOLVER.keys()) - set(STRATEGY_SSTS.split(','))))
 
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
+    strategy = re.sub(r'\bhodoku_easy\b', STRATEGY_HODOKU_EASY, strategy)
+    strategy = re.sub(r'\bhodoku_medium\b', STRATEGY_HODOKU_MEDIUM, strategy)
     strategy = re.sub(r'\ball\b', ALL, strategy)
 
     if '-' not in strategy:
@@ -2186,6 +2258,7 @@ SOLVER = {
     'u5': solve_uniqueness_test_5,
     'u6': solve_uniqueness_test_6,
     'hr': solve_hidden_rectangle,
+    'ar1': solve_avoidable_rectangle_1,
     'w': solve_w_wing,
 }
 
@@ -2201,7 +2274,7 @@ def apply_strategy(grid, list_techniques, explain):
 def solve(grid, options, techniques, explain):
     list_techniques = make_list_techniques(techniques)
     if explain:
-        print(grid.output())
+        print(grid.output_s81())
         grid.dump()
     while not grid.solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
         pass
@@ -2235,10 +2308,7 @@ def solvegrid(options, techniques, explain):
         return False, None
 
     if options.format is None:
-        if len(sgrid) == 81:
-            grid.input(sgrid)
-        else:
-            grid.inputcand(sgrid)
+        grid.input(sgrid)
     elif options.format == 'ss':
         load_ss_clipboard(grid, sgrid)
     else:
@@ -2246,7 +2316,7 @@ def solvegrid(options, techniques, explain):
         return False, None
 
     if not explain:
-        print(grid.output())
+        print(grid.output_s81())
         grid.dump()
     solve(grid, options, techniques, explain)
     if not explain:
@@ -2259,8 +2329,11 @@ def testfile(options, filename, techniques, explain):
     grid.decorate = options.decorate
     ngrids = 0
     solved = 0
-    with open(filename) as f:
-        grids = f.readlines()
+    try:
+        with open(filename) as f:
+            grids = f.readlines()
+    except IOError:
+        application_error('unable to read', filename)
 
     # remove empty lines and full line comments before choosing grids
     grids = [line for line in grids if line.strip() and line[0] != '#']
@@ -2284,22 +2357,19 @@ def testfile(options, filename, techniques, explain):
                 line = re.sub('#.*', '', line)
             try:
                 input, output = line.strip().split(None, 1)
-                if Grid.valid_input_string(input) and Grid.valid_input_string(output):
-                    grid.input(input)
+                grid.input(input)
+                solve(grid, options, techniques, explain)
+                if grid.compare_string(output):
+                    solved += 1
+                    if options.trace == 'success':
+                        print(input, output, file=f)
                 else:
-                    raise ValueError
+                    if options.trace == 'failure':
+                        print(input, output, file=f)
+                ngrids += 1
             except ValueError:
                 print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
                 return False, 0
-            ngrids += 1
-            solve(grid, options, techniques, explain)
-            if output == grid.output() or output == grid.outputcand():
-                solved += 1
-                if options.trace == 'success':
-                    print(input, output, file=f)
-            else:
-                if options.trace == 'failure':
-                    print(input, output, file=f)
     finally:
         if options.output:
             f.close()
@@ -2384,7 +2454,7 @@ def compare_output(options):
         output = remove_timing(output)
 
         res, diff = list_compare('ref', 'res', reference, output)
-        print(f'COMPARE OK' if res else 'COMPARE FAILURE')
+        print(f'COMPARE OK:' if res else 'COMPARE FAILURE:', compare)
         if not res:
             for _ in diff[0:20]:
                 print(_, end='')
@@ -2420,6 +2490,11 @@ def list_compare(tag1, tag2, list1, list2):
             diff.append('line %s %d: %s' % (tag2, i + 1, y))
             res = False
     return res, diff
+
+
+def application_error(*args):
+    print('sudosol error:', *args)
+    exit(1)
 
 
 def parse_command_line(argstring=None):

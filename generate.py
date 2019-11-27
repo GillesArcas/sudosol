@@ -167,9 +167,10 @@ def main3():
     with open(name_out, 'wt') as file_out:
         for rec in getrecord(TMP2):
             rec = pack_pencilmarks(rec)
+            giv = rec[0]
             res = before_after_tech(caption, rec)
             if res:
-                print(res[0], res[1], '#', rec[0], file=file_out)
+                print(format_gvc(giv, res[0]), format_gvc(giv, res[1]), '#', rec[0], file=file_out)
 
     # clean
     os.remove(TMP1)
@@ -202,6 +203,18 @@ def before_after_tech(tech, rec):
         return m.group(1), m.group(2)
     else:
         return None
+
+
+def format_gvc(given, candidates):
+    lst = []
+    for g, c in zip(given, candidates.split(',')):
+        if g in '123456789':
+            lst.append(f'g{g}')
+        elif len(c) == 1:
+            lst.append(f'v{c}')
+        else:
+            lst.append(f'c{c}')
+    return ''.join(lst)
 
 
 if __name__ == '__main__':
