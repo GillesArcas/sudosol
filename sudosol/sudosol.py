@@ -2169,23 +2169,6 @@ def solve_avoidable_rectangle_1(grid, explain):
     return 0
 
 
-def apply_avoidable_rectangle_1(grid, caption, explain, candidates, define_set, remove_set):
-    defcand, extra = candidates
-    remove_dict = candidates_cells(extra, remove_set)
-    if remove_dict:
-        if explain:
-            explain_avoidable_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_dict)
-        return apply_remove_candidates(grid, caption, remove_dict)
-    return 0
-
-
-def explain_avoidable_rectangle_1(grid, caption, candidates, define_set, remove_set, remove_dict):
-    defcand, extra = candidates
-    print_single_history(grid)
-    print(describe_xy_wing(caption, sorted(defcand), define_set, remove_dict))
-    grid.dump(((remove_set, extra, CellDecor.REMOVECAND),))
-
-
 # Solving engine
 
 
