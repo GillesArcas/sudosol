@@ -2169,6 +2169,51 @@ def solve_avoidable_rectangle_1(grid, explain):
     return 0
 
 
+def solve_avoidable_rectangle_2(grid, explain):
+    for cell1 in grid.cells:
+        if cell1.value and not cell1.given:
+            cell2s = [cell for cell in cell1.row if cell != cell1]  # TODO: start after cell?
+            cell3s = [cell for cell in cell1.col if cell != cell1]
+            for cell2, cell3 in itertools.product(cell2s, cell3s):
+                if (cell2.value and not cell2.given and len(cell3.candidates) == 2 and cell2.value in cell3.candidates or
+                    cell3.value and not cell3.given and len(cell2.candidates) == 2 and cell3.value in cell2.candidates):
+                    if in_two_boxes(cell1, cell2, cell3):
+                        cell4 = cell3.row[cell2.colnum]
+                        if len(cell4.candidates) == 2 and cell1.value in cell4.candidates:
+                            extracand = list(cell4.candidates - {cell1.value})[0]
+                            if (cell2.candidates and extracand in cell2.candidates) or extracand in cell3.candidates:
+                                if cell2.candidates:
+                                    remove_set = cellinter(cell4.same_digit_peers(extracand), cell2.same_digit_peers(extracand))
+                                    defcand = [cell1.value, cell3.value]
+                                else:
+                                    remove_set = cellinter(cell4.same_digit_peers(extracand), cell3.same_digit_peers(extracand))
+                                    defcand = [cell1.value, cell2.value]
+                                nb_removed = apply_avoidable_rectangle_2(grid, 'Avoidable rectangle type 2', explain,
+                                                [defcand, [extracand]], [cell1, cell2, cell3, cell4], remove_set)
+                                if nb_removed:
+                                    return nb_removed
+    return 0
+
+
+def apply_avoidable_rectangle_2(grid, caption, explain, candidates, define_set, remove_set):
+    defcand, extra = candidates
+    remove_dict = candidates_cells(extra, remove_set)
+    if remove_dict:
+        if explain:
+            explain_avoidable_rectangle_2(grid, caption, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_avoidable_rectangle_2(grid, caption, candidates, define_set, remove_set, remove_dict):
+    defcand, extracand = candidates
+    print_single_history(grid)
+    print(describe_xy_wing(caption, sorted(defcand), define_set, remove_dict))
+    grid.dump(((define_set, defcand, CellDecor.DEFININGCAND),
+               (define_set, extracand, CellDecor.COLOR4),
+               (remove_set, extracand, CellDecor.REMOVECAND),))
+
+
 # Solving engine
 
 
@@ -2180,7 +2225,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,AR2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,FBF2,SBF2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2242,6 +2287,7 @@ SOLVER = {
     'u6': solve_uniqueness_test_6,
     'hr': solve_hidden_rectangle,
     'ar1': solve_avoidable_rectangle_1,
+    'ar2': solve_avoidable_rectangle_2,
     'w': solve_w_wing,
 }
 
