@@ -23,6 +23,8 @@
 --testf tests/l3.txt  --rand 100 --tech n1,h1,l2,l3
 
 --testf tests/bf4-ssts.txt  --rand 100 --tech ssts,bf4
+--testf tests/fbf2.txt  --rand 100 --tech fbf2 --step
+--testf tests/sbf2.txt  --rand 100 --tech sbf2 --step
 
 --testf tests/x.txt   --rand 100 --tech ssts,x
 --testf tests/2sk.txt --rand 100 --tech ssts,2sk-sc1,sc2,mc1,mc2

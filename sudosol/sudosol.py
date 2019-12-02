@@ -37,11 +37,15 @@ class Cell:
         self.rownum = cellnum // 9
         self.colnum = cellnum % 9
         self.boxnum = (self.rownum // 3) * 3 + self.colnum // 3
+        self.boxrownum = self.cellnum // 3
+        self.boxcolnum = self.colnum * 3 + self.rownum // 3
 
         # to be completed in grid.__init__
         self.row = set()
         self.col = set()
         self.box = set()
+        self.boxrow = set()
+        self.boxcol = set()
         self.peers = set()
 
     def __str__(self):
@@ -80,6 +84,12 @@ class Cell:
 
     def mcolnum(self):
         return self.colnum
+
+    def mboxrow(self):
+        return self.boxrow
+
+    def mboxcol(self):
+        return self.boxcol
 
     def is_pair(self):
         return len(self.candidates) == 2
@@ -187,6 +197,8 @@ class Grid:
             cell.row = self.rows[cell.rownum]
             cell.col = self.cols[cell.colnum]
             cell.box = self.boxes[cell.boxnum]
+            cell.boxrow = self.horizontal_triplets[cell.boxrownum]
+            cell.boxcol = self.vertical_triplets[cell.boxcolnum]
 
         # peers
         # properties: x not in x.peers, x in y.peers equivalent to y in x.peers
@@ -932,6 +944,99 @@ def describe_basic_fish(legend, candidates, subset, dir, remove_dict):
     return '%s: %s %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(candidates)),
         defcells,
+        discarded_text(remove_dict))
+
+
+def solve_finned_x_wing(grid, explain):
+    return solve_finned_x_wing_tech(grid, explain, tech={'Finned'})
+
+
+def solve_sashimi_x_wing(grid, explain):
+    return solve_finned_x_wing_tech(grid, explain, tech={'Sashimi'})
+
+
+def solve_finned_x_wing_tech(grid, explain, tech):
+    for digit in ALLDIGITS:
+        nb_removed = solve_finned_x_wing_unit(grid, explain, digit, grid.rows,
+            Cell.mrownum, Cell.mcolnum, Cell.mboxrow, Cell.mboxcol, tech=tech)
+        if nb_removed:
+            return nb_removed
+        nb_removed = solve_finned_x_wing_unit(grid, explain, digit, grid.cols,
+            Cell.mcolnum, Cell.mrownum, Cell.mboxcol, Cell.mboxrow, tech=tech)
+        if nb_removed:
+            return nb_removed
+    return 0
+
+
+def solve_finned_x_wing_unit(grid, explain, digit, rows, rownum, colnum, mboxrow, mboxcol, tech):
+    for row in rows:
+        rowcells = [cell for cell in row if digit in cell.candidates]
+        if len(rowcells) == 2:
+            cell1, cell2 = rowcells
+            for row2 in rows:
+                if row2 == row:
+                    continue
+                cell3 = row2[colnum(cell1)]
+                cell4 = row2[colnum(cell2)]
+                if digit in cell3.candidates or digit in cell4.candidates:
+                    tri3 = mboxrow(cell3)
+                    tri4 = mboxrow(cell4)
+                    row2num = sum(1 for cell in row2 if digit in cell.candidates)
+                    tri3num = sum(1 for cell in tri3 if digit in cell.candidates)
+                    tri4num = sum(1 for cell in tri4 if digit in cell.candidates)
+                    if row2num == tri3num + tri4num:
+                        if ('Finned' in tech and digit in cell3.candidates and tri3num == 1 and
+                            digit in cell4.candidates and tri4num > 1):
+                            flavor = 'Finned'
+                        elif ('Finned' in tech and digit in cell3.candidates and tri3num > 1 and
+                            digit in cell4.candidates and tri4num == 1):
+                            flavor = 'Finned'
+                            cell1, cell2, cell3, cell4, tri3, tri4 = cell2, cell1, cell4, cell3, tri4, tri3
+                        elif 'Sashimi' in tech and digit in cell3.candidates and tri3num == 1 and tri4num > 1: # >= 1
+                            flavor = 'Sashimi'
+                        elif 'Sashimi' in tech and digit in cell4.candidates and tri3num > 1 and tri4num == 1:
+                            flavor = 'Sashimi'
+                            cell1, cell2, cell3, cell4, tri3, tri4 = cell2, cell1, cell4, cell3, tri4, tri3
+                        else:
+                            continue
+                        remove_set = [cell for cell in mboxcol(cell4) if cell != cell2 and cell != cell4]
+                        nb_removed = apply_finned_fish(grid, f'{flavor} X-wing', explain, [digit],
+                            [[cell1, cell2], [cell3, cell4], set(tri4) - {cell4}], remove_set)
+                        if nb_removed:
+                            return nb_removed
+    return 0
+
+
+def apply_finned_fish(grid, caption, explain, candidates, defunits, cells_to_discard):
+    remove_dict = candidates_cells(candidates, cells_to_discard)
+    if remove_dict:
+        if explain:
+            explain_finned_fish(grid, caption, candidates, defunits, cells_to_discard, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_finned_fish(grid, caption, candidates, defunits, cells_to_discard, remove_dict):
+    orientation = 'H' if defunits[0][0].rownum == defunits[0][1].rownum else 'V'
+    subset = cellunionx(*defunits[:-1])
+    fin = [cell for cell in defunits[-1] if candidates[0] in cell.candidates]
+    print_single_history(grid)
+    print(describe_finned_fish(caption, candidates, subset, fin, orientation, remove_dict))
+    grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
+               (fin, candidates, CellDecor.COLOR3),
+               (cells_to_discard, candidates, CellDecor.REMOVECAND)))
+
+
+def describe_finned_fish(legend, candidates, subset, fin, orientation, remove_dict):
+    rows = {cell.rownum + 1 for cell in subset}
+    cols = {cell.colnum + 1 for cell in subset}
+    srows = ''.join(f'{_}' for _ in sorted(list(rows)))
+    scols = ''.join(f'{_}' for _ in sorted(list(cols)))
+    defcells = f'r{srows} c{scols}' if orientation == 'H' else f'c{scols} r{srows}'
+    return '%s: %s %s f%s => %s' % (legend,
+        ','.join(f'{_}' for _ in sorted(candidates)),
+        defcells,
+        packed_coordinates(fin),
         discarded_text(remove_dict))
 
 
@@ -2225,7 +2330,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 # upper case techniques are not yet implemented
 STRATEGY_HODOKU_EASY = 'n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,FBF2,SBF2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,fbf2,sbf2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2265,6 +2370,8 @@ SOLVER = {
     'bf2': solve_X_wing,
     'bf3': solve_swordfish,
     'bf4': solve_jellyfish,
+    'fbf2': solve_finned_x_wing,
+    'sbf2': solve_sashimi_x_wing,
     'sc1': solve_coloring_trap,
     'sc2': solve_coloring_wrap,
     'mc1': solve_multi_coloring_type_1,
