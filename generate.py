@@ -2,23 +2,12 @@
 Generate or solve sudoku grids using hodoku.
 """
 
+import argparse
 import sys
 import os
 import time
 import subprocess
 import re
-
-
-def tailf(fname):
-    f = open(fname)
-    while True:
-        line = f.readline().strip()
-
-        if not line:
-            time.sleep(0.1)
-            continue
-
-        yield line
 
 
 NAME_GENERATED = 'generated.txt'
@@ -27,12 +16,62 @@ NAME_SOLVED = 'solved.txt'
 HODOKU_JAR = 'hodoku.jar'
 
 
-def main():
-    tech = sys.argv[1]
-    name_out = sys.argv[2]
-    numwanted = int(sys.argv[3])
-    enable_ssts = len(sys.argv) == 5 and sys.argv[4] == 'ssts'
-    enable_x = len(sys.argv) == 5 and sys.argv[4] == 'x'
+USAGE = """
+generate.py test tech name_out num_wanted s|ssts|x
+    technique   hodoku ID's
+    s|ssts|x    technique occurs after and is followrd by only singles, ssts
+                techniques or any technique (default to s)
+    generate list of grids with solution for given techniques
+
+generate.py solve name_in name_out
+    add final grid to list of grids
+
+generate.py step name_in name_out caption
+    caption     hodoku caption of the technique
+    input a list of grids with a given technique, output pencil marks just
+    before application of the technique
+"""
+
+
+def parse_command_line():
+    parser = argparse.ArgumentParser(
+        description=USAGE,
+        usage=argparse.SUPPRESS,
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    subparsers = parser.add_subparsers()
+
+    _ = subparsers.add_parser('test')
+    _.add_argument('technique')
+    _.add_argument('name_out')
+    _.add_argument('numwanted', type=int)
+    _.add_argument('context', nargs='?', choices=['s', 'ssts', 'x'], default='s')
+    _.set_defaults(func=main_testdeck)
+
+    _ = subparsers.add_parser('solve')
+    _.add_argument('name_in')
+    _.add_argument('name_out')
+    _.set_defaults(func=main_solve)
+
+    _ = subparsers.add_parser('step')
+    _.add_argument('name_in')
+    _.add_argument('name_out')
+    _.add_argument('caption')
+    _.set_defaults(func=main_step)
+
+    return parser.parse_args()
+
+
+def main_testdeck(args):
+    """Generate a testdeck for sudosol. Starting grid and solution grid on
+    the same line.
+    """
+    tech = args.technique
+    name_out = args.name_out
+    numwanted = args.numwanted
+    enable_s = args.context == 's'
+    enable_ssts = args.context == 'ssts'
+    enable_x = args.context ==  'x'
 
     name_generated = f'{tech}-{NAME_GENERATED}'
 
@@ -47,28 +86,44 @@ def main():
     if num_existing == numwanted:
         exit(0)
 
-    # check hodoku presence
-    if not os.path.isfile(HODOKU_JAR):
-        print('Error: hodoku.jar not found')
-        exit(1)
-
     # start hodoku in generate mode
-    mode = 0 if enable_x else 1 if enable_ssts else 3
+    mode = {'x': 0, 'ssts': 1, 's': 3}[args.context]
     comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:{mode} /o {name_generated}'
-    p = subprocess.Popen(comm.split())
-    time.sleep(1)
+    print(comm)
+    numobtained = num_existing
 
     try:
-        numobtained = num_existing
-        for line in tailf(name_generated):
-            if enable_ssts or 'ssts' not in line:
-                # even with tech:3 some grids are generated requiring ssts techniques
-                # these lines have to be filtered
-                numobtained += 1
-                print(numobtained)
-                if numobtained >= numwanted:
-                    p.terminate()
+        cont = True
+        while cont:
+            # errors and warnings on stderr
+            p = subprocess.Popen(comm.split(), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+            time.sleep(0.1)
+            print('STARTED')
+
+            while True:
+                output = p.stdout.readline()
+                output = output.decode("ascii", errors="ignore")
+                if output == '' and p.poll() is not None:
+                    cont = False
                     break
+                if output:
+                    print(output.strip())
+                    if 'Exception' in output:
+                        p.terminate()
+                        print('Exception detected')
+                        break
+                    if re.match(r'[1-9.]{81}', output):
+                        # even with tech:3 some grids are generated requiring ssts techniques
+                        # these lines have to be filtered
+                        if args.context == 's' and 'ssts' in output:
+                            continue
+                        else:
+                            numobtained += 1
+                            print(f'{numobtained}/{numwanted}')
+                            if numobtained >= numwanted:
+                                p.terminate()
+                                cont = False
+                                break
 
     except KeyboardInterrupt:
         p.terminate()
@@ -76,8 +131,7 @@ def main():
 
     except Exception as e:
         p.terminate()
-        print("Unknown error during execution !")
-        print(e)
+        print("Error during execution:", e)
         sys.exit(1)
 
     # make file of grids to be solved
@@ -107,22 +161,15 @@ def main():
     os.remove(NAME_SOLVED)
 
 
-def main2():
-    assert sys.argv[1] == 'solve'
-    name_in = sys.argv[2]
-    name_out = sys.argv[3]
-
-    # check hodoku presence
-    if not os.path.isfile(HODOKU_JAR):
-        print('Error: hodoku.jar not found')
-        exit(1)
-
+def main_solve(args):
+    """Take a file with starting grids only and add solution grids.
+    """
     # start hodoku in solving mode (hodoku must be in path)
-    comm = f'java -jar {HODOKU_JAR} /bs {name_in} /vs /o {NAME_SOLVED}'
+    comm = f'java -jar {HODOKU_JAR} /bs {args.name_in} /vs /o {NAME_SOLVED}'
     subprocess.check_output(comm)
 
     # merge
-    with open(name_in) as f1, open(NAME_SOLVED) as f2, open(name_out, 'wt') as g:
+    with open(args.name_in) as f1, open(NAME_SOLVED) as f2, open(args.name_out, 'wt') as g:
         numobtained = 0
         for line1, line2 in zip(f1, f2):
             line = line1[0:81] + '  ' + line2[0:81] + '  #\n'
@@ -133,27 +180,17 @@ def main2():
     os.remove(NAME_SOLVED)
 
 
-def main3():
+def main_step(args):
     """Take a file generated for some technique and generate the file focus on
     the positions before and after apllication of the technique. Before and after
     positions are represented as the lists of candidates. Requires the full
     captions associated with the technique as an argument.
     """
-    assert sys.argv[1] == 'step'
-    name_in = sys.argv[2]
-    name_out = sys.argv[3]
-    caption = sys.argv[4]
-
     TMP1 = 'tmp1.txt'
     TMP2 = 'tmp2.txt'
 
-    # check hodoku presence
-    if not os.path.isfile(HODOKU_JAR):
-        print('Error: hodoku.jar not found')
-        exit(1)
-
     # make sure there is only one value string in line
-    with open(name_in) as f, open(TMP1, 'wt') as g:
+    with open(args.name_in) as f, open(TMP1, 'wt') as g:
         for line in f:
             x = line.split()
             print(x[0], file=g)
@@ -164,11 +201,11 @@ def main3():
     comm = f'java -jar {HODOKU_JAR} /bs {TMP1} /vp /vg c:{listtech} /o {TMP2}'
     subprocess.check_output(comm)
 
-    with open(name_out, 'wt') as file_out:
+    with open(args.name_out, 'wt') as file_out:
         for rec in getrecord(TMP2):
             rec = pack_pencilmarks(rec)
             giv = rec[0]
-            res = before_after_tech(caption, rec)
+            res = before_after_tech(args.caption, rec)
             if res:
                 print(format_gvc(giv, res[0]), format_gvc(giv, res[1]), '#', rec[0], file=file_out)
 
@@ -217,10 +254,15 @@ def format_gvc(given, candidates):
     return ''.join(lst)
 
 
+def main():
+    # check hodoku presence
+    if not os.path.isfile(HODOKU_JAR):
+        print('Error: hodoku.jar not found')
+        exit(1)
+
+    args = parse_command_line()
+    args.func(args)
+
+
 if __name__ == '__main__':
-    if sys.argv[1] == 'solve':
-        main2()
-    elif sys.argv[1] == 'step':
-        main3()
-    else:
-        main()
+    main()
