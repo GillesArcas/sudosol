@@ -46,6 +46,7 @@ def parse_command_line():
     _.add_argument('name_out')
     _.add_argument('numwanted', type=int)
     _.add_argument('context', nargs='?', choices=['s', 'ssts', 'x'], default='s')
+    _.add_argument('--timeout', action='store', type=int, default=3600)
     _.set_defaults(func=main_testdeck)
 
     _ = subparsers.add_parser('solve')
@@ -69,10 +70,6 @@ def main_testdeck(args):
     tech = args.technique
     name_out = args.name_out
     numwanted = args.numwanted
-    enable_s = args.context == 's'
-    enable_ssts = args.context == 'ssts'
-    enable_x = args.context ==  'x'
-
     name_generated = f'{tech}-{NAME_GENERATED}'
 
     # calculate number of existing solutions if any
@@ -91,6 +88,7 @@ def main_testdeck(args):
     comm = f'java -jar {HODOKU_JAR} /s /sc {tech}:{mode} /o {name_generated}'
     print(comm)
     numobtained = num_existing
+    t0 = time.time()
 
     try:
         cont = True
@@ -108,6 +106,12 @@ def main_testdeck(args):
                     break
                 if output:
                     print(output.strip())
+                    runtime = time.time() - t0
+                    if numobtained == 0 and runtime > args.timeout:
+                        p.terminate()
+                        cont = False
+                        print(f'Time out: no solution generated in {int(runtime)} seconds')
+                        break
                     if 'Exception' in output:
                         p.terminate()
                         print('Exception detected')
@@ -148,8 +152,10 @@ def main_testdeck(args):
     with open(name_generated) as f1, open(NAME_SOLVED) as f2, open(name_out, 'at') as g:
         numobtained = 0
         for line1, line2 in zip(f1, f2):
-            if enable_ssts or 'ssts' not in line1:
-                line = line1[0:81] + '  ' + line2[0:81] + line1[81:]
+            if args.context == 's' and 'ssts' in line1:
+                continue
+            else:
+                line = line1[:81] + '  ' + line2[:81] + line1[81:]
                 print(line, end='', file=g)
                 numobtained += 1
                 if numobtained == numwanted:
