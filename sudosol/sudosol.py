@@ -437,38 +437,6 @@ def retain_decor(cell, spec_color):
     return candcol
 
 
-def candidate_in_cells(digit, cells):
-    for cell in cells:
-        if digit in cell.candidates:
-            return True
-    else:
-        return False
-
-
-def cellinter(cells1, cells2):
-    return [cell for cell in cells1 if cell in cells2]
-
-
-def cellunion(cells1, cells2):
-    return set.union(set(cells1), set(cells2))
-
-
-def cellunionx(*list_of_list_cells):
-    return set.union(*[set(cells) for cells in list_of_list_cells])
-
-
-def cellinterx(*list_of_list_cells):
-    return set.intersection(*[set(cells) for cells in list_of_list_cells])
-
-
-def bivaluedict(grid):
-    pairs = defaultdict(set)
-    for cell in grid.cells:
-        if cell.is_pair():
-            pairs[frozenset(cell.candidates)].add(cell)
-    return pairs
-
-
 # Loading
 
 
@@ -508,6 +476,48 @@ def load_ss_clipboard(grid, content):
 
 
 # Helpers
+
+
+def cellinter(cells1, cells2):
+    return [cell for cell in cells1 if cell in cells2]
+
+
+def cellunion(cells1, cells2):
+    return set.union(set(cells1), set(cells2))
+
+
+def cellunionx(*list_of_list_cells):
+    return set.union(*[set(cells) for cells in list_of_list_cells])
+
+
+def cellinterx(*list_of_list_cells):
+    return set.intersection(*[set(cells) for cells in list_of_list_cells])
+
+
+def candidate_in_cells(digit, cells):
+    for cell in cells:
+        if digit in cell.candidates:
+            return True
+    else:
+        return False
+
+
+def candidate_union(cells):
+    """return the union of candidates in cells. cells is a collection supporting
+    for loops
+    """
+    return set().union(*(cell.candidates for cell in cells))
+
+
+def bivaluedict(grid):
+    """return a dictionary with pairs of candidates as keys, and sets of cells
+    as values.
+    """
+    pairs = defaultdict(set)
+    for cell in grid.cells:
+        if cell.is_pair():
+            pairs[frozenset(cell.candidates)].add(cell)
+    return pairs
 
 
 def candidates_cells(candidates, cells):
@@ -576,7 +586,7 @@ def single_history(grid):
     start = len(grid.history) - 1
 
     i = start
-    while i >= 0 and grid.history[i][0] in ('Naked single', 'Hidden single'):
+    while i >= 0 and grid.history[i][0] in ('Full house', 'Naked single', 'Hidden single'):
         i -= 1
 
     i += 1
@@ -601,6 +611,31 @@ def print_single_history(grid):
 
 
 # Singles
+
+
+def solve_full_house(grid, explain):
+    unset = []
+    for row in grid.rows:
+        unset = [cell for cell in row if cell.value is None]
+        if len(unset) == 1:
+            break
+    if len(unset) != 1:
+        for col in grid.cols:
+            unset = [cell for cell in col if cell.value is None]
+            if len(unset) == 1:
+                break
+    if len(unset) != 1:
+        for box in grid.boxes:
+            unset = [cell for cell in box if cell.value is None]
+            if len(unset) == 1:
+                break
+    if len(unset) == 1:
+        cell = unset[0]
+        cand = list(cell.candidates)[0]
+        discarded = grid.set_value(cell, cand)
+        grid.push(('Full house', 'value', cell, cand, discarded))
+        return 10
+    return 0
 
 
 def solve_single_candidate(grid, explain):
@@ -782,54 +817,46 @@ def describe_locked_candidates(caption, flavor, candidates, define_set, remove_d
 
 
 def solve_nacked_pairs(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, None, 2, 'Naked pair', explain) for x in grid.units())
+    nb_removed = (nacked_sets_n(grid, x, 2, 'Naked pair', explain) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
 def solve_nacked_triples(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, None, 3, 'Naked triple', explain) for x in grid.units())
+    nb_removed = (nacked_sets_n(grid, x, 3, 'Naked triple', explain) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
 def solve_nacked_quads(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, None, 4, 'Naked quadruple', explain) for x in grid.units())
+    nb_removed = (nacked_sets_n(grid, x, 4, 'Naked quadruple', explain) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def nacked_sets_n(grid, cells, subcells, length, legend, explain):
-    if subcells is None:
-        subcells = [cell for cell in cells if len(cell.candidates) > 1]
-    for subset in itertools.combinations(subcells, length):
-        candidates = set().union(*(cell.candidates for cell in subset))
-        if len(candidates) == length:
+def nacked_sets_n(grid, unit, size, legend, explain):
+    subcells = [cell for cell in unit if len(cell.candidates) > 1]
+    for subset in itertools.combinations(subcells, size):
+        candidates = candidate_union(subset)
+        if len(candidates) == size:
             cells_less_subset = [cell for cell in subcells if cell not in subset]
-            nb_removed = apply_naked_set(grid, legend, explain, candidates, subset, cells_less_subset, subcells)
+            nb_removed = apply_naked_set(grid, legend, explain, candidates, subset, cells_less_subset)
             if nb_removed:
                 return nb_removed
     return 0
 
 
-def apply_naked_set(grid, caption, explain, candidates, subset, remove_set, subcells):
+def apply_naked_set(grid, caption, explain, candidates, subset, remove_set):
     remove_dict = candidates_cells(candidates, remove_set)
     if remove_dict:
         if explain:
-            explain_naked_set(grid, caption, candidates, subset, remove_set, subcells, remove_dict)
+            explain_naked_set(grid, caption, candidates, subset, remove_set, remove_dict)
         return apply_remove_candidates(grid, caption, remove_dict)
     return 0
 
 
-def explain_naked_set(grid, caption, candidates, subset, remove_set, subcells, remove_dict):
+def explain_naked_set(grid, caption, candidates, subset, remove_set, remove_dict):
     print_single_history(grid)
-    if caption.startswith('Naked'):
-        print(describe_locked_set(caption, candidates, subset, remove_dict))
-        grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
-                    (remove_set, candidates, CellDecor.REMOVECAND)))
-    if caption.startswith('Hidden'):
-        allcand = set().union(*(cell.candidates for cell in subcells))
-        print(describe_locked_set(caption, allcand - candidates, remove_set, remove_dict))
-        grid.dump(((remove_set,
-                    ALLCAND - candidates, CellDecor.DEFININGCAND,
-                    candidates, CellDecor.REMOVECAND),))
+    print(describe_locked_set(caption, candidates, subset, remove_dict))
+    grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
+                (remove_set, candidates, CellDecor.REMOVECAND)))
 
 
 def solve_hidden_pair(grid, explain):
@@ -847,15 +874,37 @@ def solve_hidden_quad(grid, explain):
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_hidden_set(grid, cells, length, legend, explain):
-    subcells = [cell for cell in cells if len(cell.candidates) > 1]
-    for len_naked_set in range(5, 10 - length):
-        len_hidden_set = len(subcells) - len_naked_set
-        if len_hidden_set == length:
-            nb_removed = nacked_sets_n(grid, cells, subcells, len_naked_set, legend, explain)
-            if nb_removed:
-                return nb_removed
+def solve_hidden_set(grid, unit, size, caption, explain):
+    cells = [cell for cell in unit if len(cell.candidates) > 1]
+    for subset in itertools.combinations(cells, size):
+        candidates = candidate_union(subset)
+        cellcompl = set(cells) - set(subset)
+        candcompl = candidate_union(cellcompl)
+        for candset in itertools.combinations(candidates, size):
+            if not set(candset).intersection(candcompl):
+                if all(set(candset).intersection(cell.candidates) for cell in subset):
+                    nb_removed = apply_hidden_set(grid, caption, explain, candidates - set(candset), subset, subset)
+                    if nb_removed:
+                        return nb_removed
     return 0
+
+
+def apply_hidden_set(grid, caption, explain, candidates, define_set, remove_set):
+    remove_dict = candidates_cells(candidates, remove_set)
+    if remove_dict:
+        if explain:
+            explain_hidden_set(grid, caption, candidates, define_set, remove_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_hidden_set(grid, caption, candidates, define_set, remove_set, remove_dict):
+    print_single_history(grid)
+    allcand = candidate_union(define_set)
+    print(describe_locked_set(caption, allcand - candidates, remove_set, remove_dict))
+    grid.dump(((remove_set,
+                ALLCAND - candidates, CellDecor.DEFININGCAND,
+                candidates, CellDecor.REMOVECAND),))
 
 
 # Basic fishes
@@ -945,6 +994,9 @@ def describe_basic_fish(legend, candidates, subset, dir, remove_dict):
         ','.join(f'{_}' for _ in sorted(candidates)),
         defcells,
         discarded_text(remove_dict))
+
+
+# Finned fishes
 
 
 def solve_finned_x_wing(grid, explain):
@@ -2052,8 +2104,8 @@ def solve_uniqueness_test_2_on_unit(grid, explain, candidates, cell1, cell2, row
                 if in_two_boxes(cell1, cell2, cell3):
                     if candidates < cell3.candidates and len(cell3.candidates) == 3 and cell3.candidates == cell4.candidates:
                         extra = min(cell3.candidates - candidates)
-                        remove_set  = cellinter(cell3.same_digit_peers(extra),
-                                                cell4.same_digit_peers(extra))
+                        remove_set = cellinter(cell3.same_digit_peers(extra),
+                                               cell4.same_digit_peers(extra))
                         nb_removed = apply_uniqueness_test_2(grid, 'Uniqueness test 2', explain,
                             [candidates, [extra]], [cell1, cell2, cell3, cell4], remove_set)
                         if nb_removed:
@@ -2100,17 +2152,17 @@ def solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, row
                 cell4 = row[colnum(cell2)]
                 if in_two_boxes(cell1, cell2, cell3):
                     if candidates < cell3.candidates and candidates < cell4.candidates:
-                        nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, row)
+                        nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, row)
                         if nb_removed:
                             return nb_removed
                         if cell3.boxnum == cell4.boxnum:
-                            nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, grid.boxes[cell3.boxnum])
+                            nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, grid.boxes[cell3.boxnum])
                             if nb_removed:
                                 return nb_removed
     return 0
 
 
-def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, rownum, colnum, target):
+def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, target):
     # will search for subset in target
     subcells = {cell for cell in target if len(cell.candidates) > 1}
     subcells.discard(cell3)
@@ -2328,9 +2380,9 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 
 # Hodoku
 # upper case techniques are not yet implemented
-STRATEGY_HODOKU_EASY = 'n1,h1'
-STRATEGY_HODOKU_MEDIUM = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
-STRATEGY_HODOKU_HARD = 'n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,fbf2,sbf2,sc1,sc2,mc1,mc2'
+STRATEGY_HODOKU_EASY = 'fh,n1,h1'
+STRATEGY_HODOKU_MEDIUM = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
+STRATEGY_HODOKU_HARD = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,fbf2,sbf2,sc1,sc2,mc1,mc2'
 STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
@@ -2341,6 +2393,7 @@ def make_list_techniques(strategy):
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
     strategy = re.sub(r'\bhodoku_easy\b', STRATEGY_HODOKU_EASY, strategy)
     strategy = re.sub(r'\bhodoku_medium\b', STRATEGY_HODOKU_MEDIUM, strategy)
+    strategy = re.sub(r'\bhodoku_hard\b', STRATEGY_HODOKU_HARD , strategy)
     strategy = re.sub(r'\ball\b', ALL, strategy)
 
     if '-' not in strategy:
@@ -2355,6 +2408,7 @@ def make_list_techniques(strategy):
 
 
 SOLVER = {
+    'fh': solve_full_house,
     'n1': solve_single_candidate,
     'n2': solve_nacked_pairs,
     'n3': solve_nacked_triples,

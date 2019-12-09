@@ -16,9 +16,6 @@
 --testf tests/mc2.txt --rand 100 --tech ssts
 --testf tests/xy.txt  --rand 100 --tech ssts
 
---testf tests/sudocue_The_Learning_Curve_Collection.txt  --rand 100 --tech ssts
---testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech ssts
-
 --testf tests/l2.txt  --rand 100 --tech n1,h1,l2,l3
 --testf tests/l3.txt  --rand 100 --tech n1,h1,l2,l3
 
@@ -47,3 +44,8 @@
 --testf tests/ar2.txt  --rand 100 --tech ar2 --step
 --testf tests/w.txt    --rand 100 --tech n1,h1,w
 --testf tests/xyz.txt  --rand 100 --tech n1,h1,xyz
+
+--testf tests/sudocue_The_Learning_Curve_Collection.txt  --rand 100 --tech ssts
+--testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech ssts
+--testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech hodoku_hard
+
