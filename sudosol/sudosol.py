@@ -161,44 +161,44 @@ class Grid:
             self.boxes.append(rows[0][6:9] + rows[1][6:9] + rows[2][6:9])
 
         # make the list of horizontal triplets
-        self.horizontal_triplets = [self.cells[i:i + 3] for i in range(0, 81, 3)]
+        self.boxrows = [self.cells[i:i + 3] for i in range(0, 81, 3)]
 
         # make the list of vertical triplets
-        self.vertical_triplets = []
+        self.boxcols = []
         for col in self.cols:
-            self.vertical_triplets.extend([col[i:i + 3] for i in range(0, 9, 3)])
+            self.boxcols.extend([col[i:i + 3] for i in range(0, 9, 3)])
 
         # make the list of complements of triplets in rows:
-        self.rows_less_triplet = []
-        for triplet in self.horizontal_triplets:
-            row_less_triplet = [cell for cell in self.rows[triplet[0].rownum] if cell not in triplet]
-            self.rows_less_triplet.append(row_less_triplet)
+        self.rows_less_boxrow = []
+        for triplet in self.boxrows:
+            row_less_boxrow = [cell for cell in self.rows[triplet[0].rownum] if cell not in triplet]
+            self.rows_less_boxrow.append(row_less_boxrow)
 
         # make the list of complements of triplets in cols:
-        self.cols_less_triplet = []
-        for triplet in self.vertical_triplets:
-            col_less_triplet = [cell for cell in self.cols[triplet[0].colnum] if cell not in triplet]
-            self.cols_less_triplet.append(col_less_triplet)
+        self.cols_less_boxcol = []
+        for triplet in self.boxcols:
+            col_less_boxcol = [cell for cell in self.cols[triplet[0].colnum] if cell not in triplet]
+            self.cols_less_boxcol.append(col_less_boxcol)
 
         # make the list of complements of horizontal triplets in boxes:
-        self.boxes_less_hortriplet = []
-        for triplet in self.horizontal_triplets:
-            box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
-            self.boxes_less_hortriplet.append(box_less_triplet)
+        self.boxes_less_boxrow = []
+        for triplet in self.boxrows:
+            box_less_boxrow = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
+            self.boxes_less_boxrow.append(box_less_boxrow)
 
         # make the list of complements of vertical triplets in boxes:
-        self.boxes_less_vertriplet = []
-        for triplet in self.vertical_triplets:
-            box_less_triplet = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
-            self.boxes_less_vertriplet.append(box_less_triplet)
+        self.boxes_less_boxcol = []
+        for triplet in self.boxcols:
+            box_less_boxcol = [cell for cell in self.boxes[triplet[0].boxnum] if cell not in triplet]
+            self.boxes_less_boxcol.append(box_less_boxcol)
 
         # init cell data
         for cell in self.cells:
             cell.row = self.rows[cell.rownum]
             cell.col = self.cols[cell.colnum]
             cell.box = self.boxes[cell.boxnum]
-            cell.boxrow = self.horizontal_triplets[cell.boxrownum]
-            cell.boxcol = self.vertical_triplets[cell.boxcolnum]
+            cell.boxrow = self.boxrows[cell.boxrownum]
+            cell.boxcol = self.boxcols[cell.boxcolnum]
 
         # peers
         # properties: x not in x.peers, x in y.peers equivalent to y in x.peers
@@ -670,18 +670,18 @@ def solve_hidden_candidate(grid, explain):
 
 def solve_locked_pairs(grid, explain):
 
-    for trinum, triplet in enumerate(grid.horizontal_triplets):
+    for trinum, triplet in enumerate(grid.boxrows):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                remove_set = [cell for cell in triplet if cell not in subset] + grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                remove_set = [cell for cell in triplet if cell not in subset] + grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
                 nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
                 if nb_removed:
                     return nb_removed
 
-    for trinum, triplet in enumerate(grid.vertical_triplets):
+    for trinum, triplet in enumerate(grid.boxcols):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                remove_set = [cell for cell in triplet if cell not in subset] + grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                remove_set = [cell for cell in triplet if cell not in subset] + grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
                 nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
                 if nb_removed:
                     return nb_removed
@@ -691,20 +691,20 @@ def solve_locked_pairs(grid, explain):
 
 def solve_locked_triples(grid, explain):
 
-    for trinum, triplet in enumerate(grid.horizontal_triplets):
+    for trinum, triplet in enumerate(grid.boxrows):
         if all(len(cell.candidates) > 0 for cell in triplet):
-            candidates = set().union(*(cell.candidates for cell in triplet))
+            candidates = candidate_union(triplet)
             if len(candidates) == 3:
-                remove_set = grid.rows_less_triplet[trinum] + grid.boxes_less_hortriplet[trinum]
+                remove_set = grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
                 nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
                 if nb_removed:
                     return nb_removed
 
-    for trinum, triplet in enumerate(grid.vertical_triplets):
+    for trinum, triplet in enumerate(grid.boxcols):
         if all(len(cell.candidates) > 0 for cell in triplet):
-            candidates = set().union(*(cell.candidates for cell in triplet))
+            candidates = candidate_union(triplet)
             if len(candidates) == 3:
-                remove_set = grid.cols_less_triplet[trinum] + grid.boxes_less_vertriplet[trinum]
+                remove_set = grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
                 nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
                 if nb_removed:
                     return nb_removed
@@ -742,19 +742,19 @@ def solve_pointing(grid, explain):
 
     for digit in ALLDIGITS:
 
-        for trinum, triplet in enumerate(grid.horizontal_triplets):
+        for trinum, triplet in enumerate(grid.boxrows):
             if (candidate_in_cells(digit, triplet) and
-                not candidate_in_cells(digit, grid.boxes_less_hortriplet[trinum])):
+                not candidate_in_cells(digit, grid.boxes_less_boxrow[trinum])):
                 nb_removed = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
-                                                 grid.rows_less_triplet[trinum])
+                                                 grid.rows_less_boxrow[trinum])
                 if nb_removed:
                     return nb_removed
 
-        for trinum, triplet in enumerate(grid.vertical_triplets):
+        for trinum, triplet in enumerate(grid.boxcols):
             if (candidate_in_cells(digit, triplet) and
-                not candidate_in_cells(digit, grid.boxes_less_vertriplet[trinum])):
+                not candidate_in_cells(digit, grid.boxes_less_boxcol[trinum])):
                 nb_removed = apply_locked_candidates(grid, 'Pointing', 'b', explain, [digit], triplet,
-                                                 grid.cols_less_triplet[trinum])
+                                                 grid.cols_less_boxcol[trinum])
                 if nb_removed:
                     return nb_removed
 
@@ -765,19 +765,19 @@ def solve_claiming(grid, explain):
 
     for digit in ALLDIGITS:
 
-        for trinum, triplet in enumerate(grid.horizontal_triplets):
+        for trinum, triplet in enumerate(grid.boxrows):
             if (candidate_in_cells(digit, triplet) and
-                not candidate_in_cells(digit, grid.rows_less_triplet[trinum])):
+                not candidate_in_cells(digit, grid.rows_less_boxrow[trinum])):
                 nb_removed = apply_locked_candidates(grid, 'Claiming', 'r', explain, [digit], triplet,
-                                                 grid.boxes_less_hortriplet[trinum])
+                                                 grid.boxes_less_boxrow[trinum])
                 if nb_removed:
                     return nb_removed
 
-        for trinum, triplet in enumerate(grid.vertical_triplets):
+        for trinum, triplet in enumerate(grid.boxcols):
             if (candidate_in_cells(digit, triplet) and
-                not candidate_in_cells(digit, grid.cols_less_triplet[trinum])):
+                not candidate_in_cells(digit, grid.cols_less_boxcol[trinum])):
                 nb_removed = apply_locked_candidates(grid, 'Claiming', 'c', explain, [digit], triplet,
-                                                 grid.boxes_less_vertriplet[trinum])
+                                                 grid.boxes_less_boxcol[trinum])
                 if nb_removed:
                     return nb_removed
 
@@ -2172,7 +2172,7 @@ def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cel
     for length in range(2, 7):
         if length >= len(extra):
             for subset in itertools.combinations(subcells, length - 1):
-                setcandidates = set().union(*(cell.candidates for cell in subset))
+                setcandidates = candidate_union(subset)
                 setcandidates = setcandidates.union(extra)
                 if len(setcandidates) == length:
                     # found a subset, completed with the extra candidates, it forms a naked subset of length length
