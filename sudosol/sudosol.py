@@ -614,27 +614,14 @@ def print_single_history(grid):
 
 
 def solve_full_house(grid, explain):
-    unset = []
-    for row in grid.rows:
-        unset = [cell for cell in row if cell.value is None]
+    for unit in grid.units():
+        unset = [cell for cell in unit if cell.value is None]
         if len(unset) == 1:
-            break
-    if len(unset) != 1:
-        for col in grid.cols:
-            unset = [cell for cell in col if cell.value is None]
-            if len(unset) == 1:
-                break
-    if len(unset) != 1:
-        for box in grid.boxes:
-            unset = [cell for cell in box if cell.value is None]
-            if len(unset) == 1:
-                break
-    if len(unset) == 1:
-        cell = unset[0]
-        cand = list(cell.candidates)[0]
-        discarded = grid.set_value(cell, cand)
-        grid.push(('Full house', 'value', cell, cand, discarded))
-        return 10
+            cell = unset[0]
+            cand = list(cell.candidates)[0]
+            discarded = grid.set_value(cell, cand)
+            grid.push(('Full house', 'value', cell, cand, discarded))
+            return 10
     return 0
 
 
