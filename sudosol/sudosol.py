@@ -1539,47 +1539,35 @@ def test_turbot_fish(chain):
 
 
 def solve_empty_rectangle(grid, explain):
-
     for digit in ALLDIGITS:
+        nb_removed = solve_empty_rectangle_rows(grid, explain, digit, grid.rows, Cell.mrownum, Cell.mcolnum)
+        if nb_removed:
+            return nb_removed
+        nb_removed = solve_empty_rectangle_rows(grid, explain, digit, grid.cols, Cell.mcolnum, Cell.mrownum)
+        if nb_removed:
+            return nb_removed
+    return 0
 
-        strong_links = []
-        for row in grid.rows:
-            cells = [cell for cell in row if digit in cell.candidates]
-            if len(cells) == 2 and cells[0].boxnum != cells[1].boxnum:
-                strong_links.append(cells)
 
-        for strong_link in strong_links:
-            floornum = strong_link[0].rownum // 3
-            colnum1 = strong_link[0].colnum
-            colnum2 = strong_link[1].colnum
-            for row in grid.rows:
-                if row[0].rownum // 3 != floornum:
-                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum1, colnum2)
-                    if nb_removed:
-                        return nb_removed
-                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum2, colnum1)
-                    if nb_removed:
-                        return nb_removed
+def solve_empty_rectangle_rows(grid, explain, digit, rows, mrownum, mcolnum):
+    strong_links = []
+    for row in rows:
+        cells = [cell for cell in row if digit in cell.candidates]
+        if len(cells) == 2 and cells[0].boxnum != cells[1].boxnum:
+            strong_links.append(cells)
 
-        strong_links = []
-        for col in grid.cols:
-            cells = [cell for cell in col if digit in cell.candidates]
-            if len(cells) == 2 and cells[0].boxnum != cells[1].boxnum:
-                strong_links.append(cells)
-
-        for strong_link in strong_links:
-            towernum = strong_link[0].colnum // 3
-            rownum1 = strong_link[0].rownum
-            rownum2 = strong_link[1].rownum
-            for col in grid.cols:
-                if col[0].colnum // 3 != towernum:
-                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, col, rownum1, rownum2)
-                    if nb_removed:
-                        return nb_removed
-                    nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, col, rownum2, rownum1)
-                    if nb_removed:
-                        return nb_removed
-
+    for strong_link in strong_links:
+        floornum = mrownum(strong_link[0]) // 3
+        colnum1 = mcolnum(strong_link[0])
+        colnum2 = mcolnum(strong_link[1])
+        for row in rows:
+            if mrownum(row[0]) // 3 != floornum:
+                nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum1, colnum2)
+                if nb_removed:
+                    return nb_removed
+                nb_removed = test_empty_rectangle(grid, explain, digit, strong_link, row, colnum2, colnum1)
+                if nb_removed:
+                    return nb_removed
     return 0
 
 
