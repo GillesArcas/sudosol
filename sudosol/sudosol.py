@@ -909,81 +909,70 @@ def solve_jellyfish(grid, explain):
     return solve_basicfish(grid, explain, 4, 'Jellyfish')
 
 
-def solve_basicfish(grid, explain, order, name):
-
+def solve_basicfish(grid, explain, size, name):
     for digit in ALLDIGITS:
-
-        rows = []
-        for row in grid.rows:
-            rowcells = [cell for cell in row if digit in cell.candidates]
-            if 1 < len(rowcells) <= order:
-                rows.append(rowcells)
-
-        for defrows in itertools.combinations(rows, order):
-            rowsnum = [row[0].rownum for row in defrows]
-            colsnum = {cell.colnum for row in defrows for cell in row}
-            if len(colsnum) == order:
-                # n rows with candidates in n cols
-                cells_to_discard = []
-                for colnum in colsnum:
-                    for cell in grid.cols[colnum]:
-                        if cell.rownum not in rowsnum:
-                            cells_to_discard.append(cell)
-                nb_removed = apply_basic_fish(grid, name, explain, [digit], defrows, cells_to_discard, 'H')
-                if nb_removed:
-                    return nb_removed
-
-        cols = []
-        for col in grid.cols:
-            colcells = [cell for cell in col if digit in cell.candidates]
-            if 1 < len(colcells) <= order:
-                cols.append(colcells)
-
-        for defcols in itertools.combinations(cols, order):
-            colsnum = [col[0].colnum for col in defcols]
-            rowsnum = {cell.rownum for col in defcols for cell in col}
-            if len(rowsnum) == order:
-                cells_to_discard = []
-                for rownum in rowsnum:
-                    for cell in grid.rows[rownum]:
-                        if cell.colnum not in colsnum:
-                            cells_to_discard.append(cell)
-                nb_removed = apply_basic_fish(grid, name, explain, [digit], defcols, cells_to_discard, 'V')
-                if nb_removed:
-                    return nb_removed
+        nb_removed = solve_basicfish_rows(grid, explain, size, name, digit, grid.rows, grid.cols, Cell.mrownum, Cell.mcolnum, 'H')
+        if nb_removed:
+            return nb_removed
+        nb_removed = solve_basicfish_rows(grid, explain, size, name, digit, grid.cols, grid.rows, Cell.mcolnum, Cell.mrownum, 'V')
+        if nb_removed:
+            return nb_removed
     return 0
 
 
-def apply_basic_fish(grid, caption, explain, candidates, defunits, cells_to_discard, flavor):
-    remove_dict = candidates_cells(candidates, cells_to_discard)
+def solve_basicfish_rows(grid, explain, size, name, digit, rows, cols, mrownum, mcolnum, orientation):
+    candrows = []
+    for row in rows:
+        rowcells = [cell for cell in row if digit in cell.candidates]
+        if 1 < len(rowcells) <= size:
+            candrows.append(rowcells)
+
+    for defrows in itertools.combinations(candrows, size):
+        rowsnum = [mrownum(row[0]) for row in defrows]
+        colsnum = {mcolnum(cell) for row in defrows for cell in row}
+        if len(colsnum) == size:
+            # n rows with candidates in n cols
+            remove_set = []
+            for colnum in colsnum:
+                for cell in cols[colnum]:
+                    if mrownum(cell) not in rowsnum:
+                        remove_set.append(cell)
+            nb_removed = apply_basic_fish(grid, name, explain, [digit], defrows, remove_set, orientation)
+            if nb_removed:
+                return nb_removed
+    return 0
+
+
+def apply_basic_fish(grid, caption, explain, candidates, defunits, remove_set, orientation):
+    remove_dict = candidates_cells(candidates, remove_set)
     if remove_dict:
         if explain:
-            explain_basic_fish(grid, caption, candidates, defunits, cells_to_discard, flavor, remove_dict)
+            explain_basic_fish(grid, caption, candidates, defunits, remove_set, remove_dict, orientation)
         return apply_remove_candidates(grid, caption, remove_dict)
     return 0
 
 
-def explain_basic_fish(grid, caption, candidates, defunits, cells_to_discard, flavor, remove_dict):
+def explain_basic_fish(grid, caption, candidates, defunits, remove_set, remove_dict, orientation):
     subset = cellunionx(*defunits)
     print_single_history(grid)
-    print(describe_basic_fish(caption, candidates, subset, flavor, remove_dict))
+    print(describe_basic_fish(caption, candidates, subset, remove_dict, orientation))
     grid.dump(((subset, candidates, CellDecor.DEFININGCAND),
-               (cells_to_discard, candidates, CellDecor.REMOVECAND)))
+               (remove_set, candidates, CellDecor.REMOVECAND)))
 
 
-def describe_basic_fish(legend, candidates, subset, dir, remove_dict):
+def describe_basic_fish(legend, candidates, subset, remove_dict, orientation):
     rows = {cell.rownum + 1 for cell in subset}
     cols = {cell.colnum + 1 for cell in subset}
     srows = ''.join(f'{_}' for _ in sorted(list(rows)))
     scols = ''.join(f'{_}' for _ in sorted(list(cols)))
-    defcells = f'r{srows} c{scols}' if dir == 'H' else f'c{scols} r{srows}'
+    defcells = f'r{srows} c{scols}' if orientation == 'H' else f'c{scols} r{srows}'
     return '%s: %s %s => %s' % (legend,
         ','.join(f'{_}' for _ in sorted(candidates)),
         defcells,
         discarded_text(remove_dict))
 
 
-# Finned fishes
+# Finned and sashimi fishes
 
 
 def solve_finned_x_wing(grid, explain):
