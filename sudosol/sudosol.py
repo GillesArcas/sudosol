@@ -1068,6 +1068,115 @@ def describe_finned_fish(legend, candidates, subset, fin, orientation, remove_di
         discarded_text(remove_dict))
 
 
+def solve_finned_swordfish(grid, explain):
+    return solve_finned_fish(grid, explain, 3, 'Finned swordfish', tech={'Finned'})
+
+
+def solve_finned_jellyfish(grid, explain):
+    return solve_finned_fish(grid, explain, 4, 'Finned jellyfish', tech={'Finned'})
+
+
+def solve_sashimi_swordfish(grid, explain):
+    return solve_finned_fish(grid, explain, 3, 'Sashimi swordfish', tech={'Sashimi'})
+
+
+def solve_sashimi_jellyfish(grid, explain):
+    return solve_finned_fish(grid, explain, 4, 'Sashimi jellyfish', tech={'Sashimi'})
+
+
+def solve_finned_fish(grid, explain, size, name, tech):
+    for digit in ALLDIGITS:
+        nb_removed = solve_finned_fish_rows(grid, explain, size, name, digit, grid.rows, grid.cols, Cell.mrownum, Cell.mcolnum, Cell.mboxrow, tech)
+        if nb_removed:
+            return nb_removed
+        nb_removed = solve_finned_fish_rows(grid, explain, size, name, digit, grid.cols, grid.rows, Cell.mcolnum, Cell.mrownum, Cell.mboxcol, tech)
+        if nb_removed:
+            return nb_removed
+    return 0
+
+
+def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum, mcolnum, mboxrow, tech):
+    candrows = []
+    for row in rows:
+        rowcells = [cell for cell in row if digit in cell.candidates]
+        if len(rowcells) >= 2:
+            candrows.append(rowcells)
+
+    for defrows in itertools.combinations(candrows, size):
+        colsnum = {mcolnum(cell) for row in defrows for cell in row}
+
+        for covercols in itertools.combinations(colsnum, size):
+
+            # search for cell in defrows not in coverrows
+            complement = set()
+            for row in defrows:
+                for cell in row:
+                    if mcolnum(cell) not in covercols:
+                        complement.add(cell)
+
+            # all cells in complement must be in a single box
+            box = None
+            for cell in complement:
+                if box is None:
+                    box = cell.box
+                elif box == cell.box:
+                    pass
+                else:
+                    # at least two boxes
+                    box = False
+
+            if not box:
+                continue
+
+            # the box must intersect with a cover col
+            intersect = False
+            for colnum in covercols:
+                if colnum // 3 == mcolnum(box[0]) // 3:
+                    intersect = True
+                    break
+
+            if not intersect:
+                continue
+
+            # test for sashimi
+            if 'Sashimi' not in tech and not is_genuine_fish(grid, size, digit, rows, defrows, covercols, mrownum, mcolnum):
+                continue
+
+            defcells = []
+            for row in defrows:
+                defcells.extend(cell for cell in row if mcolnum(cell) in covercols)
+
+            fin_set = []
+            remove_set = []
+            for cell in box:
+                in_base = any(cell in row for row in defrows)
+                in_cover = mcolnum(cell) in covercols
+                if in_base and not in_cover:
+                    fin_set.append(cell)
+                elif not in_base and in_cover:
+                    remove_set.append(cell)
+
+            nb_removed = apply_finned_fish(grid, name, explain, [digit], [defcells] + [fin_set], remove_set)
+            if nb_removed:
+                return nb_removed
+    return 0
+
+
+def is_genuine_fish(grid, size, digit, rows, fishrows, colnums, mrownum, mcolnum):
+    if len(fishrows) != len(colnums):
+        return False
+    else:
+        for row in fishrows:
+            n = sum(1 for cell in row if mcolnum(cell) in colnums)
+            if n < 2:
+                return False
+        for colnum in colnums:
+            n = sum(1 for row in fishrows if rows[mrownum(row[0])][colnum] in row)
+            if n < 2:
+                return False
+        return True
+
+
 # Simple coloring
 
 
@@ -2347,7 +2456,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 STRATEGY_HODOKU_EASY = 'fh,n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
 STRATEGY_HODOKU_HARD = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,fbf2,sbf2,sc1,sc2,mc1,mc2'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,FBF3,SBF3,FBF4,SBF4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,fbf3,sbf3,fbf4,sbf4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
 
 
 def make_list_techniques(strategy):
@@ -2390,6 +2499,10 @@ SOLVER = {
     'bf4': solve_jellyfish,
     'fbf2': solve_finned_x_wing,
     'sbf2': solve_sashimi_x_wing,
+    'fbf3': solve_finned_swordfish,
+    'sbf3': solve_sashimi_swordfish,
+    'fbf4': solve_finned_jellyfish,
+    'sbf4': solve_sashimi_jellyfish,
     'sc1': solve_coloring_trap,
     'sc2': solve_coloring_wrap,
     'mc1': solve_multi_coloring_type_1,
