@@ -13,7 +13,7 @@ sudosol is a sudoku solver using only human techniques. Currently, sudosol imple
 More techniques are being implemented, either equivalent to Simple Sudoku techniques, or beyond Simple Sudoku techniques. Currently, they are:
 
 - locked pair and triple, turbot fish, skyscraper, 2-string kite, empty rectangle,
-- jellyfish, finned and sashimi X-wing, finned and sashimi swordfish, XYZ-wing, W-wing, X-chain, XY-chain, BUG+1, uniqueness test 1, 2, 3, 4, 5 and 6, hidden rectangle, avoidable rectangle type 1 and type 2.
+- jellyfish, finned and sashimi X-wing, finned and sashimi swordfish, finned and sashimi jellyfish, XYZ-wing, W-wing, X-chain, XY-chain, BUG+1, uniqueness test 1, 2, 3, 4, 5 and 6, hidden rectangle, avoidable rectangle type 1 and type 2.
 
 Tests make sure each technique is handled correctly.
 

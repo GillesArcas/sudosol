@@ -24,6 +24,8 @@
 --testf tests/sbf2.txt  --rand 100 --tech sbf2 --step
 --testf tests/fbf3.txt  --rand 100 --tech fbf3 --step
 --testf tests/sbf3.txt  --rand 100 --tech sbf3 --step
+--testf tests/fbf4.txt  --rand 100 --tech fbf4 --step
+--testf tests/sbf4.txt  --rand 100 --tech sbf4 --step
 
 --testf tests/x.txt   --rand 100 --tech ssts,x
 --testf tests/2sk.txt --rand 100 --tech ssts,2sk-sc1,sc2,mc1,mc2
