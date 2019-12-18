@@ -95,7 +95,7 @@ def main_testdeck(args):
         while cont:
             # errors and warnings on stderr
             p = subprocess.Popen(comm.split(), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-            time.sleep(0.1)
+            time.sleep(2)
             print('STARTED')
 
             while True:
