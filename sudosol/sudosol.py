@@ -565,6 +565,10 @@ def packed_coordinates(cells):
     return ','.join(lcoord)
 
 
+def packed_candidates(candidates):
+    return ','.join(str(_) for _ in sorted(candidates))
+
+
 def discarded_at_last_move(grid):
     """Return candidates discarded at last move (from history).
     """
@@ -2484,7 +2488,8 @@ def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_bo
                                                              rows_less_boxrow[boxrownum],
                                                              boxes_less_boxrow[boxrownum],
                                                              cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
+                            [candidates, cand_row, cand_box],
                             [cells, cells_row, cells_box], remove_dict)
                         if nb_removed:
                             return nb_removed
@@ -2504,7 +2509,8 @@ def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_bo
                                                              rows_less_boxrow[boxrownum],
                                                              boxes_less_boxrow[boxrownum],
                                                              cand_row, cand_box, extra)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
+                            [candidates, cand_row, cand_box],
                             [cells, cells_row, cells_box], remove_dict)
                         if nb_removed:
                             return nb_removed
@@ -2519,7 +2525,8 @@ def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_bo
                                                              rows_less_boxrow[boxrownum],
                                                              boxes_less_boxrow[boxrownum],
                                                              cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
+                            [candidates, cand_row, cand_box],
                             [cells, cells_row, cells_box], remove_dict)
                         if nb_removed:
                             return nb_removed
@@ -2534,7 +2541,8 @@ def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_bo
                                                              rows_less_boxrow[boxrownum],
                                                              boxes_less_boxrow[boxrownum],
                                                              cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
+                            [candidates, cand_row, cand_box],
                             [cells, cells_row, cells_box], remove_dict)
                         if nb_removed:
                             return nb_removed
@@ -2578,15 +2586,28 @@ def apply_sue_de_coq(grid, caption, explain, candidates, define_set, remove_dict
 
 
 def explain_sue_de_coq(grid, caption, candidates, define_set, remove_dict):
-    #defcand, extracand = candidates
     cells, cells_row, cells_box = define_set
     print_single_history(grid)
-    print(describe_xy_wing(caption, sorted(candidates), cells, remove_dict))
+    print(describe_sue_de_coq(caption, candidates, define_set, remove_dict))
     grid.dump([(cells, candidate_union(cells_row), CellDecor.COLOR1),
                (cells, candidate_union(cells_box), CellDecor.COLOR3),
                (cells_row, candidate_union(cells_row), CellDecor.COLOR1),
                (cells_box, candidate_union(cells_box), CellDecor.COLOR3),
                 ] + [(cells, {cand}, CellDecor.REMOVECAND) for cand, cells in remove_dict.items()])
+
+
+def describe_sue_de_coq(caption, digits, define_set, remove_dict):
+    # Sue de Coq: r23c6 - {2579} (r456c6 - {1245}, r1c456 - {1789}) => r19c6<>1, r79c6<>5
+    cells, cells_row, cells_box = define_set
+    candidates, cand_row, cand_box = digits
+    return '%s: %s - {%s} (%s - {%s}, %s - {%s}) => %s' % (caption,
+        packed_coordinates(cells),
+        packed_candidates(candidates),
+        packed_coordinates(cells_row),
+        packed_candidates(cand_row),
+        packed_coordinates(cells_box),
+        packed_candidates(cand_box),
+        discarded_text(remove_dict))
 
 
 # Solving engine
