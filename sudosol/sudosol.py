@@ -2444,6 +2444,151 @@ def explain_avoidable_rectangle_2(grid, caption, candidates, define_set, remove_
                (remove_set, extracand, CellDecor.REMOVECAND),))
 
 
+# Sue de Coq
+
+
+def subsets(cells, delta):
+    candcells = [cell for cell in cells if cell.candidates]
+    for size in range(1, len(candcells) + 1):
+        for subset in itertools.combinations(sorted(candcells), size):
+            candidates = candidate_union(subset)
+            ##print(packed_coordinates(subset), candidates)
+            if len(candidates) - len(subset) == delta:
+                yield subset, candidates
+
+
+def solve_sue_de_coq(grid, explain):
+    nb_removed = solve_sue_de_coq_row(grid, explain, grid.boxrows, grid.rows_less_boxrow, grid.boxes_less_boxrow)
+    if nb_removed:
+        return nb_removed
+    nb_removed = solve_sue_de_coq_row(grid, explain, grid.boxcols, grid.cols_less_boxcol, grid.boxes_less_boxcol)
+    if nb_removed:
+        return nb_removed
+    return 0
+
+
+def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_boxrow):
+    for boxrownum, boxrow in enumerate(boxrows):
+        cells = [cell for cell in boxrow if cell.candidates]
+        if len(cells) == 2:
+            candidates = candidate_union(cells)
+            if len(candidates) >= 4:
+                ##print(1, candidates)
+                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
+                    subsets(rows_less_boxrow[boxrownum], delta=1),
+                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
+                    ##print(2, candidates)
+                    if (candidates <= set().union(cand_row, cand_box) and
+                        not cellinterx(cells, cells_row, cells_box)):
+                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
+                                                             rows_less_boxrow[boxrownum],
+                                                             boxes_less_boxrow[boxrownum],
+                                                             cand_row, cand_box, extra=None)
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                            [cells, cells_row, cells_box], remove_dict)
+                        if nb_removed:
+                            return nb_removed
+
+        if len(cells) == 3:
+            candidates = candidate_union(cells)
+            if len(candidates) >= 5:
+                ##print(1, candidates)
+                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
+                    subsets(rows_less_boxrow[boxrownum], delta=1),
+                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
+                    extra = candidates - set().union(cand_row, cand_box)
+                    ##print(2, candidates)
+                    if (len(extra) == 1 and not cellinterx(cells, cells_row, cells_box)):
+                        ##print(3, candidates)
+                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
+                                                             rows_less_boxrow[boxrownum],
+                                                             boxes_less_boxrow[boxrownum],
+                                                             cand_row, cand_box, extra)
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                            [cells, cells_row, cells_box], remove_dict)
+                        if nb_removed:
+                            return nb_removed
+                #continue
+                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
+                    subsets(rows_less_boxrow[boxrownum], delta=1),
+                    subsets(boxes_less_boxrow[boxrownum], delta=2)):
+                    ##print(2, candidates)
+                    if (candidates <= set().union(cand_row, cand_box) and
+                        not cellinterx(cells, cells_row, cells_box)):
+                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
+                                                             rows_less_boxrow[boxrownum],
+                                                             boxes_less_boxrow[boxrownum],
+                                                             cand_row, cand_box, extra=None)
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                            [cells, cells_row, cells_box], remove_dict)
+                        if nb_removed:
+                            return nb_removed
+
+                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
+                    subsets(rows_less_boxrow[boxrownum], delta=2),
+                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
+                    ##print(2, candidates)
+                    if (candidates <= set().union(cand_row, cand_box) and
+                        not cellinterx(cells, cells_row, cells_box)):
+                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
+                                                             rows_less_boxrow[boxrownum],
+                                                             boxes_less_boxrow[boxrownum],
+                                                             cand_row, cand_box, extra=None)
+                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain, candidates,
+                            [cells, cells_row, cells_box], remove_dict)
+                        if nb_removed:
+                            return nb_removed
+    return 0
+
+
+def remove_cells_sue_de_coq(cells_row, cells_box, row_less_boxrow, box_less_boxrow,
+                            cand_row, cand_box, extra):
+    remove_dict = dict()
+    for cand in cand_row:
+        remcells = [cell for cell in row_less_boxrow
+            if cell not in cells_row and cand in cell.candidates]
+        if remcells:
+            remove_dict[cand] = remcells
+    for cand in cand_box:
+        remcells = [cell for cell in box_less_boxrow
+            if cell not in cells_box and cand in cell.candidates]
+        if remcells:
+            remove_dict[cand] = remcells
+
+    if extra:
+        extracand = list(extra)[0]
+        remcells1 = [cell for cell in row_less_boxrow
+            if cell not in cells_row and extracand in cell.candidates]
+        remcells2 = [cell for cell in box_less_boxrow
+            if cell not in cells_box and extracand in cell.candidates]
+        remcells = cellunion(remcells1, remcells2)
+        if remcells:
+            remove_dict[extracand] = remcells
+
+    return remove_dict
+
+
+def apply_sue_de_coq(grid, caption, explain, candidates, define_set, remove_dict):
+    #defcand, extra = candidates
+    if remove_dict:
+        if explain:
+            explain_sue_de_coq(grid, caption, candidates, define_set, remove_dict)
+        return apply_remove_candidates(grid, caption, remove_dict)
+    return 0
+
+
+def explain_sue_de_coq(grid, caption, candidates, define_set, remove_dict):
+    #defcand, extracand = candidates
+    cells, cells_row, cells_box = define_set
+    print_single_history(grid)
+    print(describe_xy_wing(caption, sorted(candidates), cells, remove_dict))
+    grid.dump([(cells, candidate_union(cells_row), CellDecor.COLOR1),
+               (cells, candidate_union(cells_box), CellDecor.COLOR3),
+               (cells_row, candidate_union(cells_row), CellDecor.COLOR1),
+               (cells_box, candidate_union(cells_box), CellDecor.COLOR3),
+                ] + [(cells, {cand}, CellDecor.REMOVECAND) for cand, cells in remove_dict.items()])
+
+
 # Solving engine
 
 
@@ -2456,7 +2601,7 @@ STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
 STRATEGY_HODOKU_EASY = 'fh,n1,h1'
 STRATEGY_HODOKU_MEDIUM = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3'
 STRATEGY_HODOKU_HARD = 'fh,n1,h1,l2,l3,lc1,lc2,n2,n3,h2,h3,n4,h4,bf2,bf3,bf4,rp,bug1,sk,2sk,tf,er,w,xy,xyz,u1,u2,u3,u4,u5,u6,hr,ar1,ar2,fbf2,sbf2,sc1,sc2,mc1,mc2'
-STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',x,BF5,BF6,BF7,fbf3,sbf3,fbf4,sbf4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,SDC,xyc'
+STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',BF5,BF6,BF7,fbf3,sbf3,fbf4,sbf4,FBF5,SBF5,FBF6,SBF6,FBF7,SBF7,sdc,x,xyc'
 
 
 def make_list_techniques(strategy):
@@ -2527,6 +2672,7 @@ SOLVER = {
     'ar1': solve_avoidable_rectangle_1,
     'ar2': solve_avoidable_rectangle_2,
     'w': solve_w_wing,
+    'sdc': solve_sue_de_coq,
 }
 
 
