@@ -80,7 +80,7 @@ def main_testdeck(args):
         num_existing = 0
 
     # check if number wanted is reached
-    if num_existing == numwanted:
+    if num_existing >= numwanted:
         exit(0)
 
     # start hodoku in generate mode
