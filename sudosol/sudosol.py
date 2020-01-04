@@ -227,7 +227,7 @@ class Grid:
         elif re.match(r'^([gvc][1-9]{1,9}){81}$', str):
             self.input_gvc(str)
         else:
-            raise ValueError
+            raise SudokuError(f'illegal grid format in string: {str}')
 
     def input_s81(self, str81):
         """load a 81 character string of given values
@@ -341,6 +341,11 @@ class Grid:
 
     def push(self, item):
         self.history.append(item)
+
+
+class SudokuError (Exception):
+    def __init__(self, *args):
+        self.message = ' '.join(args)
 
 
 CellDecor = Enum('CellDecor', 'VALUE GIVEN DEFAULTCAND DEFININGCAND REMOVECAND COLOR1 COLOR2 COLOR3 COLOR4')
@@ -1109,7 +1114,7 @@ def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum
     for defrows in itertools.combinations(candrows, size):
         colsnum = {mcolnum(cell) for row in defrows for cell in row}
 
-        for covercols in itertools.combinations(colsnum, size):
+        for covercols in itertools.combinations(sorted(colsnum), size):
 
             # search for cell in defrows not in coverrows
             complement = set()
@@ -2939,7 +2944,7 @@ def application_error(*args):
 def parse_command_line(argstring=None):
     usage = "usage: sudosol ..."
     parser = argparse.ArgumentParser(description=usage, usage=argparse.SUPPRESS)
-    parser.add_argument('-s', '--solve', help='solve file or str81 argument',
+    parser.add_argument('-s', '--solve', help='solve grid in command line argument, clipboard or file',
                         action='store', default=None)
     parser.add_argument('-f', '--format', help='format',
                         action='store', default=None)
