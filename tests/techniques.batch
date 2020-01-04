@@ -48,6 +48,8 @@
 --testf tests/ar2.txt  --rand 100 --tech ar2 --step
 --testf tests/w.txt    --rand 100 --tech n1,h1,w
 --testf tests/xyz.txt  --rand 100 --tech n1,h1,xyz
+--testf tests/sdc_first.txt --rand 100 --tech sdc  --step
+--testf tests/sdc_best.txt  --rand 100 --tech sdc* --step
 
 --testf tests/sudocue_The_Learning_Curve_Collection.txt  --rand 100 --tech ssts
 --testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech ssts

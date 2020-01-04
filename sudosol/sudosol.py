@@ -2456,118 +2456,120 @@ def subsets(cells, delta):
     for size in range(1, len(candcells) + 1):
         for subset in itertools.combinations(sorted(candcells), size):
             candidates = candidate_union(subset)
-            ##print(packed_coordinates(subset), candidates)
             if len(candidates) - len(subset) == delta:
                 yield subset, candidates
 
 
 def solve_sue_de_coq(grid, explain):
-    nb_removed = solve_sue_de_coq_row(grid, explain, grid.boxrows, grid.rows_less_boxrow, grid.boxes_less_boxrow)
-    if nb_removed:
-        return nb_removed
-    nb_removed = solve_sue_de_coq_row(grid, explain, grid.boxcols, grid.cols_less_boxcol, grid.boxes_less_boxcol)
-    if nb_removed:
-        return nb_removed
+    for pattern in sue_de_coq_patterns(grid, explain):
+        cells, cells_row, cells_box, candidates, cand_row, cand_box, extra, row_less_cells, box_less_cells = pattern
+        remove_dict = remove_cells_sue_de_coq(pattern)
+        nb_removed = sum(len(cells) for cand, cells in remove_dict.items())
+        if nb_removed > 0:
+            apply_sue_de_coq(grid, 'Sue de Coq', explain,
+                [candidates, cand_row, cand_box, extra],
+                [cells, cells_row, cells_box], remove_dict)
+            return nb_removed
     return 0
 
 
-def solve_sue_de_coq_row(grid, explain, boxrows, rows_less_boxrow, boxes_less_boxrow):
-    for boxrownum, boxrow in enumerate(boxrows):
-        cells = [cell for cell in boxrow if cell.candidates]
-        if len(cells) == 2:
+def solve_sue_de_coq_best(grid, explain):
+    max_removed = 0
+    max_pattern = None
+    for pattern in sue_de_coq_patterns(grid, explain):
+        remove_dict = remove_cells_sue_de_coq(pattern)
+        nb_removed = sum(len(cells) for cand, cells in remove_dict.items())
+        if nb_removed > max_removed:
+            max_removed = nb_removed
+            max_remove_dict = remove_dict
+            max_pattern = pattern
+
+    if max_removed > 0:
+        cells, cells_row, cells_box, candidates, cand_row, cand_box, extra, row_less_cells, box_less_cells = max_pattern
+        apply_sue_de_coq(grid, 'Sue de Coq', explain,
+            [candidates, cand_row, cand_box, extra],
+            [cells, cells_row, cells_box], max_remove_dict)
+        return max_removed
+    return 0
+
+
+def sue_de_coq_patterns(grid, explain):
+    for _ in sue_de_coq_row_patterns(grid, explain, grid.boxrows, grid.rows, grid.boxes, Cell.mrownum):
+        yield _
+    for _ in sue_de_coq_row_patterns(grid, explain, grid.boxcols, grid.cols, grid.boxes, Cell.mcolnum):
+        yield _
+
+
+def sue_de_coq_row_patterns(grid, explain, boxrows, row, box, mrownum):
+    for boxrow in boxrows:
+        candcells = [cell for cell in boxrow if cell.candidates]
+        if len(candcells) < 2:
+            continue
+
+        for cells in itertools.combinations(candcells, 2):
             candidates = candidate_union(cells)
             if len(candidates) >= 4:
-                ##print(1, candidates)
+                row_less_cells = [cell for cell in row[mrownum(cells[0])] if cell.candidates and cell not in cells]
+                box_less_cells = [cell for cell in box[cells[0].boxnum] if cell.candidates and cell not in cells]
                 for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
-                    subsets(rows_less_boxrow[boxrownum], delta=1),
-                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
-                    ##print(2, candidates)
-                    if (candidates <= set().union(cand_row, cand_box) and
-                        not cellinterx(cells, cells_row, cells_box)):
-                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
-                                                             rows_less_boxrow[boxrownum],
-                                                             boxes_less_boxrow[boxrownum],
-                                                             cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
-                            [candidates, cand_row, cand_box],
-                            [cells, cells_row, cells_box], remove_dict)
-                        if nb_removed:
-                            return nb_removed
+                    subsets(row_less_cells, delta=1),
+                    subsets(box_less_cells, delta=1)):
+                    if candidates <= set().union(cand_row, cand_box) and not cellinterx(cells, cells_row, cells_box):
+                        yield (cells, cells_row, cells_box, candidates, cand_row, cand_box, None,
+                            row_less_cells, box_less_cells)
 
-        if len(cells) == 3:
+        if len(candcells) == 3:
+            cells = candcells
             candidates = candidate_union(cells)
             if len(candidates) >= 5:
-                ##print(1, candidates)
+                row_less_cells = [cell for cell in row[mrownum(cells[0])] if cell.candidates and cell not in cells]
+                box_less_cells = [cell for cell in box[cells[0].boxnum] if cell.candidates and cell not in cells]
                 for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
-                    subsets(rows_less_boxrow[boxrownum], delta=1),
-                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
+                    subsets(row_less_cells, delta=1),
+                    subsets(box_less_cells, delta=1)):
                     extra = candidates - set().union(cand_row, cand_box)
-                    ##print(2, candidates)
-                    if (len(extra) == 1 and not cellinterx(cells, cells_row, cells_box)):
-                        ##print(3, candidates)
-                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
-                                                             rows_less_boxrow[boxrownum],
-                                                             boxes_less_boxrow[boxrownum],
-                                                             cand_row, cand_box, extra)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
-                            [candidates, cand_row, cand_box],
-                            [cells, cells_row, cells_box], remove_dict)
-                        if nb_removed:
-                            return nb_removed
-                #continue
-                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
-                    subsets(rows_less_boxrow[boxrownum], delta=1),
-                    subsets(boxes_less_boxrow[boxrownum], delta=2)):
-                    ##print(2, candidates)
-                    if (candidates <= set().union(cand_row, cand_box) and
-                        not cellinterx(cells, cells_row, cells_box)):
-                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
-                                                             rows_less_boxrow[boxrownum],
-                                                             boxes_less_boxrow[boxrownum],
-                                                             cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
-                            [candidates, cand_row, cand_box],
-                            [cells, cells_row, cells_box], remove_dict)
-                        if nb_removed:
-                            return nb_removed
+                    if len(extra) == 1 and not cellinterx(cells, cells_row, cells_box):
+                        yield (cells, cells_row, cells_box, candidates, cand_row, cand_box, extra,
+                            row_less_cells, box_less_cells)
 
                 for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
-                    subsets(rows_less_boxrow[boxrownum], delta=2),
-                    subsets(boxes_less_boxrow[boxrownum], delta=1)):
-                    ##print(2, candidates)
+                    subsets(row_less_cells, delta=1),
+                    subsets(box_less_cells, delta=2)):
                     if (candidates <= set().union(cand_row, cand_box) and
                         not cellinterx(cells, cells_row, cells_box)):
-                        remove_dict = remove_cells_sue_de_coq(cells_row, cells_box,
-                                                             rows_less_boxrow[boxrownum],
-                                                             boxes_less_boxrow[boxrownum],
-                                                             cand_row, cand_box, extra=None)
-                        nb_removed = apply_sue_de_coq(grid, 'Sue de Coq', explain,
-                            [candidates, cand_row, cand_box],
-                            [cells, cells_row, cells_box], remove_dict)
-                        if nb_removed:
-                            return nb_removed
-    return 0
+                        yield (cells, cells_row, cells_box, candidates, cand_row, cand_box, None,
+                            row_less_cells, box_less_cells)
+
+                for (cells_row, cand_row), (cells_box, cand_box) in itertools.product(
+                    subsets(row_less_cells, delta=2),
+                    subsets(box_less_cells, delta=1)):
+                    if (candidates <= set().union(cand_row, cand_box) and
+                        not cellinterx(cells, cells_row, cells_box)):
+                        yield (cells, cells_row, cells_box, candidates, cand_row, cand_box, None,
+                            row_less_cells, box_less_cells)
 
 
-def remove_cells_sue_de_coq(cells_row, cells_box, row_less_boxrow, box_less_boxrow,
-                            cand_row, cand_box, extra):
+def remove_cells_sue_de_coq(pattern):
+    cells, cells_row, cells_box, candidates, cand_row, cand_box, extra, row_less_cells, box_less_cells = pattern
     remove_dict = dict()
+
     for cand in cand_row:
-        remcells = [cell for cell in row_less_boxrow
+        remcells = [cell for cell in row_less_cells
             if cell not in cells_row and cand in cell.candidates]
         if remcells:
             remove_dict[cand] = remcells
+
     for cand in cand_box:
-        remcells = [cell for cell in box_less_boxrow
+        remcells = [cell for cell in box_less_cells
             if cell not in cells_box and cand in cell.candidates]
         if remcells:
             remove_dict[cand] = remcells
 
     if extra:
         extracand = list(extra)[0]
-        remcells1 = [cell for cell in row_less_boxrow
+        remcells1 = [cell for cell in row_less_cells
             if cell not in cells_row and extracand in cell.candidates]
-        remcells2 = [cell for cell in box_less_boxrow
+        remcells2 = [cell for cell in box_less_cells
             if cell not in cells_box and extracand in cell.candidates]
         remcells = cellunion(remcells1, remcells2)
         if remcells:
@@ -2577,7 +2579,6 @@ def remove_cells_sue_de_coq(cells_row, cells_box, row_less_boxrow, box_less_boxr
 
 
 def apply_sue_de_coq(grid, caption, explain, candidates, define_set, remove_dict):
-    #defcand, extra = candidates
     if remove_dict:
         if explain:
             explain_sue_de_coq(grid, caption, candidates, define_set, remove_dict)
@@ -2599,7 +2600,7 @@ def explain_sue_de_coq(grid, caption, candidates, define_set, remove_dict):
 def describe_sue_de_coq(caption, digits, define_set, remove_dict):
     # Sue de Coq: r23c6 - {2579} (r456c6 - {1245}, r1c456 - {1789}) => r19c6<>1, r79c6<>5
     cells, cells_row, cells_box = define_set
-    candidates, cand_row, cand_box = digits
+    candidates, cand_row, cand_box, extra = digits
     return '%s: %s - {%s} (%s - {%s}, %s - {%s}) => %s' % (caption,
         packed_coordinates(cells),
         packed_candidates(candidates),
@@ -2633,6 +2634,7 @@ def make_list_techniques(strategy):
     strategy = re.sub(r'\bhodoku_easy\b', STRATEGY_HODOKU_EASY, strategy)
     strategy = re.sub(r'\bhodoku_medium\b', STRATEGY_HODOKU_MEDIUM, strategy)
     strategy = re.sub(r'\bhodoku_hard\b', STRATEGY_HODOKU_HARD , strategy)
+    strategy = re.sub(r'\bhodoku_unfair\b', STRATEGY_HODOKU_UNFAIR , strategy)
     strategy = re.sub(r'\ball\b', ALL, strategy)
 
     if '-' not in strategy:
@@ -2694,11 +2696,14 @@ SOLVER = {
     'ar2': solve_avoidable_rectangle_2,
     'w': solve_w_wing,
     'sdc': solve_sue_de_coq,
+    'sdc*': solve_sue_de_coq_best,
 }
 
 
 def apply_strategy(grid, list_techniques, explain):
     for technique in list_techniques:
+        if technique.isupper():
+            continue
         if SOLVER[technique](grid, explain):
             return True
     else:
