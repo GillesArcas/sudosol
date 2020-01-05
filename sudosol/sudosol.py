@@ -2811,7 +2811,7 @@ def testfile(options, filename, techniques, explain):
                     if options.trace == 'failure':
                         print(input, output, file=f)
                 ngrids += 1
-            except ValueError:
+            except (ValueError, SudokuError):
                 print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
                 return False, 0
     finally:
