@@ -148,9 +148,9 @@ def make_groups(strong_links):
                 else:
                     group3.add(link)
             group2 = group3
-        color_cells.append((group, color1, color2))
+        color_cells.append((sorted(group), color1, color2))
 
-    return color_cells
+    return sorted(color_cells)
 
 
 def show_groups(digit, num_pair, sscells):
