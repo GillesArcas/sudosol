@@ -242,6 +242,7 @@ def new_simple_command(tkapp, win, sscells):
         win.set_focus()
         send_keys('^{VK_NUMPAD0}')
         send_keys('^{VK_NUMPAD1}')
+        tkapp.wheel_mode = 'wheel_digit'
 
 
 def new_collection_command(tkapp, win, sscells):
@@ -264,6 +265,7 @@ def new_collection_command(tkapp, win, sscells):
         win.set_focus()
         send_keys('^{VK_NUMPAD0}')
         send_keys('^{VK_NUMPAD1}')
+        tkapp.wheel_mode = 'wheel_digit'
 
 
 def new_hodoku_command(tkapp, win, sscells):
@@ -289,14 +291,13 @@ def new_hodoku_command(tkapp, win, sscells):
     static = win['Are you sure you want to quit this puzzle?']
     static.wait_not('visible', timeout=1_000_000)
     s2 = get_grid_signature()
-    print(s)
-    print(s2)
     if s2 != s:
         solve_singles(sscells)
         win.set_focus()
         tkapp.set_digit_button('1')
         send_keys('^{VK_NUMPAD0}')
         send_keys('^{VK_NUMPAD1}')
+        tkapp.wheel_mode = 'wheel_digit'
 
 
 def solve_singles_command(tkapp, win, sscells):
@@ -304,35 +305,44 @@ def solve_singles_command(tkapp, win, sscells):
     solve_singles(sscells)
     send_keys('^Q')
     send_keys('^{VK_NUMPAD0}')
-    send_keys('^{VK_NUMPAD%d}' % tkapp.current_wheel_digit)
+    send_keys('^{VK_NUMPAD%d}' % tkapp.current_digit)
 
 
 def digit_mode_settings(tkapp, reset_digit=True):
-    if reset_digit or tkapp.wheel_mode == 'wheel_digit':
-        tkapp.current_wheel_digit = 1
+    if tkapp.wheel_mode == 'wheel_digit':
+        tkapp.current_digit = (tkapp.current_digit + 1) % 10
+    else:
+        pass
     tkapp.wheel_mode = 'wheel_digit'
-    tkapp.current_wheel_group = 0
+    tkapp.current_color = 0
+    tkapp.set_coloring_label(hide=True)
 
 
 def color_mode_settings(tkapp):
     tkapp.wheel_mode = 'wheel_group'
-    tkapp.current_wheel_group = 0
+    tkapp.current_color = 0
 
 
 def digit_mode_command(tkapp, win):
     digit_mode_settings(tkapp, reset_digit=False)
-    tkapp.on_select_digit(str(tkapp.current_wheel_digit))
-    win.set_focus()
-    send_keys('^Q')
-    send_keys('^{VK_NUMPAD0}')
-    send_keys('^{VK_NUMPAD%d}' % tkapp.current_wheel_digit)
+    tkapp.on_select_digit(str(tkapp.current_digit))
+    #win.set_focus()
+    #send_keys('^Q')
+    #send_keys('^{VK_NUMPAD0}')
+    #send_keys('^{VK_NUMPAD%d}' % tkapp.current_digit)
 
 
 def coloring_mode_command(tkapp, win, sscells):
-    color_mode_settings(tkapp)
-    win.set_focus()
-    tkapp.num_groups = show_groups(tkapp.current_wheel_digit, 0, sscells)
-    tkapp.text_var_color.set(f'1 / {tkapp.num_groups}')
+    if tkapp.wheel_mode != 'wheel_group':
+        color_mode_settings(tkapp)
+        win.set_focus()
+        tkapp.num_groups = show_groups(tkapp.current_digit, 0, sscells)
+        tkapp.set_coloring_label()
+    else:
+        tkapp.current_color = (tkapp.current_color + 1) % tkapp.num_groups
+        win.set_focus()
+        show_groups(tkapp.current_digit, tkapp.current_color, sscells)
+        tkapp.set_coloring_label()
 
 
 def quit_command(tkapp, win):
@@ -471,8 +481,8 @@ class App(customtkinter.CTk):
     def __init__(self, parent=None):
         customtkinter.CTk.__init__(self, parent)
         self.wheel_mode = 'wheel_digit'
-        self.current_wheel_digit = 1
-        self.current_wheel_group = 0
+        self.current_digit = 1
+        self.current_color = 0
 
     def initialize(self, appauto, win, sscells):
         self.appauto = appauto
@@ -513,12 +523,13 @@ class App(customtkinter.CTk):
             command=lambda: solve_singles_command(self, win, sscells))
         button.place(x=DX, y=160)
 
-        button = customtkinter.CTkButton(master=self, text="Digit mode",
+        button = customtkinter.CTkButton(master=self, text="Digits",
             command=lambda: digit_mode_command(self, win))
         button.place(x=DX, y=190)
 
         self.segmented_button1 = customtkinter.CTkSegmentedButton(master=self,
                                                          width=140,
+                                                         font=('Arial', 15),
                                                          dynamic_resizing=False,
                                                          values=list('01234:'),
                                                          command=self.on_select_digit)
@@ -527,31 +538,37 @@ class App(customtkinter.CTk):
 
         self.segmented_button2 = customtkinter.CTkSegmentedButton(master=self,
                                                          width=140,
+                                                         font=('Arial', 15),
                                                          dynamic_resizing=False,
                                                          values=list('56789>'),
                                                          command=self.on_select_digit)
         self.segmented_button2.place(x=DX, y=250)
 
-        button = customtkinter.CTkButton(master=self, text="Coloring",
+        self.bt_coloring = customtkinter.CTkButton(master=self, text="Colors",
             command=lambda: coloring_mode_command(self, win, sscells))
-        button.place(x=DX, y=280)
-
-        self.text_var_color = tk.StringVar(value='None')
-        label = customtkinter.CTkLabel(master=self, textvariable=self.text_var_color,
-                                              width=150, height=8)
-        label.place(x=DX - 5, y=310)
+        self.bt_coloring.place(x=DX, y=280)
 
         button = customtkinter.CTkButton(master=self, text="Quit",
             command=lambda: quit_command(self, win))
         button.place(x=DX, y=340)
 
         self.bind("<MouseWheel>", lambda event: self.on_wheel_event(event, win, appauto, sscells))
+        self.bind("<Unmap>", self.on_unmap)
+        self.bind("<Map>", self.on_map)
         self.protocol("WM_DELETE_WINDOW", lambda: quit_command(self, win))
 
         data = get_grid_from_collection()
         if data:
             _, name, index, size = data
             self.update_collection_label(name, index, size)
+
+    def on_unmap(self, event):
+        return
+        self.win.minimize()
+
+    def on_map(self, event):
+        return
+        self.win.maximize()
 
     def update_collection_label(self, name, index, size):
         self.text_var.set(f'{os.path.basename(name)} {index}/{size}')
@@ -564,45 +581,54 @@ class App(customtkinter.CTk):
             self.segmented_button1.set('')
             self.segmented_button2.set(value)
         if value in list('0123456789'):
-            self.current_wheel_digit = int(value)
+            self.current_digit = int(value)
 
     def on_select_digit(self, value):
-        digit_mode_settings(self) # , reset_digit=True)
+        print('CTkSegmentedButton', value, 'current', self.current_digit)
+        digit_mode_settings(self, reset_digit=False)
         self.set_digit_button(value)
         self.win.set_focus()
         send_keys('^Q')
         if value in list('0123456789'):
+            send_keys('^{VK_NUMPAD0}')
             send_keys('^{VK_NUMPAD%d}' % int(value))
         elif value == ':':
             send_keys('^Y')
         elif value == '>':
-            self.current_wheel_digit = (self.current_wheel_digit + 1) % 10
-            self.on_select_digit(str(self.current_wheel_digit))
+            self.current_digit = (self.current_digit + 1) % 10
+            print('new current_digit', self.current_digit)
+            self.on_select_digit(str(self.current_digit))
         else:
             assert 0, value
 
     def on_wheel_digits_event(self, event):
         print('wheel delta', event.delta)
         if event.delta > 0:
-            self.current_wheel_digit = (self.current_wheel_digit - 1) % 10
+            self.current_digit = (self.current_digit - 1) % 10
         else:
-            self.current_wheel_digit = (self.current_wheel_digit + 1) % 10
-        self.on_select_digit(str(self.current_wheel_digit))
+            self.current_digit = (self.current_digit + 1) % 10
+        self.on_select_digit(str(self.current_digit))
 
-    def on_wheel_groups_event(self, event, win, app, sscells):
+    def on_wheel_colors_event(self, event, win, app, sscells):
         if event.delta > 0:
-            self.current_wheel_group = (self.current_wheel_group - 1) % self.num_groups
+            self.current_color = (self.current_color - 1) % self.num_groups
         else:
-            self.current_wheel_group = (self.current_wheel_group + 1) % self.num_groups
+            self.current_color = (self.current_color + 1) % self.num_groups
         win.set_focus()
-        show_groups(self.current_wheel_digit, self.current_wheel_group, sscells)
-        self.text_var_color.set(f'{self.current_wheel_group + 1} / {self.num_groups}')
+        show_groups(self.current_digit, self.current_color, sscells)
+        self.set_coloring_label()
 
     def on_wheel_event(self, event, win, app, sscells):
         if self.wheel_mode == 'wheel_digit':
             self.on_wheel_digits_event(event)
         else:
-            self.on_wheel_groups_event(event, win, app, sscells)
+            self.on_wheel_colors_event(event, win, app, sscells)
+
+    def set_coloring_label(self, hide: bool = False):
+        if hide:
+            self.bt_coloring.configure(text='Colors')
+        else:
+            self.bt_coloring.configure(text=f'Colors ({self.current_color + 1} / {self.num_groups})')
 
 
 # -- Main --------------------------------------------------------------------
