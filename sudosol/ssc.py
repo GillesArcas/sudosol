@@ -308,7 +308,7 @@ def solve_singles_command(tkapp, win, sscells):
     send_keys('^{VK_NUMPAD%d}' % tkapp.current_digit)
 
 
-def digit_mode_settings(tkapp, reset_digit=True):
+def digit_mode_settings(tkapp):
     if tkapp.wheel_mode == 'wheel_digit':
         tkapp.current_digit = (tkapp.current_digit + 1) % 10
     else:
@@ -324,7 +324,7 @@ def color_mode_settings(tkapp):
 
 
 def digit_mode_command(tkapp, win):
-    digit_mode_settings(tkapp, reset_digit=False)
+    digit_mode_settings(tkapp)
     tkapp.on_select_digit(str(tkapp.current_digit))
     #win.set_focus()
     #send_keys('^Q')
@@ -585,7 +585,7 @@ class App(customtkinter.CTk):
 
     def on_select_digit(self, value):
         print('CTkSegmentedButton', value, 'current', self.current_digit)
-        digit_mode_settings(self, reset_digit=False)
+        digit_mode_settings(self)
         self.set_digit_button(value)
         self.win.set_focus()
         send_keys('^Q')
