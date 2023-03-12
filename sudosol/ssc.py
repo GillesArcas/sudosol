@@ -248,7 +248,7 @@ def new_simple_command(tkapp, win, sscells):
 def new_collection_command(tkapp, win, sscells):
     win.set_focus()
     s = get_grid_signature()
-    data = get_grid_from_collection()
+    data = get_grid_from_collection(increment=True)
     if data is None:
         return
     grid, collection_name, index, num_grids = data
@@ -453,7 +453,7 @@ def load_window_position(app):
         app.geometry(f"200x380+{x}+{y}")
 
 
-def get_grid_from_collection():
+def get_grid_from_collection(increment):
     config = load_config()
     if config.get('Collections', 'Current', fallback=None) is None:
         return None
@@ -464,7 +464,8 @@ def get_grid_from_collection():
     with open(current_collection) as f:
         grids = f.readlines()
         grid = grids[index].strip().split('#')[0]
-        index = (index + 1) % len(grids)
+        if increment:
+            index = (index + 1) % len(grids)
 
     config.set('Collections', current_collection, str(index))
     save_config(config)
@@ -572,7 +573,7 @@ class App(customtkinter.CTk):
         self.bind("<Map>", self.on_map)
         self.protocol("WM_DELETE_WINDOW", lambda: quit_command(self, win))
 
-        data = get_grid_from_collection()
+        data = get_grid_from_collection(increment=False)
         if data:
             _, name, index, size = data
             self.update_collection_label(name, index, size)
