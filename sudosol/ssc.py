@@ -283,8 +283,6 @@ def new_hodoku_command(tkapp, win, sscells):
     send_keys('^N')     # new
     send_keys('^G')     # copy givens
     send_keys('%X')     # close
-    # send_keys('{ENTER}')
-    # solve_singles(sscells)
     win.set_focus()
     send_keys('^V')
     time.sleep(1)
@@ -343,6 +341,19 @@ def coloring_mode_command(tkapp, win, sscells):
         win.set_focus()
         show_groups(tkapp.current_digit, tkapp.current_color, sscells)
         tkapp.set_coloring_label()
+
+
+def hodoku_hint_command(win):
+    win.set_focus()
+    send_keys('^c')     # copy Simple Sudoku grid into clipboard
+    app = Application(backend="uia").start(r'G:\Sudoku\.Applications\HoDoKu\hodoku.exe')
+    time.sleep(3)
+    appcon = app.connect(title_re='HoDoKu.*', found_index=0)
+    winh = appcon.window(title_re='.*HoDoKu.*')
+    winh.set_focus()
+    time.sleep(1)
+    send_keys('^v')     # paste grid into HoDoKu
+    send_keys('%{F12}')
 
 
 def quit_command(tkapp, win):
@@ -547,6 +558,10 @@ class App(customtkinter.CTk):
         self.bt_coloring = customtkinter.CTkButton(master=self, text="Colors",
             command=lambda: coloring_mode_command(self, win, sscells))
         self.bt_coloring.place(x=DX, y=280)
+
+        button = customtkinter.CTkButton(master=self, text="HoDoKu hint",
+            command=lambda: hodoku_hint_command(win))
+        button.place(x=DX, y=310)
 
         button = customtkinter.CTkButton(master=self, text="Quit",
             command=lambda: quit_command(self, win))
