@@ -17,6 +17,12 @@ import clipboard
 import colorama
 from colorama import Fore
 
+import dlx
+try:
+    import dlx_sudoku
+except:
+    from . import dlx_sudoku
+
 
 VERSION = '0.1'
 
@@ -320,27 +326,84 @@ class Grid:
     def solved(self):
         return all(cell.value is not None for cell in self.cells)
 
-    def dump(self, decor=None):
+    def dumpstr(self, decor=None):
         if self.decorate == 'color':
             colorize_candidates = colorize_candidates_color
         elif self.decorate == 'char':
             colorize_candidates = colorize_candidates_char
+        elif self.decorate == 'none':
+            colorize_candidates = colorize_candidates_none
         else:
             colorize_candidates = colorize_candidates_color
 
+        lines = []
         hborder = ('+' + ('-' * (3 * 10 - 1))) * 3 + '+'
         for i in range(9):
             if i % 3 == 0:
-                print(hborder)
+                lines.append(hborder)
             line = []
             for j, cell in enumerate(self.rows[i]):
                 line.append('%s%-9s' % ('|' if j % 3 == 0 else ' ', colorize_candidates(cell, decor)))
-            print(''.join(line) + '|')
-        print(hborder)
-        print()
+            lines.append(''.join(line) + '|')
+        lines.append(hborder)
+        lines.append('')
+        return '\n'.join(lines)
+
+    def dump(self, decor=None):
+        print(self.dumpstr(decor))
 
     def push(self, item):
+        """
+        Push item on history. Item is a tuple:
+        (caption, 'value', Cell, value, {cand: set_of_cells, cand: set_of_cells, ...})
+        (caption, 'discard', {cand: set_of_cells, cand: set_of_cells, ...})
+        """
         self.history.append(item)
+
+    def undo(self):
+        if not self.history:
+            return
+        item = self.history.pop()
+
+        if item[1] == 'discard':
+            _, _, discarded = item
+            for digit, cells in discarded.items():
+                for cell in cells:
+                    cell.candidates.add(digit)
+
+        elif item[1] == 'value':
+            _, _, cell, value, discarded = item
+            cell.value = None
+            cell.candidates.add(value)
+            for digit, cells in discarded.items():
+                for cell in cells:
+                    cell.candidates.add(digit)
+        else:
+            pass
+
+    def solution(self):
+        grid = Grid()
+        grid.input_gvc(self.output_gvc())
+        grid.nbbacktrack = 0
+        for sol in solutions(grid, 0):
+            return sol
+        return None
+
+
+def solutions(grid, i):
+    if i == 81:
+        yield grid.output_s81()
+    elif grid.cells[i].value:
+        yield from solutions(grid, i + 1)
+    else:
+        candidates = grid.cells[i].candidates
+        if candidates:
+            for candidate in sorted(candidates):
+                grid.nbbacktrack += 1
+                discarded = grid.set_value(grid.cells[i], candidate)
+                grid.push(('Naked single', 'value', grid.cells[i], candidate, discarded))
+                yield from solutions(grid, i + 1)
+                grid.undo()
 
 
 class SudokuError (Exception):
@@ -431,6 +494,15 @@ def colorize_candidates_char(cell, spec_color):
     return res
 
 
+def colorize_candidates_none(cell, spec_color):
+    if not cell.candidates:
+        return str(cell.value)
+
+    res = str(cell)
+    res += ' ' * (9 - len(res))
+    return res
+
+
 def retain_decor(cell, spec_color):
     candcol = defaultdict(lambda:CellDecor.DEFAULTCAND)
     for target, *spec_col in spec_color:
@@ -445,39 +517,66 @@ def retain_decor(cell, spec_color):
 # Loading
 
 
-def load_ss_clipboard(grid, content):
-    grid.reset()
+def load_ss_clipboard(grid, content, autofilter=True):
+    """Handle the three formats from SS clipboard:
+    - given + candidates            when starting
+    - given + values + candidates   during game
+    - given + values                at the end
+
+    When candidates are present, the candidates of the resulting grid are those
+    candidates. If candidates are not present, when setting a value, the
+    candidates of adjacent cells are filterred or not depending on the parameter
+    autofilter.
+    """
     content = content.splitlines()
-
-    if len(content) == 28:      # when starting
-        lines = ''.join(content[1:4] + content[5:8] + content[9:12])
-        values = lines.replace('|', '')
-        values = values.replace(' ', '')
-        grid.input(values)
-
-    elif len(content) == 43:    # after first move
-        # TODO: should set candidates
-        # values
-        lines = ''.join(content[16:19] + content[20:23] + content[24:27])
-        values = lines.replace('|', '')
-        values = values.replace(' ', '')
-        grid.input(values)
-        # candidates
-        lines = content[31:34] + content[35:38] + content[39:42]
-        lines = [re.findall(r'\b\d+\b', line) for line in lines]
-        if any([len(x) != 9 for x in lines]):
-            print('bad clipboard (2)')
-            exit(1)
-        cells = sum(lines, [])
-        for cell, cand in zip(grid.cells, cells):
-            cell.candidates = set(int(_) for _ in cand)
-
-    else:
-        print(content)
+    if len(content) not in (28, 43):
         print('bad clipboard (1)')
         exit(1)
 
-    return lines
+    lines1 = ''.join(content[1:4] + content[5:8] + content[9:12])
+    lines2 = ''.join(content[16:19] + content[20:23] + content[24:27])
+    if len(content) == 43:
+        lines3 = ''.join(content[31:34] + content[35:38] + content[39:42])
+
+    lines_given = lines1
+    lines_values = None
+    lines_candidates = None
+    if len(content[16]) == 14:
+        lines_values = lines2
+    else:
+        lines_candidates = lines2
+    if len(content) == 43:
+        lines_candidates = lines3
+
+    grid.reset()
+    given = lines_given.replace('|', '').replace(' ', '')
+    if re.match('[1-9.]{81}', given) is None:
+        print('bad clipboard (2)')
+        exit(1)
+    givenset = {(index, g) for index, g in enumerate(given) if g != '.'}
+
+    if lines_values:
+        values = lines_values.replace('|', '').replace(' ', '')
+        if re.match('[1-9.]{81}', values) is None:
+            print('bad clipboard (2)')
+            exit(1)
+        valueset = {(index, v) for (index, v) in enumerate(values) if v != '.'}
+    else:
+        valueset = givenset
+
+    for index, v in valueset:
+        given = (index, v) in givenset
+        if lines_candidates is not None or autofilter is False:
+            grid.cells[index].value = int(v)
+            grid.cells[index].given = given
+            grid.cells[index].candidates = set()
+        else:
+            grid.set_value(grid.cells[index], int(v), given=given)
+
+    if lines_candidates:
+        for i, candidates in enumerate(re.findall(r'(\d+)', lines_candidates)):
+            if grid.cells[i].value is None:
+                grid.cells[i].candidates = set([int(_) for _ in candidates])
 
 
 # Helpers
@@ -619,6 +718,28 @@ def print_single_history(grid):
         print()
 
 
+# Brute force
+
+
+def solve_backtrack(grid, explain):
+    sol = grid.solution()
+    if sol:
+        #print(grid.nbbacktrack)
+        grid.input(sol)
+        return 81
+    return 0
+
+
+def solve_dancing_links(grid, explain):
+    s = grid.output_s81()
+    s = s.replace('.', '0')
+    d = dlx_sudoku.DLXsudoku(s)
+    for sol in d.solve():
+        grid.input(d.createSolutionString(sol))
+        return 81
+    return 0
+
+
 # Singles
 
 
@@ -651,6 +772,8 @@ def solve_single_candidate(grid, explain):
 def solve_hidden_candidate(grid, explain):
     # hidden singles
     for cell in grid.cells:
+        if len(cell.candidates) == 1:
+            continue
         for cand in cell.candidates:
             if (cell.alone_in_row(cand) or
                 cell.alone_in_col(cand) or
@@ -2702,6 +2825,8 @@ SOLVER = {
     'w': solve_w_wing,
     'sdc': solve_sue_de_coq,
     'sdc*': solve_sue_de_coq_best,
+    'bt': solve_backtrack,
+    'dlx': solve_dancing_links,
 }
 
 
@@ -2715,13 +2840,16 @@ def apply_strategy(grid, list_techniques, explain):
         return False
 
 
-def solve(grid, options, techniques, explain):
+def solve(grid, options, techniques, explain, step=False):
     list_techniques = make_list_techniques(techniques)
     if explain:
         print(grid.output_s81())
         grid.dump()
     while not grid.solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
-        pass
+        if step:
+            break
+        else:
+            pass
     if explain and not options.step:
         print_single_history(grid)
         grid.dump()
@@ -2759,12 +2887,17 @@ def solvegrid(options, techniques, explain):
         print('Unknown format', options.format)
         return False, None
 
-    if not explain:
-        print(grid.output_s81())
-        grid.dump()
-    solve(grid, options, techniques, explain)
-    if not explain:
-        grid.dump()
+    if options.output == 'clipboard':
+        solve(grid, options, techniques, explain)
+        clipboard.copy(grid.dumpstr())
+    else:
+        if not explain:
+            print(grid.output_s81())
+            grid.dump()
+        solve(grid, options, techniques, explain)
+        if not explain:
+            grid.dump()
+
     return True, time.time() - t0
 
 
@@ -2808,6 +2941,17 @@ def testfile(options, filename, techniques, explain):
                     if options.trace == 'success':
                         print(input, output, file=f)
                 else:
+                    # if True and re.match(r'([gcv]\d+){81}', output):
+                    #     grid2 = Grid()
+                    #     grid2.input(input)
+                    #     sol1 = grid2.solution()
+                    #     print(sol1)
+                    #     grid2.input(output)
+                    #     sol2 = grid2.solution()
+                    #     if sol1 == sol2:
+                    #         solved += 1
+                    #         if options.trace == 'success':
+                    #             print(input, output, file=f)
                     if options.trace == 'failure':
                         print(input, output, file=f)
                 ngrids += 1
@@ -2936,6 +3080,17 @@ def list_compare(tag1, tag2, list1, list2):
     return res, diff
 
 
+def list_compare(tag1, tag2, list1, list2):
+    diff = list()
+    res = True
+    for i, (x, y) in enumerate(itertools.zip_longest(list1, list2, fillvalue='extra\n')):
+        if x != y:
+            diff.append('line %s %d: %s' % (tag1, i + 1, x))
+            diff.append('line %s %d: %s' % (tag2, i + 1, y))
+            res = False
+    return res, diff
+
+
 def application_error(*args):
     print('sudosol error:', *args)
     exit(1)
@@ -2971,7 +3126,7 @@ def parse_command_line(argstring=None):
     parser.add_argument('--explain', help='explain techniques',
                         action='store_true', default=False)
     parser.add_argument('--decorate', help='candidate decor when tracing grid',
-                        choices=['color', 'char'],
+                        choices=['none', 'color', 'char'],
                         action='store', default=None)
     parser.add_argument('--trace', help='additional traces',
                         choices=['success', 'failure'],

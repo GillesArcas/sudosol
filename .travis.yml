@@ -14,6 +14,8 @@ matrix:
       dist: xenial
       sudo: true
 
+# cf https://docs.travis-ci.com/user/languages/python/#pypy-support pour pypy
+
 install:
   - pip install clipboard
   - pip install colorama
