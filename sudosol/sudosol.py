@@ -214,11 +214,14 @@ class Grid:
 
         # init history
         self.history = []
+        self.history_top = -1
 
         # cell decoration when tracing ('color' or 'char')
         self.decorate = 'color'
 
     def reset(self):
+        self.history = []
+        self.history_top = -1
         for cell in self.cells:
             cell.reset()
 
@@ -358,12 +361,15 @@ class Grid:
         (caption, 'value', Cell, value, {cand: set_of_cells, cand: set_of_cells, ...})
         (caption, 'discard', {cand: set_of_cells, cand: set_of_cells, ...})
         """
+        self.history = self.history[:self.history_top + 1]
         self.history.append(item)
+        self.history_top = len(self.history) - 1
 
     def undo(self):
         if not self.history:
             return
-        item = self.history.pop()
+        item = self.history[self.history_top]
+        self.history_top -= 1
 
         if item[1] == 'discard':
             _, _, discarded = item
@@ -378,6 +384,28 @@ class Grid:
             for digit, cells in discarded.items():
                 for cell in cells:
                     cell.candidates.add(digit)
+        else:
+            pass
+
+    def redo(self):
+        if self.history_top == len(self.history) - 1:
+            return
+        self.history_top += 1
+        item = self.history[self.history_top]
+
+        if item[1] == 'discard':
+            _, _, discarded = item
+            for digit, cells in discarded.items():
+                for cell in cells:
+                    cell.candidates.discard(digit)
+
+        elif item[1] == 'value':
+            _, _, cell, value, discarded = item
+            cell.value = value
+            cell.candidates = set()
+            for digit, cells in discarded.items():
+                for cell in cells:
+                    cell.candidates.discard(digit)
         else:
             pass
 
@@ -577,6 +605,29 @@ def load_ss_clipboard(grid, content, autofilter=True):
         for i, candidates in enumerate(re.findall(r'(\d+)', lines_candidates)):
             if grid.cells[i].value is None:
                 grid.cells[i].candidates = set([int(_) for _ in candidates])
+
+
+def load_ss_file(grid, filename, autofilter=True):
+    # TODO: implement saving history
+    with open(filename) as f:
+        content = f.read()
+        content = content.splitlines()
+
+    lines_given = ''.join(content[1:4] + content[5:8] + content[9:12])
+    given = lines_given.replace('|', '').replace(' ', '')
+    if re.match('[1-9.]{81}', given) is None:
+        print('bad clipboard (2)')
+        exit(1)
+    givenset = {(index, g) for index, g in enumerate(given) if g != '.'}
+
+    grid.reset()
+    for index, g in givenset:
+        if autofilter is False:
+            grid.cells[index].value = int(g)
+            grid.cells[index].given = True
+            grid.cells[index].candidates = set()
+        else:
+            grid.set_value(grid.cells[index], int(g), given=True)
 
 
 # Helpers
