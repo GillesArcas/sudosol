@@ -7,6 +7,7 @@ import glob
 import random
 import time
 import io
+import itertools
 
 from collections import defaultdict
 from enum import Enum
@@ -329,6 +330,18 @@ class Grid:
     def solved(self):
         return all(cell.value is not None for cell in self.cells)
 
+    def dump_values(self, given:bool):
+        lines = []
+        lines.append('*-----------*')
+        for index, boxrows in enumerate(batched(self.boxrows, 3)):
+            s = [''.join(str(cell.value) if cell.value and (cell.given >= given) else '.' for cell in boxrow)
+                for boxrow in boxrows]
+            lines.append('|' + '|'.join(s) + '|')
+            if index in (2, 5):
+                lines.append('|---+---+---|')
+        lines.append('*-----------*\n')
+        return '\n'.join(lines)
+
     def dumpstr(self, decor=None):
         if self.decorate == 'color':
             colorize_candidates = colorize_candidates_color
@@ -453,9 +466,9 @@ CellDecorColor = {
     CellDecor.COLOR4: Fore.MAGENTA
 }
 
-def colorize_candidates_color(cell, spec_color):
+def colorize_candidates_color(cell, color_spec):
     """
-    col_spec ::= [cells, [candidates, color]*]*
+    color_spec ::= [cells, [candidates, color]*]*
     ex:
     (({cell}, [1], CellDecor.COLOR1),
      ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, CellDecor.COLOR1))
@@ -470,10 +483,10 @@ def colorize_candidates_color(cell, spec_color):
         res += ' ' * (9 - 1)
         return res
     else:
-        if spec_color is None:
+        if color_spec is None:
             res = CellDecorColor[CellDecor.DEFAULTCAND] + str(cell) + Fore.RESET
         else:
-            candcol = retain_decor(cell, spec_color)
+            candcol = retain_decor(cell, color_spec)
             res = ''
             for cand in sorted(cell.candidates):
                 res += CellDecorColor[candcol[cand]] + str(cand) + Fore.RESET
@@ -496,9 +509,9 @@ CellDecorChar = {
 }
 
 
-def colorize_candidates_char(cell, spec_color):
+def colorize_candidates_char(cell, color_spec):
     """
-    col_spec ::= [cells, [candidates, color]*]*
+    color_spec ::= [cells, [candidates, color]*]*
     ex:
     (({cell}, [1], CellDecor.COLOR1),
      ((cell1, cell2), ALLCAND, CellDecor.COLOR2, {cand1, cand2}, CellDecor.COLOR1))
@@ -510,19 +523,20 @@ def colorize_candidates_char(cell, spec_color):
         decor = CellDecor.GIVEN if cell.given else CellDecor.VALUE
         return str(cell.value) + CellDecorChar[decor]
 
-    if spec_color is None:
+    if color_spec is None:
         res = str(cell)
     else:
-        candcol = retain_decor(cell, spec_color)
+        candcol = retain_decor(cell, color_spec)
         res = ''
         for cand in sorted(cell.candidates):
             res += str(cand) + CellDecorChar[candcol[cand]]
 
     res += ' ' * (9 - len(res))
+    print('--', res)
     return res
 
 
-def colorize_candidates_none(cell, spec_color):
+def colorize_candidates_none(cell, color_spec):
     if not cell.candidates:
         return str(cell.value)
 
@@ -531,9 +545,9 @@ def colorize_candidates_none(cell, spec_color):
     return res
 
 
-def retain_decor(cell, spec_color):
+def retain_decor(cell, color_spec):
     candcol = defaultdict(lambda:CellDecor.DEFAULTCAND)
-    for target, *spec_col in spec_color:
+    for target, *spec_col in color_spec:
         if cell in target:
             for cand in cell.candidates:
                 for spec_cand, speccol in zip(spec_col[::2], spec_col[1::2]):
@@ -545,6 +559,26 @@ def retain_decor(cell, spec_color):
 # Loading
 
 
+def format_ss_clipboard(grid):
+    """Handle the three formats from SS clipboard:
+    - given + candidates            when starting
+    - given + values + candidates   during game
+    - given + values                at the end
+    """
+    s1 = grid.dump_values(given=True)
+    if not grid.history:
+        s2 = grid.dumpstr()
+        lines = [s1, s2]
+    elif grid.solved():
+        s2 = grid.dump_values(given=False)
+        lines = [s1, s2]
+    else:
+        s2 = grid.dump_values(given=False)
+        s3 = grid.dumpstr()
+        lines = [s1, s2, s3]
+    return '\n\n'.join(lines)
+
+
 def load_ss_clipboard(grid, content, autofilter=True):
     """Handle the three formats from SS clipboard:
     - given + candidates            when starting
@@ -553,7 +587,7 @@ def load_ss_clipboard(grid, content, autofilter=True):
 
     When candidates are present, the candidates of the resulting grid are those
     candidates. If candidates are not present, when setting a value, the
-    candidates of adjacent cells are filterred or not depending on the parameter
+    candidates of adjacent cells are filtered or not depending on the parameter
     autofilter.
     """
     content = content.splitlines()
@@ -767,6 +801,18 @@ def print_single_history(grid):
     if singlehistory:
         print(singlehistory)
         print()
+
+
+def batched(iterable, n, *, strict=False):
+    # TODO: remove when updating python to 3.12 or above
+    # batched('ABCDEFG', 3) → ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    iterator = iter(iterable)
+    while batch := tuple(itertools.islice(iterator, n)):
+        if strict and len(batch) != n:
+            raise ValueError('batched(): incomplete batch')
+        yield batch
 
 
 # Brute force
