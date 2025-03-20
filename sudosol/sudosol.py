@@ -17,6 +17,7 @@ from tqdm import tqdm
 import clipboard
 import colorama
 from colorama import Fore
+from icecream import ic
 
 import dlx
 try:
@@ -101,25 +102,25 @@ class Cell:
     def is_pair(self):
         return len(self.candidates) == 2
 
-    def same_digit_in_row(self, digit):
+    def same_digit_in_row(self, digit) -> set:
         """return all cells in self row with digit as candidate (possibly
         including self)
         """
         return set(peer for peer in self.row if digit in peer.candidates)
 
-    def same_digit_in_col(self, digit):
+    def same_digit_in_col(self, digit) -> set:
         """return all cells in self col with digit as candidate (possibly
         including self)
         """
         return set(peer for peer in self.col if digit in peer.candidates)
 
-    def same_digit_in_box(self, digit):
+    def same_digit_in_box(self, digit) -> set:
         """return all cells in self box with digit as candidate (possibly
         including self)
         """
         return set(peer for peer in self.box if digit in peer.candidates)
 
-    def same_digit_peers(self, digit):
+    def same_digit_peers(self, digit) -> set:
         """return all cells in self peers with digit as candidate (not
         including self)
         """
@@ -229,23 +230,37 @@ class Grid:
     def units(self):
         return itertools.chain(self.rows, self.cols, self.boxes)
 
-    def input(self, str):
-        if re.match(r'^[\d.]{81}$', str):
-            self.input_s81(str)
-        elif re.match(r'^([1-9]{1,9},){80}\d{1,9}$', str):
-            self.input_csv(str)
-        elif re.match(r'^([gvc][1-9]{1,9}){81}$', str):
-            self.input_gvc(str)
+    def input(self, string):
+        # breakpoint()
+        if re.match(r'[\d.]{81}$', string):
+            self.input_s81(string)
+        elif re.match('([1-9]{1,9},){80}[1-9]{1,9}$', string):
+            self.input_csv(string)
+        elif re.match(r'([gvc][1-9]{1,9}){81}$', string):
+            self.input_gvc(string)
+        elif string81 := grid_to_string81(string):
+            self.input_s81(string81)
+        elif stringcsv := grid_to_csv(string):
+            self.input_csv(stringcsv)
+        elif given_values_candidates := load_ss_clipboard(self, string):
+            self.input_gvc_strings(*given_values_candidates)
+        elif given_history := load_ss_grid_and_history(string):
+            self.input_grid_and_history(*given_history)
         else:
-            raise SudokuError(f'illegal grid format in string: {str}')
+            raise SudokuError(f'illegal grid format in string: {string}')
 
-    def input_s81(self, str81):
+    def input_s81(self, str81, autofilter=True, given=True):
         """load a 81 character string of given values
         """
         self.reset()
-        for index, char in enumerate(str81):
-            if char not in '.0':
-                self.set_value(self.cells[index], int(char), given=True)
+        for cell, char in zip(self.cells, str81):
+            if char in '123456789':
+                if autofilter is False:
+                    cell.value = int(char)
+                    cell.given = given
+                    cell.candidates = set()
+                else:
+                    self.set_value(cell, int(char), given=given)
 
     def input_csv(self, strcand):
         """load a comma separated list of candidates, a single candidate is
@@ -257,6 +272,42 @@ class Grid:
                 self.set_value(self.cells[index], int(candidates[0]), given=True)
             else:
                 self.cells[index].candidates = set(int(_) for _ in candidates)
+
+    def input_gvc_strings(self, given, values, candidates):
+        """
+        """
+        self.reset()
+        for cell, g, v, c in zip(self.cells, given, values, candidates.split(',')):
+            if g in '123456789':
+                cell.value = int(g)
+                cell.given = True
+                cell.candidates = set()
+            elif v in '123456789':
+                cell.value = int(v)
+                cell.given = False
+                cell.candidates = set()
+            else:
+                cell.candidates = set([int(_) for _ in c])
+
+    def input_grid_and_history(self, given, history):
+        self.reset()
+        self.input_s81(given)
+        for line in history.splitlines():
+            if match := re.match(r'I(\d\d)([1-9])', line):
+                cell_index = int(match[1])
+                cell = self.cells[cell_index]
+                cand = int(match[2])
+                discarded = self.set_value(cell, cand)
+                self.push(('Insert', 'value', cell, cand, discarded))
+            elif match := re.match(r'E(\d\d)(\d\d)([1-9]{1,8})', line):
+                # TODO: gather cells within same move
+                cell_index = int(match[1])
+                cell = self.cells[cell_index]
+                cell_num = int(match[2])
+                candidates = match[3]
+                for cand in candidates:
+                    cell.discard(int(cand))
+                self.push(('Exclude', 'discard', {int(c): [cell] for c in candidates}))
 
     def input_gvc(self, str):
         """load a given-value-candidates string ([gvc][1-9]{1,9}){81}
@@ -314,7 +365,6 @@ class Grid:
         return self.boxes[(irow // 3) * 3 + icol // 3]
 
     def set_value(self, cell, digit, given=False):
-
         discarded = defaultdict(set)
         for candidate in cell.candidates:
             discarded[candidate].add(cell)
@@ -388,7 +438,9 @@ class Grid:
             _, _, discarded = item
             for digit, cells in discarded.items():
                 for cell in cells:
-                    cell.candidates.add(digit)
+                    # if digit not already eliminated by some value:
+                    if all(digit != c.value for c in cell.peers):
+                        cell.candidates.add(digit)
 
         elif item[1] == 'value':
             _, _, cell, value, discarded = item
@@ -420,6 +472,16 @@ class Grid:
                 for cell in cells:
                     cell.candidates.discard(digit)
         else:
+            pass
+
+    def dump_history(self):
+        # TODO
+        """
+        (caption, 'value', Cell, value, {cand: set_of_cells, cand: set_of_cells, ...})
+        (caption, 'discard', {cand: set_of_cells, cand: set_of_cells, ...})
+        """
+        dump = []
+        for _, move, spec in self.history:
             pass
 
     def solution(self):
@@ -532,7 +594,6 @@ def colorize_candidates_char(cell, color_spec):
             res += str(cand) + CellDecorChar[candcol[cand]]
 
     res += ' ' * (9 - len(res))
-    print('--', res)
     return res
 
 
@@ -579,6 +640,48 @@ def format_ss_clipboard(grid):
     return '\n\n'.join(lines)
 
 
+def grid_to_string81(string: str) -> str:
+    """Convert a string containing a grid of values into a normalized string made
+    of 81 digits or dots. The grid may contain horizontal or vertical separators.
+    Horizontal separators are lines containing dashes ('-') which cannot be used
+    as an unknown digit. Vertical separators are bar characters ('|'). The
+    character denoting unknown digits ('.', '0', ...) must be unique.
+    """
+    lines = [line.strip() for line in string.splitlines()]
+    lines = [line for line in lines if line]
+    lines = [line for line in lines if '-' not in line]
+    string = ''.join(lines)
+    string = string.replace('|', '')
+    if len(string) != 81:
+        return ''
+    else:
+        chars = ''.join(sorted(set(string)))
+        if '123456789' in chars and len(chars) == 10:
+            return string
+        else:
+            return ''
+
+
+def grid_to_csv(string: str) -> str:
+    """Convert a string containing a grid of candidates into a normalized string
+    made of candidates separated by commas. Same as grid_to_string81 for
+    separators.
+    """
+    lines = [line.strip() for line in string.splitlines()]
+    lines = [line for line in lines if line]
+    lines = [line for line in lines if '-' not in line]
+    string = ''.join(lines)
+    string = string.replace('|', '')
+    if re.match(r'([1-9]{1,9}\s+){80}[1-9]{1,9}$', string) is False:
+        return ''
+    else:
+        xs = re.findall('[1-9]{1,9}', string)
+        if len(xs) != 81:
+            return ''
+        else:
+            return ','.join(xs)
+
+
 def load_ss_clipboard(grid, content, autofilter=True):
     """Handle the three formats from SS clipboard:
     - given + candidates            when starting
@@ -590,10 +693,10 @@ def load_ss_clipboard(grid, content, autofilter=True):
     candidates of adjacent cells are filtered or not depending on the parameter
     autofilter.
     """
-    content = content.splitlines()
+    content = [_.strip() for _ in content.splitlines()]
     if len(content) not in (28, 43):
         print('bad clipboard (1)')
-        exit(1)
+        return ''
 
     lines1 = ''.join(content[1:4] + content[5:8] + content[9:12])
     lines2 = ''.join(content[16:19] + content[20:23] + content[24:27])
@@ -603,65 +706,76 @@ def load_ss_clipboard(grid, content, autofilter=True):
     lines_given = lines1
     lines_values = None
     lines_candidates = None
-    if len(content[16]) == 14:
+    if len(content[16]) == 13:
         lines_values = lines2
     else:
         lines_candidates = lines2
     if len(content) == 43:
         lines_candidates = lines3
 
-    grid.reset()
-    given = lines_given.replace('|', '').replace(' ', '')
-    if re.match('[1-9.]{81}', given) is None:
+    if not (given := grid_to_string81(lines_given)):
         print('bad clipboard (2)')
-        exit(1)
-    givenset = {(index, g) for index, g in enumerate(given) if g != '.'}
+        # exit(1)
+        return ''
 
     if lines_values:
-        values = lines_values.replace('|', '').replace(' ', '')
-        if re.match('[1-9.]{81}', values) is None:
-            print('bad clipboard (2)')
-            exit(1)
-        valueset = {(index, v) for (index, v) in enumerate(values) if v != '.'}
+        if not (values := grid_to_string81(lines_values)):
+            print('bad clipboard (3)')
+            # exit(1)
+            return ''
     else:
-        valueset = givenset
-
-    for index, v in valueset:
-        given = (index, v) in givenset
-        if lines_candidates is not None or autofilter is False:
-            grid.cells[index].value = int(v)
-            grid.cells[index].given = given
-            grid.cells[index].candidates = set()
-        else:
-            grid.set_value(grid.cells[index], int(v), given=given)
+        values = given
 
     if lines_candidates:
-        for i, candidates in enumerate(re.findall(r'(\d+)', lines_candidates)):
-            if grid.cells[i].value is None:
-                grid.cells[i].candidates = set([int(_) for _ in candidates])
+        if not (candidates := grid_to_csv(lines_candidates)):
+            print('bad clipboard (4)')
+            # exit(1)
+            return ''
+    else:
+        candidates = ','.join(list(values))
+
+    # grid.input_gvc_strings(given, values, candidates)
+    return given, values, candidates
+
+
+def load_ss_grid_and_history(content):
+    """whatever format for initial position + history
+    """
+    content = [_.strip() for _ in content.splitlines()]
+    content = '\n'.join(content)
+    match = re.match(r'(.*\n)\n+(.*)', content, re.DOTALL)
+
+    if not match:
+        print('bad grid and history (1)')
+        return ''
+    else:
+        sgrid, history = match[1], match[2]
+
+    if not (given := grid_to_string81(sgrid)):
+        print('bad grid and history')
+        # exit(1)
+        return ''
+
+    for line in history.splitlines():
+        if re.match(r'I\d\d[1-9]', line) or re.match(r'E\d\d\d\d[1-9]{1,8}', line):
+            pass
+        else:
+            print('bad history')
+            return ''
+
+    return given, history
 
 
 def load_ss_file(grid, filename, autofilter=True):
-    # TODO: implement saving history
+    # TODO: autofilter ?
     with open(filename) as f:
         content = f.read()
-        content = content.splitlines()
 
-    lines_given = ''.join(content[1:4] + content[5:8] + content[9:12])
-    given = lines_given.replace('|', '').replace(' ', '')
-    if re.match('[1-9.]{81}', given) is None:
-        print('bad clipboard (2)')
-        exit(1)
-    givenset = {(index, g) for index, g in enumerate(given) if g != '.'}
-
-    grid.reset()
-    for index, g in givenset:
-        if autofilter is False:
-            grid.cells[index].value = int(g)
-            grid.cells[index].given = True
-            grid.cells[index].candidates = set()
-        else:
-            grid.set_value(grid.cells[index], int(g), given=True)
+    try:
+        grid.input(content)
+        return
+    except SudokuError:
+        pass
 
 
 # Helpers
@@ -1621,15 +1735,15 @@ def explain_multicolor(grid, caption, digit,
                      cluster_blue1, cluster_green1,
                      cluster_blue2, cluster_green2,
                      cells_to_discard, remove_dict):
-        print_single_history(grid)
-        print(describe_multi_coloring(caption, digit,
-                    cluster_blue1, cluster_green1,
-                    cluster_blue2, cluster_green2, remove_dict))
-        grid.dump(((cluster_blue1, [digit], CellDecor.COLOR1),
-                   (cluster_green1, [digit], CellDecor.COLOR2),
-                   (cluster_blue2, [digit], CellDecor.COLOR3),
-                   (cluster_green2, [digit], CellDecor.COLOR4),
-                   (cells_to_discard, [digit], CellDecor.REMOVECAND)))
+    print_single_history(grid)
+    print(describe_multi_coloring(caption, digit,
+                cluster_blue1, cluster_green1,
+                cluster_blue2, cluster_green2, remove_dict))
+    grid.dump(((cluster_blue1, [digit], CellDecor.COLOR1),
+               (cluster_green1, [digit], CellDecor.COLOR2),
+               (cluster_blue2, [digit], CellDecor.COLOR3),
+               (cluster_green2, [digit], CellDecor.COLOR4),
+               (cells_to_discard, [digit], CellDecor.REMOVECAND)))
 
 
 def describe_multi_coloring(caption, digit,
@@ -2957,7 +3071,7 @@ def solve(grid, options, techniques, explain, step=False):
 
 def solvegrid(options, techniques, explain):
     """
-    Solve a single grid given on a the command line, in the clipboard or
+    Solve a single grid given on the command line, in the clipboard or
     a file.
     """
     t0 = time.time()
@@ -2979,7 +3093,8 @@ def solvegrid(options, techniques, explain):
     if options.format is None:
         grid.input(sgrid)
     elif options.format == 'ss':
-        load_ss_clipboard(grid, sgrid)
+        # TODO: remove
+        grid.input(sgrid)
     else:
         print('Unknown format', options.format)
         return False, None
