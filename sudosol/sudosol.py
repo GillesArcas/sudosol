@@ -3152,17 +3152,6 @@ def testfile(options, filename, techniques, explain):
                     if options.trace == 'success':
                         print(input, output, file=f)
                 else:
-                    # if True and re.match(r'([gcv]\d+){81}', output):
-                    #     grid2 = Grid()
-                    #     grid2.input(input)
-                    #     sol1 = grid2.solution()
-                    #     print(sol1)
-                    #     grid2.input(output)
-                    #     sol2 = grid2.solution()
-                    #     if sol1 == sol2:
-                    #         solved += 1
-                    #         if options.trace == 'success':
-                    #             print(input, output, file=f)
                     if options.trace == 'failure':
                         print(input, output, file=f)
                 ngrids += 1
