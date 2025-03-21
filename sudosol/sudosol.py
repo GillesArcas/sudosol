@@ -656,7 +656,7 @@ def grid_to_string81(string: str) -> str:
         return ''
     else:
         chars = ''.join(sorted(set(string)))
-        if '123456789' in chars and len(chars) == 10:
+        if sum(_ not in '123456789' for _ in chars) == 1:
             return string
         else:
             return ''
