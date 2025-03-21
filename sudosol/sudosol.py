@@ -695,7 +695,7 @@ def load_ss_clipboard(grid, content, autofilter=True):
     """
     content = [_.strip() for _ in content.splitlines()]
     if len(content) not in (28, 43):
-        print('bad clipboard (1)')
+        print('bad clipboard (1)', file=sys.stderr)
         return ''
 
     lines1 = ''.join(content[1:4] + content[5:8] + content[9:12])
@@ -714,13 +714,13 @@ def load_ss_clipboard(grid, content, autofilter=True):
         lines_candidates = lines3
 
     if not (given := grid_to_string81(lines_given)):
-        print('bad clipboard (2)')
+        print('bad clipboard (2)', file=sys.stderr)
         # exit(1)
         return ''
 
     if lines_values:
         if not (values := grid_to_string81(lines_values)):
-            print('bad clipboard (3)')
+            print('bad clipboard (3)', file=sys.stderr)
             # exit(1)
             return ''
     else:
@@ -728,7 +728,7 @@ def load_ss_clipboard(grid, content, autofilter=True):
 
     if lines_candidates:
         if not (candidates := grid_to_csv(lines_candidates)):
-            print('bad clipboard (4)')
+            print('bad clipboard (4)', file=sys.stderr)
             # exit(1)
             return ''
     else:
@@ -746,21 +746,20 @@ def load_ss_grid_and_history(content):
     match = re.match(r'(.*\n)\n+(.*)', content, re.DOTALL)
 
     if not match:
-        print('bad grid and history (1)')
+        print('bad grid and history (1)', file=sys.stderr)
         return ''
     else:
         sgrid, history = match[1], match[2]
 
     if not (given := grid_to_string81(sgrid)):
-        print('bad grid and history')
-        # exit(1)
+        print('bad grid and history', file=sys.stderr)
         return ''
 
     for line in history.splitlines():
         if re.match(r'I\d\d[1-9]', line) or re.match(r'E\d\d\d\d[1-9]{1,8}', line):
             pass
         else:
-            print('bad history')
+            print('bad history', file=sys.stderr)
             return ''
 
     return given, history
@@ -3125,7 +3124,7 @@ def testfile(options, filename, techniques, explain):
         application_error('unable to read', filename)
 
     # remove empty lines and full line comments before choosing grids
-    grids = [line for line in grids if line.strip() and line[0] != '#']
+    grids = [line for line in grids if line.strip() and line[0] not in ';#']
 
     # choose grids
     if options.first:
