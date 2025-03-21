@@ -5,3 +5,4 @@
 --solve tests/formats/ss-clipboard1.txt --format ss --decor char
 --solve tests/formats/ss-clipboard2.txt --format ss --decor char
 --testf tests/formats/str81-strcand.txt --explain --decor char
+--solve tests/formats/top12.ss --explain --decor char
