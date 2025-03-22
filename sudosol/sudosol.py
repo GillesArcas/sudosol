@@ -231,7 +231,6 @@ class Grid:
         return itertools.chain(self.rows, self.cols, self.boxes)
 
     def input(self, string):
-        # breakpoint()
         if re.match(r'[\d.]{81}$', string):
             self.input_s81(string)
         elif re.match('([1-9]{1,9},){80}[1-9]{1,9}$', string):
@@ -505,8 +504,10 @@ class Grid:
 
 
 def solutions(grid, i):
+    """backtracing
+    """
     if i == 81:
-        yield grid.output_s81()
+        yield grid.output_gvc()
     elif grid.cells[i].value:
         yield from solutions(grid, i + 1)
     else:
@@ -515,7 +516,7 @@ def solutions(grid, i):
             for candidate in sorted(candidates):
                 grid.nbbacktrack += 1
                 discarded = grid.set_value(grid.cells[i], candidate)
-                grid.push(('Naked single', 'value', grid.cells[i], candidate, discarded))
+                grid.push(('Backtrack', 'value', grid.cells[i], candidate, discarded))
                 yield from solutions(grid, i + 1)
                 grid.undo()
 
@@ -782,6 +783,15 @@ def load_ss_file(grid, filename, autofilter=True):
         return
     except SudokuError:
         pass
+
+
+def save_ss_file(grid, filename):
+    """Save grid as Simple Sudoku: the grid of given followed by history.
+    """
+    with open(filename, 'wt') as f:
+        print(grid.dump_values(given=True), file=f)
+        for item in grid.dump_history():
+            print(item, file=f)
 
 
 # Helpers
@@ -2974,6 +2984,8 @@ STRATEGY_HODOKU_UNFAIR = STRATEGY_HODOKU_HARD + ',BF5,BF6,BF7,fbf3,sbf3,fbf4,sbf
 def make_list_techniques(strategy):
     ALL = ','.join(SOLVER.keys())
     ALL = STRATEGY_SSTS + ','  + ','.join(sorted(set(SOLVER.keys()) - set(STRATEGY_SSTS.split(','))))
+    ALL = ALL.replace(',bt', '')
+    ALL = ALL.replace(',dlx', '')
 
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
     strategy = re.sub(r'\bhodoku_easy\b', STRATEGY_HODOKU_EASY, strategy)
@@ -3351,6 +3363,8 @@ def parse_command_line(argstring=None):
 
 
 def main(argstring=None):
+    """executable entry point
+    """
     options = parse_command_line(argstring)
     return main_args(options)
 
