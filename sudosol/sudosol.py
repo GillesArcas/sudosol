@@ -267,11 +267,11 @@ class Grid:
         considered as a given value
         """
         self.reset()
-        for index, candidates in enumerate(strcand.split(',')):
+        for cell, candidates in zip(self.cells, strcand.split(',')):
             if len(candidates) == 1:
-                self.set_value(self.cells[index], int(candidates[0]), given=True)
+                self.set_value(cell, int(candidates[0]), given=True)
             else:
-                self.cells[index].candidates = set(int(_) for _ in candidates)
+                cell.candidates = set(int(_) for _ in candidates)
 
     def input_gvc_strings(self, given, values, candidates):
         """
@@ -309,17 +309,17 @@ class Grid:
                     cell.discard(int(cand))
                 self.push(('Exclude', 'discard', {int(c): [cell] for c in candidates}))
 
-    def input_gvc(self, str):
+    def input_gvc(self, string):
         """load a given-value-candidates string ([gvc][1-9]{1,9}){81}
         """
         self.reset()
-        for index, s in enumerate(re.findall(r'[gvc][1-9]{1,9}', str)):
+        for cell, s in zip(self.cells, re.findall(r'[gvc][1-9]{1,9}', string)):
             if s[0] == 'g':
-                self.set_value(self.cells[index], int(s[1]), given=True)
+                self.set_value(cell, int(s[1]), given=True)
             elif s[0] == 'v':
-                self.set_value(self.cells[index], int(s[1]), given=False)
+                self.set_value(cell, int(s[1]), given=False)
             else:
-                self.cells[index].candidates = set(int(_) for _ in s[1:])
+                cell.candidates = set(int(_) for _ in s[1:])
 
     def output_s81(self):
         """return a 81 character string
@@ -475,14 +475,25 @@ class Grid:
             pass
 
     def dump_history(self):
-        # TODO
         """
         (caption, 'value', Cell, value, {cand: set_of_cells, cand: set_of_cells, ...})
         (caption, 'discard', {cand: set_of_cells, cand: set_of_cells, ...})
         """
         dump = []
-        for _, move, spec in self.history:
-            pass
+        for _, move, *spec in self.history:
+            if move == 'value':
+                cell, value, _ = spec
+                dump.append('I%02d%d' % (cell.cellnum, value))
+            else:
+                discarded, *_ = spec
+                discarded2 = defaultdict(list)
+                for cand, cells in discarded.items():
+                    for cell in cells:
+                        discarded2[cell.cellnum].append(cand)
+                for index, (cellnum, candidates) in enumerate(sorted(discarded2.items())):
+                    dump.append('E%02d%02d%s' % (cellnum, index, ''.join([str(_) for _ in sorted(candidates)])))
+        return dump
+
 
     def solution(self):
         grid = Grid()
@@ -715,13 +726,11 @@ def load_ss_clipboard(grid, content, autofilter=True):
 
     if not (given := grid_to_string81(lines_given)):
         print('bad clipboard (2)', file=sys.stderr)
-        # exit(1)
         return ''
 
     if lines_values:
         if not (values := grid_to_string81(lines_values)):
             print('bad clipboard (3)', file=sys.stderr)
-            # exit(1)
             return ''
     else:
         values = given
@@ -729,12 +738,10 @@ def load_ss_clipboard(grid, content, autofilter=True):
     if lines_candidates:
         if not (candidates := grid_to_csv(lines_candidates)):
             print('bad clipboard (4)', file=sys.stderr)
-            # exit(1)
             return ''
     else:
         candidates = ','.join(list(values))
 
-    # grid.input_gvc_strings(given, values, candidates)
     return given, values, candidates
 
 
