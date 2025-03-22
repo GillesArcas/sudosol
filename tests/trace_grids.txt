@@ -51,15 +51,7 @@ Naked single : r6c2=6, r6c4=7, r6c8=8, r7c8=6, r7c9=4, r8c8=2, r8c9=8
 |345689    134589    1589     |13489     1349      7.       |2.        1568      156      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c7=5, r3c3=3, r3c1=6, r1c2=9, r1c1=7, r3c7=2, r3c4=5, r3c5=1, r9c3=4
-Hidden single: r1c8=1, r2c6=7, r2c5=9, r4c1=4, r5c8=9, r7c7=9, r8c1=9
-Naked single : r9c1=2, r5c1=5, r5c5=6, r4c5=5, r6c6=1, r4c6=9, r6c1=3, r7c1=1, r7c3=8, r5c3=7
-Naked single : r4c3=1, r8c2=3, r7c2=5, r8c5=4, r1c5=3, r1c4=2, r1c6=4, r7c4=3, r9c4=9, r9c6=6
-Naked single : r7c6=2
-Hidden single: r6c9=5, r4c9=7
-Naked single : r4c4=8, r4c7=6, r1c7=8, r1c9=6, r4c2=2, r4c8=3, r2c8=4, r2c9=3, r5c2=8, r5c9=2
-Naked single : r6c2=6, r6c4=7, r6c8=8, r7c8=6, r7c9=4, r8c8=2, r8c9=8, r6c7=1, r6c5=2, r6c6=8
-Naked single : r6c1=7, r7c9=1
+Naked single : r6c7=1, r6c5=2, r6c6=8, r6c1=7, r7c9=1
 Hidden single: r1c8=7, r2c5=7, r3c5=5, r5c6=6
 Naked single : r5c7=5, r1c7=4, r4c7=6, r3c7=8, r8c7=9
 Hidden single: r5c5=1
@@ -99,25 +91,7 @@ Naked single : r3c4=1, r7c1=9, r7c3=8, r9c2=4, r9c3=1
 |2679      12567     679      |1269      25689     1569     |4.        679       3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c7=5, r3c3=3, r3c1=6, r1c2=9, r1c1=7, r3c7=2, r3c4=5, r3c5=1, r9c3=4
-Hidden single: r1c8=1, r2c6=7, r2c5=9, r4c1=4, r5c8=9, r7c7=9, r8c1=9
-Naked single : r9c1=2, r5c1=5, r5c5=6, r4c5=5, r6c6=1, r4c6=9, r6c1=3, r7c1=1, r7c3=8, r5c3=7
-Naked single : r4c3=1, r8c2=3, r7c2=5, r8c5=4, r1c5=3, r1c4=2, r1c6=4, r7c4=3, r9c4=9, r9c6=6
-Naked single : r7c6=2
-Hidden single: r6c9=5, r4c9=7
-Naked single : r4c4=8, r4c7=6, r1c7=8, r1c9=6, r4c2=2, r4c8=3, r2c8=4, r2c9=3, r5c2=8, r5c9=2
-Naked single : r6c2=6, r6c4=7, r6c8=8, r7c8=6, r7c9=4, r8c8=2, r8c9=8, r6c7=1, r6c5=2, r6c6=8
-Naked single : r6c1=7, r7c9=1
-Hidden single: r1c8=7, r2c5=7, r3c5=5, r5c6=6
-Naked single : r5c7=5, r1c7=4, r4c7=6, r3c7=8, r8c7=9
-Hidden single: r5c5=1
-Naked single : r8c5=4, r4c5=3, r4c4=4, r4c8=2, r5c8=3, r8c6=1, r1c6=2, r1c9=5, r2c6=4, r2c8=1
-Naked single : r3c8=6, r3c9=2, r8c4=8, r8c8=5, r8c2=2, r5c2=9, r5c1=2, r8c1=6, r8c3=7, r9c5=9
-Naked single : r9c4=3, r9c8=8, r9c9=6
-Hidden single: r2c3=2, r3c1=4
-Naked single : r9c1=5, r2c1=8, r2c2=5, r4c2=8, r4c3=5, r7c2=3, r1c2=1, r1c4=9, r1c1=3, r3c3=9
-Naked single : r3c4=1, r7c1=9, r7c3=8, r9c2=4, r9c3=1, r1c7=7, r1c8=4, r1c1=6, r1c6=5, r3c9=2
-Naked single : r2c9=1, r3c7=8, r3c8=3, r6c7=9, r5c7=1
+Naked single : r1c7=7, r1c8=4, r1c1=6, r1c6=5, r3c9=2, r2c9=1, r3c7=8, r3c8=3, r6c7=9, r5c7=1
 Hidden single: r2c3=8, r4c9=5
 Naked single : r8c9=6, r6c9=7, r8c8=9, r9c8=7
 Hidden single: r9c5=8, r9c2=5, r8c2=1
@@ -155,32 +129,7 @@ Naked single : r7c5=9, r5c5=3, r2c5=2, r2c4=3, r5c4=9, r7c4=6, r9c4=2
 |367       9.        8.       |135       12357     1237     |24567     24567     1256     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c7=5, r3c3=3, r3c1=6, r1c2=9, r1c1=7, r3c7=2, r3c4=5, r3c5=1, r9c3=4
-Hidden single: r1c8=1, r2c6=7, r2c5=9, r4c1=4, r5c8=9, r7c7=9, r8c1=9
-Naked single : r9c1=2, r5c1=5, r5c5=6, r4c5=5, r6c6=1, r4c6=9, r6c1=3, r7c1=1, r7c3=8, r5c3=7
-Naked single : r4c3=1, r8c2=3, r7c2=5, r8c5=4, r1c5=3, r1c4=2, r1c6=4, r7c4=3, r9c4=9, r9c6=6
-Naked single : r7c6=2
-Hidden single: r6c9=5, r4c9=7
-Naked single : r4c4=8, r4c7=6, r1c7=8, r1c9=6, r4c2=2, r4c8=3, r2c8=4, r2c9=3, r5c2=8, r5c9=2
-Naked single : r6c2=6, r6c4=7, r6c8=8, r7c8=6, r7c9=4, r8c8=2, r8c9=8, r6c7=1, r6c5=2, r6c6=8
-Naked single : r6c1=7, r7c9=1
-Hidden single: r1c8=7, r2c5=7, r3c5=5, r5c6=6
-Naked single : r5c7=5, r1c7=4, r4c7=6, r3c7=8, r8c7=9
-Hidden single: r5c5=1
-Naked single : r8c5=4, r4c5=3, r4c4=4, r4c8=2, r5c8=3, r8c6=1, r1c6=2, r1c9=5, r2c6=4, r2c8=1
-Naked single : r3c8=6, r3c9=2, r8c4=8, r8c8=5, r8c2=2, r5c2=9, r5c1=2, r8c1=6, r8c3=7, r9c5=9
-Naked single : r9c4=3, r9c8=8, r9c9=6
-Hidden single: r2c3=2, r3c1=4
-Naked single : r9c1=5, r2c1=8, r2c2=5, r4c2=8, r4c3=5, r7c2=3, r1c2=1, r1c4=9, r1c1=3, r3c3=9
-Naked single : r3c4=1, r7c1=9, r7c3=8, r9c2=4, r9c3=1, r1c7=7, r1c8=4, r1c1=6, r1c6=5, r3c9=2
-Naked single : r2c9=1, r3c7=8, r3c8=3, r6c7=9, r5c7=1
-Hidden single: r2c3=8, r4c9=5
-Naked single : r8c9=6, r6c9=7, r8c8=9, r9c8=7
-Hidden single: r9c5=8, r9c2=5, r8c2=1
-Naked single : r8c6=3, r2c6=7, r2c1=4, r3c2=7, r5c2=6, r7c2=2, r7c7=5, r8c3=4, r6c3=3, r8c7=2
-Naked single : r8c5=5, r9c1=9, r5c1=7, r4c1=2, r4c3=9, r7c1=3, r9c3=6, r7c3=7, r9c6=1, r4c6=6
-Naked single : r3c6=9, r4c8=8, r4c2=4, r4c4=1, r4c5=7, r6c2=8, r6c5=4, r3c5=6, r3c4=4, r6c8=6
-Naked single : r7c5=9, r5c5=3, r2c5=2, r2c4=3, r5c4=9, r7c4=6, r9c4=2, r1c9=3, r8c1=7, r8c3=5
+Naked single : r1c9=3, r8c1=7, r8c3=5
 Hidden single: r1c5=1, r2c8=7, r2c9=6, r2c2=5, r3c1=1, r2c1=8, r4c1=9, r4c3=1, r5c3=6, r5c7=2
 Naked single : r8c7=9, r8c9=2, r8c6=8
 Hidden single: r3c5=8, r3c8=2, r3c9=9
@@ -220,41 +169,7 @@ Naked single : r9c7=4, r9c8=6
 |8.        1234      123469   |123579    13569     12357    |1234567   12356     234567   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c7=5, r3c3=3, r3c1=6, r1c2=9, r1c1=7, r3c7=2, r3c4=5, r3c5=1, r9c3=4
-Hidden single: r1c8=1, r2c6=7, r2c5=9, r4c1=4, r5c8=9, r7c7=9, r8c1=9
-Naked single : r9c1=2, r5c1=5, r5c5=6, r4c5=5, r6c6=1, r4c6=9, r6c1=3, r7c1=1, r7c3=8, r5c3=7
-Naked single : r4c3=1, r8c2=3, r7c2=5, r8c5=4, r1c5=3, r1c4=2, r1c6=4, r7c4=3, r9c4=9, r9c6=6
-Naked single : r7c6=2
-Hidden single: r6c9=5, r4c9=7
-Naked single : r4c4=8, r4c7=6, r1c7=8, r1c9=6, r4c2=2, r4c8=3, r2c8=4, r2c9=3, r5c2=8, r5c9=2
-Naked single : r6c2=6, r6c4=7, r6c8=8, r7c8=6, r7c9=4, r8c8=2, r8c9=8, r6c7=1, r6c5=2, r6c6=8
-Naked single : r6c1=7, r7c9=1
-Hidden single: r1c8=7, r2c5=7, r3c5=5, r5c6=6
-Naked single : r5c7=5, r1c7=4, r4c7=6, r3c7=8, r8c7=9
-Hidden single: r5c5=1
-Naked single : r8c5=4, r4c5=3, r4c4=4, r4c8=2, r5c8=3, r8c6=1, r1c6=2, r1c9=5, r2c6=4, r2c8=1
-Naked single : r3c8=6, r3c9=2, r8c4=8, r8c8=5, r8c2=2, r5c2=9, r5c1=2, r8c1=6, r8c3=7, r9c5=9
-Naked single : r9c4=3, r9c8=8, r9c9=6
-Hidden single: r2c3=2, r3c1=4
-Naked single : r9c1=5, r2c1=8, r2c2=5, r4c2=8, r4c3=5, r7c2=3, r1c2=1, r1c4=9, r1c1=3, r3c3=9
-Naked single : r3c4=1, r7c1=9, r7c3=8, r9c2=4, r9c3=1, r1c7=7, r1c8=4, r1c1=6, r1c6=5, r3c9=2
-Naked single : r2c9=1, r3c7=8, r3c8=3, r6c7=9, r5c7=1
-Hidden single: r2c3=8, r4c9=5
-Naked single : r8c9=6, r6c9=7, r8c8=9, r9c8=7
-Hidden single: r9c5=8, r9c2=5, r8c2=1
-Naked single : r8c6=3, r2c6=7, r2c1=4, r3c2=7, r5c2=6, r7c2=2, r7c7=5, r8c3=4, r6c3=3, r8c7=2
-Naked single : r8c5=5, r9c1=9, r5c1=7, r4c1=2, r4c3=9, r7c1=3, r9c3=6, r7c3=7, r9c6=1, r4c6=6
-Naked single : r3c6=9, r4c8=8, r4c2=4, r4c4=1, r4c5=7, r6c2=8, r6c5=4, r3c5=6, r3c4=4, r6c8=6
-Naked single : r7c5=9, r5c5=3, r2c5=2, r2c4=3, r5c4=9, r7c4=6, r9c4=2, r1c9=3, r8c1=7, r8c3=5
-Hidden single: r1c5=1, r2c8=7, r2c9=6, r2c2=5, r3c1=1, r2c1=8, r4c1=9, r4c3=1, r5c3=6, r5c7=2
-Naked single : r8c7=9, r8c9=2, r8c6=8
-Hidden single: r3c5=8, r3c8=2, r3c9=9
-Naked single : r6c9=5, r9c9=1
-Hidden single: r3c7=5, r4c5=5, r6c4=8, r6c6=1, r4c6=6
-Naked single : r4c8=8, r1c8=4, r1c7=8, r4c7=3, r4c2=7, r6c2=3, r3c2=4, r2c3=3, r2c4=9, r3c6=3
-Naked single : r5c4=3, r6c7=6, r6c8=9, r6c5=7, r7c2=2, r7c3=4, r7c7=7, r7c6=9, r5c6=4, r2c6=2
-Naked single : r2c5=4, r5c5=9, r7c5=3, r7c1=6, r7c8=5, r7c4=1, r9c1=3, r9c4=5, r9c5=2, r9c6=7
-Naked single : r9c7=4, r9c8=6, r6c1=3, r2c1=4, r7c1=5, r8c1=9, r1c1=7
+Naked single : r6c1=3, r2c1=4, r7c1=5, r8c1=9, r1c1=7
 Hidden single: r1c5=9, r3c3=9, r4c3=4, r5c4=4, r5c9=9, r6c3=8
 Naked single : r6c2=1, r6c5=5, r4c4=3, r2c4=1, r2c6=3, r4c5=8, r4c7=5, r5c5=1, r5c6=2, r5c8=3
 Naked single : r3c8=5, r3c6=4, r1c6=5, r5c7=8, r6c4=7, r7c4=2, r8c4=5, r8c6=1, r9c4=9, r9c6=7
@@ -277,7 +192,7 @@ Naked single : r8c9=2, r8c3=6, r7c3=1, r7c8=6, r7c5=3, r9c2=3, r9c3=2, r9c5=6, r
 |8.        3+        2+       |9+        6+        7+       |4+        1+        5+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/n1.txt         Result: True Solved: 5/5 
+Test file: tests/n1.txt         Result: True Solved: 5/5 Time: 0.0152
 ......1..9....83...3....8.661...9..5..28..64...37........5..9..7..1........4.7.68
 +-----------------------------+-----------------------------+-----------------------------+
 |2458      245678    45678    |2369      2345679   23456    |1.        2579      2479     |
@@ -347,10 +262,7 @@ Naked single : r7c3=6, r7c5=8, r7c2=4, r8c2=8, r8c5=9, r8c3=5, r9c1=1, r9c3=9, r
 |7.        6.        2.       |1.        8         58       |458       3.        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c1=8, r7c1=3, r7c6=2, r1c6=4, r1c9=2, r2c9=4, r2c2=5, r1c2=6, r1c3=7, r1c5=5
-Naked single : r2c3=1, r2c8=7, r2c5=2, r3c1=2, r3c3=4, r3c6=1, r3c5=7, r3c8=5, r5c6=3, r5c5=1
-Naked single : r7c3=6, r7c5=8, r7c2=4, r8c2=8, r8c5=9, r8c3=5, r9c1=1, r9c3=9, r9c5=3, r9c5=8
-Naked single : r9c6=5, r9c7=4
+Naked single : r9c5=8, r9c6=5, r9c7=4
 Hidden single: r1c6=1, r2c1=2, r2c3=3, r2c8=1, r2c9=4, r2c7=7
 Naked single : r3c8=9, r1c7=5, r1c1=9, r3c1=5, r3c2=7, r3c7=6, r3c5=3, r3c6=8, r4c2=9
 Hidden single: r5c4=5, r8c6=2
@@ -405,11 +317,6 @@ Naked single : r8c1=8, r8c2=3, r8c3=9, r8c9=5
 |1.        5.        347      |278       9.        2478     |23678     2678      23678    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r6c5=2
-Naked single : r4c5=6, r7c5=9, r5c5=1, r8c4=7, r4c4=8, r4c1=4, r4c7=2, r4c8=7, r5c8=4, r6c4=9
-Naked single : r2c4=6, r2c6=9, r5c6=7, r5c3=8, r5c9=6, r5c1=3, r5c7=9, r6c2=1, r6c1=6, r6c3=7
-Naked single : r6c6=4, r6c7=3, r6c9=8, r7c2=5, r7c3=4, r7c6=6, r7c7=8, r7c1=1, r7c8=2, r7c9=7
-Naked single : r8c1=8, r8c2=3, r8c3=9, r8c9=5
 Hidden single: r2c5=1
 Naked single : r7c5=2
 Hidden single: r3c3=1, r3c8=4, r4c5=4, r4c6=1, r5c6=9, r5c5=3
@@ -483,13 +390,6 @@ Naked single : r5c3=6, r5c4=7, r5c1=2, r5c9=5, r6c1=7, r9c4=8, r9c7=2, r9c8=6, r
 |1.        38        348      |35        6.        9.       |7.        258       45       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c3=9
-Hidden single: r4c1=9, r1c1=3
-Naked single : r1c3=7, r2c2=2, r9c3=3
-Hidden single: r3c6=3, r2c9=3, r4c2=3, r7c7=3, r8c7=9, r8c8=5
-Naked single : r2c8=7, r2c7=5, r6c7=6, r6c4=5, r7c8=8, r4c8=2, r7c2=7, r5c2=8, r8c1=8, r8c6=7
-Naked single : r6c6=2, r1c6=8, r1c9=2, r3c4=2, r3c7=8, r3c9=6, r4c7=7, r4c4=6, r4c3=5, r4c9=8
-Naked single : r5c3=6, r5c4=7, r5c1=2, r5c9=5, r6c1=7, r9c4=8, r9c7=2, r9c8=6, r9c9=7
 Hidden single: r1c2=2, r3c4=4, r6c3=2, r4c2=6
 Naked single : r8c2=9, r5c2=1, r8c8=1, r8c4=7, r8c7=6
 Hidden single: r1c9=6
@@ -549,8 +449,6 @@ Naked single : r5c5=5, r5c4=8, r5c6=7, r5c7=3, r7c4=5, r7c6=1
 |4.        59        3.       |56        1.        269      |7.        259       8.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c6=3, r4c8=5, r3c8=3, r1c7=5, r1c5=7, r1c6=8, r1c4=1, r1c3=3, r3c3=1, r3c6=5
-Naked single : r5c5=5, r5c4=8, r5c6=7, r5c7=3, r7c4=5, r7c6=1
 Hidden single: r1c7=8, r2c9=5, r3c4=4, r3c6=8, r4c6=1, r6c3=2, r6c4=6
 Naked single : r9c4=5, r9c2=9, r8c3=7, r7c3=8, r7c1=5, r8c4=3, r7c4=7, r5c4=8, r8c6=9, r9c8=2
 Naked single : r7c8=9, r9c6=6, r7c6=2, r2c6=7
@@ -593,7 +491,7 @@ Naked single : r4c7=9, r4c5=5, r4c2=3, r5c2=5, r5c5=7, r6c5=9, r8c7=4, r8c9=1
 |4.        9+        3.       |5+        1.        6+       |7.        2+        8.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/n2.txt         Result: True Solved: 5/5 
+Test file: tests/n2.txt         Result: True Solved: 5/5 Time: 0.0189
 ...67...952......4.....51...5..9....9.6.28.1..7........4...392...2.8645..........
 +-----------------------------+-----------------------------+-----------------------------+
 |1348      138       1348     |6.        7.        124      |2358      38        9.       |
@@ -667,11 +565,6 @@ Naked single : r9c3=9, r9c7=3, r9c8=8
 |4.        2.        1379     |5678      135689    135679   |389       358       3589     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c3=5, r7c5=1, r9c5=5
-Hidden single: r9c9=1, r8c9=7
-Naked single : r8c1=3, r3c1=6, r3c2=9, r3c3=3, r7c1=8, r7c9=6, r4c9=8, r4c3=1, r1c3=4, r1c1=1
-Naked single : r4c1=2, r4c7=6, r2c7=8, r2c8=6, r6c1=4, r6c3=8, r6c9=3, r6c7=2, r9c1=7, r9c2=6
-Naked single : r9c3=9, r9c7=3, r9c8=8
 Hidden single: r1c2=1
 Naked single : r7c2=9, r7c1=3, r7c3=1, r9c3=7, r4c3=9, r6c3=5, r3c3=3, r2c3=2, r8c2=6, r6c2=7
 Naked single : r4c2=8, r5c1=6
@@ -733,11 +626,7 @@ Naked single : r9c8=8, r9c9=5
 |2479      234789    2348     |1234679   23459     135679   |15789     1789      1257     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c5=6, r4c5=4, r4c6=6
-Hidden single: r1c7=4
-Naked single : r3c7=8, r2c8=5, r1c8=3, r1c9=7, r1c1=8, r1c5=5, r2c2=4, r2c4=8, r2c9=9, r2c1=7
-Naked single : r3c1=9, r3c2=5, r3c6=4, r3c9=6, r5c7=7, r5c9=8, r7c4=4, r7c5=8, r7c6=5, r9c7=3
-Naked single : r9c8=8, r9c9=5, r1c3=4
+Naked single : r1c3=4
 Hidden single: r1c2=5, r2c5=8, r2c4=4, r3c7=4, r4c2=4
 
 Naked triple: 1,3,6 in r4c8,r6c78 => r4c9,r5c78<>1, r5c78<>3, r4c9,r5c8<>6
@@ -795,16 +684,7 @@ Naked single : r9c7=5, r9c8=9, r9c9=7
 |1259      24579     1245     |6.        8.        123457   |1         134       13       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c9=5
-Hidden single: r2c9=6, r1c1=6
-Naked single : r5c1=2
-Hidden single: r5c5=5, r6c5=2, r6c6=9
-Naked single : r3c6=7, r2c6=3, r1c4=9, r3c9=1, r3c3=8, r3c2=9, r2c1=7, r2c7=9, r7c6=5
-Hidden single: r7c5=9
-Naked single : r8c5=4, r8c1=9, r9c1=4, r9c5=3, r9c3=2, r2c3=1, r2c2=2, r5c3=3, r8c2=7, r8c8=1
-Naked single : r8c4=2, r7c4=7, r7c7=8, r5c7=7, r1c7=3, r1c8=7, r5c8=8, r6c7=1, r6c2=6, r5c2=1
-Naked single : r5c4=6, r4c6=1, r4c4=3, r4c8=6, r6c8=3, r7c2=3, r7c9=2, r9c2=8, r9c4=1, r9c6=6
-Naked single : r9c7=5, r9c8=9, r9c9=7, r9c7=1, r9c9=3, r9c8=4
+Naked single : r9c7=1, r9c9=3, r9c8=4
 Hidden single: r1c6=8
 Naked single : r1c7=5, r1c5=1, r1c9=2, r2c5=5, r2c2=2
 Hidden single: r5c9=7, r3c7=7, r6c7=9
@@ -861,9 +741,6 @@ Naked single : r3c3=3, r4c3=2, r8c3=6, r8c6=1, r9c3=5, r9c6=2
 |1.        5.        34789    |2379      6.        2379     |24789     249       49       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c3=8, r6c8=2, r4c8=1, r4c6=5, r5c4=1, r5c8=8, r7c4=9, r3c4=2, r3c6=4, r3c5=9
-Naked single : r7c5=4, r7c3=1, r8c4=5, r8c2=4, r5c2=5, r5c1=6, r5c3=4, r8c1=2, r4c1=3, r3c1=5
-Naked single : r3c3=3, r4c3=2, r8c3=6, r8c6=1, r9c3=5, r9c6=2
 Hidden single: r2c1=2, r2c9=5, r4c4=6, r5c3=5, r8c4=5
 Naked single : r8c5=1
 
@@ -908,7 +785,7 @@ Naked single : r9c8=2, r9c9=9
 |1.        5.        4+       |7+        6.        3+       |8+        2+        9+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/n3.txt         Result: True Solved: 5/5 
+Test file: tests/n3.txt         Result: True Solved: 5/5 Time: 0.0149
 .8367.94..7.3..52.4...2.......9...58.1...3................8.2....5..2..382...17.5
 +-----------------------------+-----------------------------+-----------------------------+
 |125       8.        3.       |6.        7.        5        |9.        4.        1        |
@@ -979,11 +856,7 @@ Naked single : r6c6=7, r6c8=1, r6c7=6, r7c1=1, r7c8=9, r8c1=6, r8c2=4, r8c7=1, r
 |45        46        4568     |4568      2.        3.       |9.        7.        1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c8=7, r5c9=9
-Naked single : r7c9=4, r6c9=2, r6c4=8, r5c4=2, r7c2=3, r7c3=7, r6c3=4, r4c2=6, r4c5=1, r5c1=5
-Naked single : r5c3=8, r5c5=6, r5c7=4, r4c7=3, r3c7=8, r3c8=3, r4c1=7, r4c6=4, r6c1=3, r6c5=5
-Naked single : r6c6=7, r6c8=1, r6c7=6, r7c1=1, r7c8=9, r8c1=6, r8c2=4, r8c7=1, r8c8=8, r2c9=2
-Naked single : r2c3=3, r2c2=7, r2c8=1
+Naked single : r2c9=2, r2c3=3, r2c2=7, r2c8=1
 Hidden single: r1c8=5, r3c4=1, r3c5=3, r4c4=3, r4c7=1, r6c1=3, r7c7=2
 
 Naked quadruple: 4,5,6,8 in r7c3,r9c123 => r7c12,r8c123<>4, r7c1<>5, r7c2<>6, r8c3<>8
@@ -1036,11 +909,7 @@ Naked single : r9c1=5, r9c2=4, r9c3=8, r9c4=6
 |1369      2369      5.       |12389     12368     36789    |12789     12678     4.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c3=2, r3c3=4, r3c9=9, r3c8=6, r1c7=4, r3c6=2, r6c7=6, r6c3=5, r6c6=7, r6c9=4
-Naked single : r5c8=2, r4c8=8, r4c9=5, r5c9=7, r6c8=9, r7c9=8, r7c3=6, r7c6=5, r5c6=6, r1c6=8
-Naked single : r4c5=4, r4c1=2, r1c1=9, r1c2=2, r4c2=6, r5c4=5, r8c1=7, r7c1=1, r5c1=4, r5c2=1
-Naked single : r8c5=9, r7c5=7, r1c5=6, r1c4=7, r7c4=4, r7c8=3, r7c2=9, r8c2=3, r8c4=8, r8c8=4
-Naked single : r9c1=5, r9c2=4, r9c3=8, r9c4=6, r3c6=3, r2c6=8, r1c6=4, r6c7=8, r6c4=3, r6c1=6
+Naked single : r3c6=3, r2c6=8, r1c6=4, r6c7=8, r6c4=3, r6c1=6
 Hidden single: r1c8=8, r2c8=3, r4c1=8, r1c1=5
 Naked single : r1c7=2, r3c9=9, r2c7=5
 Hidden single: r3c1=7
@@ -1099,12 +968,7 @@ Naked single : r8c1=1, r8c8=5, r9c1=3, r9c4=2, r9c5=8, r9c6=9, r9c7=7, r9c8=1
 |1479      12379     12479    |13568     135689    1389     |12459     14569     12456    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c5=1, r7c1=9, r7c4=5
-Hidden single: r4c6=5
-Naked single : r4c2=7, r4c7=1, r5c2=5, r8c7=9, r8c6=6, r7c6=7, r7c8=6, r4c8=2, r5c8=7, r8c9=2
-Naked single : r8c4=4, r4c4=9, r4c3=3, r4c9=6, r4c5=4, r5c3=9, r5c4=8, r5c5=6, r5c9=3, r8c5=3
-Naked single : r8c1=1, r8c8=5, r9c1=3, r9c4=2, r9c5=8, r9c6=9, r9c7=7, r9c8=1, r8c9=1, r8c8=9
-Naked single : r8c2=3
+Naked single : r8c9=1, r8c8=9, r8c2=3
 Hidden single: r1c2=6, r1c6=7
 Naked single : r1c3=1, r1c1=5, r1c7=4, r2c9=5, r3c8=1, r2c8=8, r3c6=9, r2c5=1, r2c4=4, r3c5=5
 Naked single : r7c6=1
@@ -1160,11 +1024,7 @@ Naked single : r9c8=6, r9c9=2
 |8.        12359     1259     |6.        123457    147      |7         34579     34579    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c3=8, r5c1=4
-Naked single : r7c1=9, r2c1=7, r2c3=9, r6c3=7, r5c2=1, r5c7=2, r5c9=6, r5c5=3, r1c5=8, r1c4=3
-Naked single : r4c6=4, r4c8=3, r5c8=7, r6c2=9, r6c6=8, r6c4=6, r6c5=2, r6c8=5, r6c7=1, r6c9=4
-Naked single : r7c4=5, r7c5=6, r7c8=4, r9c1=1, r9c2=7, r9c3=4, r9c4=8, r9c5=9, r9c6=3, r9c7=5
-Naked single : r9c8=6, r9c9=2, r9c7=7, r2c7=6, r4c7=1, r7c7=8
+Naked single : r9c7=7, r2c7=6, r4c7=1, r7c7=8
 
 Naked quadruple: 3,5,6,7 in r4568c9 => r9c9<>3, r9c9<>5, r23c9<>7
 +-----------------------------+-----------------------------+-----------------------------+
@@ -1203,7 +1063,7 @@ Naked single : r7c4=2, r7c5=5, r7c8=4, r8c4=1, r5c4=3, r5c5=1, r8c5=8, r9c5=3, r
 |8.        1+        2+       |6.        3+        4+       |7+        5+        9+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/n4.txt         Result: True Solved: 5/5 
+Test file: tests/n4.txt         Result: True Solved: 5/5 Time: 0.0175
 ........79..6.5.....5.139......54..6......1.....29.3.5.7...6....6..78.12.4.......
 +-----------------------------+-----------------------------+-----------------------------+
 |123468    1238      123468   |489       248       29       |24568     234568    7.       |
@@ -1258,15 +1118,7 @@ Naked single : r9c5=2, r9c6=9, r9c7=6, r9c8=7, r9c9=3
 |3568      2.        3478     |9.        135       137      |1468      4678      1678     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c6=7, r6c6=1, r6c2=8, r3c2=2
-Hidden single: r2c3=7, r2c9=1
-Naked single : r2c2=3, r1c2=1, r4c2=9, r5c2=5
-Hidden single: r1c8=3, r1c7=5
-Naked single : r8c7=4, r7c7=8, r2c7=2, r4c7=7, r6c8=4, r2c8=8, r2c5=4, r3c8=6, r3c9=4, r3c1=8
-Naked single : r3c4=7, r4c8=2, r5c8=9, r5c9=8, r5c4=3, r4c4=8, r1c4=9, r1c6=2, r1c5=8, r5c5=6
-Naked single : r6c3=6, r1c3=4, r1c1=6, r5c3=2, r5c1=4, r6c1=7, r7c8=5, r8c4=5, r8c1=3, r4c1=1
-Naked single : r4c3=3, r7c1=2, r7c5=3, r7c9=9, r7c3=1, r7c4=4, r8c3=9, r9c1=5, r9c3=8, r9c4=1
-Naked single : r9c5=2, r9c6=9, r9c7=6, r9c8=7, r9c9=3, r7c5=3
+Naked single : r7c5=3
 Hidden single: r2c4=7, r3c5=4, r6c5=9, r4c3=9, r5c5=8, r6c2=1, r6c1=8, r6c8=7, r7c2=9, r2c2=4
 Hidden single: r8c6=2
 Naked single : r6c6=3, r4c6=1, r4c4=5, r4c8=8, r4c9=3, r6c7=6, r5c9=5, r6c4=2, r5c4=6, r9c6=7
@@ -1308,26 +1160,6 @@ Naked single : r9c7=4
 |2358      236       23678    |13578     4.        9.       |12        12678     1678     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c6=7, r6c6=1, r6c2=8, r3c2=2
-Hidden single: r2c3=7, r2c9=1
-Naked single : r2c2=3, r1c2=1, r4c2=9, r5c2=5
-Hidden single: r1c8=3, r1c7=5
-Naked single : r8c7=4, r7c7=8, r2c7=2, r4c7=7, r6c8=4, r2c8=8, r2c5=4, r3c8=6, r3c9=4, r3c1=8
-Naked single : r3c4=7, r4c8=2, r5c8=9, r5c9=8, r5c4=3, r4c4=8, r1c4=9, r1c6=2, r1c5=8, r5c5=6
-Naked single : r6c3=6, r1c3=4, r1c1=6, r5c3=2, r5c1=4, r6c1=7, r7c8=5, r8c4=5, r8c1=3, r4c1=1
-Naked single : r4c3=3, r7c1=2, r7c5=3, r7c9=9, r7c3=1, r7c4=4, r8c3=9, r9c1=5, r9c3=8, r9c4=1
-Naked single : r9c5=2, r9c6=9, r9c7=6, r9c8=7, r9c9=3, r7c5=3
-Hidden single: r2c4=7, r3c5=4, r6c5=9, r4c3=9, r5c5=8, r6c2=1, r6c1=8, r6c8=7, r7c2=9, r2c2=4
-Hidden single: r8c6=2
-Naked single : r6c6=3, r4c6=1, r4c4=5, r4c8=8, r4c9=3, r6c7=6, r5c9=5, r6c4=2, r5c4=6, r9c6=7
-Hidden single: r2c8=5, r2c9=6, r7c9=7
-Naked single : r7c3=4, r7c8=2, r3c8=9, r1c8=4, r9c8=6
-Hidden single: r1c6=9
-Naked single : r2c6=8
-Hidden single: r2c1=9, r8c1=6, r8c5=5
-Naked single : r9c5=1, r9c9=8, r8c7=1, r2c7=3, r1c7=8, r2c3=1, r9c3=3, r1c3=2, r1c9=1, r1c4=3
-Naked single : r3c1=3, r3c2=8, r3c4=1, r3c9=2, r5c1=2, r5c3=7, r5c2=3, r8c2=7, r8c3=8, r9c1=5
-Naked single : r9c7=4
 Hidden single: r2c1=1
 Naked single : r2c8=8, r2c9=3, r1c9=9, r2c6=6, r2c5=2, r2c3=4
 Hidden single: r3c3=9, r3c4=4, r4c7=4, r5c1=4, r5c7=3, r3c7=5
@@ -1369,37 +1201,6 @@ Naked single : r8c1=3, r1c1=2, r1c2=3, r8c2=9, r9c1=5, r9c2=2, r9c4=3
 |36        4.        7.       |125       1259      29       |23569     8.        2356     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c6=7, r6c6=1, r6c2=8, r3c2=2
-Hidden single: r2c3=7, r2c9=1
-Naked single : r2c2=3, r1c2=1, r4c2=9, r5c2=5
-Hidden single: r1c8=3, r1c7=5
-Naked single : r8c7=4, r7c7=8, r2c7=2, r4c7=7, r6c8=4, r2c8=8, r2c5=4, r3c8=6, r3c9=4, r3c1=8
-Naked single : r3c4=7, r4c8=2, r5c8=9, r5c9=8, r5c4=3, r4c4=8, r1c4=9, r1c6=2, r1c5=8, r5c5=6
-Naked single : r6c3=6, r1c3=4, r1c1=6, r5c3=2, r5c1=4, r6c1=7, r7c8=5, r8c4=5, r8c1=3, r4c1=1
-Naked single : r4c3=3, r7c1=2, r7c5=3, r7c9=9, r7c3=1, r7c4=4, r8c3=9, r9c1=5, r9c3=8, r9c4=1
-Naked single : r9c5=2, r9c6=9, r9c7=6, r9c8=7, r9c9=3, r7c5=3
-Hidden single: r2c4=7, r3c5=4, r6c5=9, r4c3=9, r5c5=8, r6c2=1, r6c1=8, r6c8=7, r7c2=9, r2c2=4
-Hidden single: r8c6=2
-Naked single : r6c6=3, r4c6=1, r4c4=5, r4c8=8, r4c9=3, r6c7=6, r5c9=5, r6c4=2, r5c4=6, r9c6=7
-Hidden single: r2c8=5, r2c9=6, r7c9=7
-Naked single : r7c3=4, r7c8=2, r3c8=9, r1c8=4, r9c8=6
-Hidden single: r1c6=9
-Naked single : r2c6=8
-Hidden single: r2c1=9, r8c1=6, r8c5=5
-Naked single : r9c5=1, r9c9=8, r8c7=1, r2c7=3, r1c7=8, r2c3=1, r9c3=3, r1c3=2, r1c9=1, r1c4=3
-Naked single : r3c1=3, r3c2=8, r3c4=1, r3c9=2, r5c1=2, r5c3=7, r5c2=3, r8c2=7, r8c3=8, r9c1=5
-Naked single : r9c7=4
-Hidden single: r2c1=1
-Naked single : r2c8=8, r2c9=3, r1c9=9, r2c6=6, r2c5=2, r2c3=4
-Hidden single: r3c3=9, r3c4=4, r4c7=4, r5c1=4, r5c7=3, r3c7=5
-Naked single : r3c8=1
-Hidden single: r7c3=6
-Naked single : r5c3=2, r6c3=3, r1c3=8, r6c1=9, r7c1=8, r7c5=7, r7c4=1, r7c7=9, r8c7=2, r8c8=7
-Naked single : r9c3=7, r9c7=1, r9c8=6, r9c9=8
-Hidden single: r4c4=8, r4c8=2
-Naked single : r6c8=5, r5c8=9, r6c5=6, r5c5=5, r5c4=7, r5c6=1, r4c6=3, r3c6=8, r3c5=3, r1c4=5
-Naked single : r1c6=7, r4c5=9, r5c9=6, r4c9=1, r4c2=6, r6c2=1, r6c4=2, r6c9=7, r8c5=8, r8c6=5
-Naked single : r8c1=3, r1c1=2, r1c2=3, r8c2=9, r9c1=5, r9c2=2, r9c4=3
 Hidden single: r3c8=1, r1c5=1, r4c1=7, r4c7=1, r4c2=8, r4c4=3
 Naked single : r6c4=2, r4c5=4, r4c3=2, r5c4=7, r6c8=3, r7c3=1, r8c3=6, r9c1=3, r8c1=8, r8c2=2
 Naked single : r8c4=5, r2c4=8, r9c4=1
@@ -1438,45 +1239,7 @@ Naked single : r5c7=2, r7c7=7, r8c7=3, r9c7=5, r9c9=6
 |4.        2568      68       |1.        256       7.       |3.        25689     568      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c6=7, r6c6=1, r6c2=8, r3c2=2
-Hidden single: r2c3=7, r2c9=1
-Naked single : r2c2=3, r1c2=1, r4c2=9, r5c2=5
-Hidden single: r1c8=3, r1c7=5
-Naked single : r8c7=4, r7c7=8, r2c7=2, r4c7=7, r6c8=4, r2c8=8, r2c5=4, r3c8=6, r3c9=4, r3c1=8
-Naked single : r3c4=7, r4c8=2, r5c8=9, r5c9=8, r5c4=3, r4c4=8, r1c4=9, r1c6=2, r1c5=8, r5c5=6
-Naked single : r6c3=6, r1c3=4, r1c1=6, r5c3=2, r5c1=4, r6c1=7, r7c8=5, r8c4=5, r8c1=3, r4c1=1
-Naked single : r4c3=3, r7c1=2, r7c5=3, r7c9=9, r7c3=1, r7c4=4, r8c3=9, r9c1=5, r9c3=8, r9c4=1
-Naked single : r9c5=2, r9c6=9, r9c7=6, r9c8=7, r9c9=3, r7c5=3
-Hidden single: r2c4=7, r3c5=4, r6c5=9, r4c3=9, r5c5=8, r6c2=1, r6c1=8, r6c8=7, r7c2=9, r2c2=4
-Hidden single: r8c6=2
-Naked single : r6c6=3, r4c6=1, r4c4=5, r4c8=8, r4c9=3, r6c7=6, r5c9=5, r6c4=2, r5c4=6, r9c6=7
-Hidden single: r2c8=5, r2c9=6, r7c9=7
-Naked single : r7c3=4, r7c8=2, r3c8=9, r1c8=4, r9c8=6
-Hidden single: r1c6=9
-Naked single : r2c6=8
-Hidden single: r2c1=9, r8c1=6, r8c5=5
-Naked single : r9c5=1, r9c9=8, r8c7=1, r2c7=3, r1c7=8, r2c3=1, r9c3=3, r1c3=2, r1c9=1, r1c4=3
-Naked single : r3c1=3, r3c2=8, r3c4=1, r3c9=2, r5c1=2, r5c3=7, r5c2=3, r8c2=7, r8c3=8, r9c1=5
-Naked single : r9c7=4
-Hidden single: r2c1=1
-Naked single : r2c8=8, r2c9=3, r1c9=9, r2c6=6, r2c5=2, r2c3=4
-Hidden single: r3c3=9, r3c4=4, r4c7=4, r5c1=4, r5c7=3, r3c7=5
-Naked single : r3c8=1
-Hidden single: r7c3=6
-Naked single : r5c3=2, r6c3=3, r1c3=8, r6c1=9, r7c1=8, r7c5=7, r7c4=1, r7c7=9, r8c7=2, r8c8=7
-Naked single : r9c3=7, r9c7=1, r9c8=6, r9c9=8
-Hidden single: r4c4=8, r4c8=2
-Naked single : r6c8=5, r5c8=9, r6c5=6, r5c5=5, r5c4=7, r5c6=1, r4c6=3, r3c6=8, r3c5=3, r1c4=5
-Naked single : r1c6=7, r4c5=9, r5c9=6, r4c9=1, r4c2=6, r6c2=1, r6c4=2, r6c9=7, r8c5=8, r8c6=5
-Naked single : r8c1=3, r1c1=2, r1c2=3, r8c2=9, r9c1=5, r9c2=2, r9c4=3
-Hidden single: r3c8=1, r1c5=1, r4c1=7, r4c7=1, r4c2=8, r4c4=3
-Naked single : r6c4=2, r4c5=4, r4c3=2, r5c4=7, r6c8=3, r7c3=1, r8c3=6, r9c1=3, r8c1=8, r8c2=2
-Naked single : r8c4=5, r2c4=8, r9c4=1
-Hidden single: r3c2=3, r3c9=8, r5c6=9
-Naked single : r6c5=6, r6c2=5, r5c2=6, r6c7=8, r9c6=2, r9c5=9, r8c5=7, r3c5=5, r2c5=2, r3c3=4
-Naked single : r6c3=9, r2c3=5, r6c1=4, r8c6=4, r7c6=8, r8c8=9, r2c8=7, r3c7=6, r3c6=7, r7c8=2
-Naked single : r7c9=4, r2c9=3, r1c9=2, r1c7=9, r1c1=6, r1c6=3, r2c1=9, r2c6=6, r2c7=4, r5c9=5
-Naked single : r5c7=2, r7c7=7, r8c7=3, r9c7=5, r9c9=6, r1c4=6, r8c4=5, r7c4=9, r4c4=7
+Naked single : r1c4=6, r8c4=5, r7c4=9, r4c4=7
 Hidden single: r1c2=4, r1c7=9
 Naked single : r1c1=2
 Hidden single: r2c1=5, r2c3=9, r2c5=7, r1c5=8, r4c6=9
@@ -1503,7 +1266,7 @@ Naked single : r7c9=7, r8c9=4, r9c2=2, r9c3=8, r9c5=6, r9c8=9, r9c9=5
 |4.        2+        8+       |1.        6+        7.       |3.        9+        5+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/h1.txt         Result: True Solved: 5/5 
+Test file: tests/h1.txt         Result: True Solved: 5/5 Time: 0.0
 76.5.3.............1.2....5.9874..6.2..3.......7...9.8..9.516.........52......43.
 +-----------------------------+-----------------------------+-----------------------------+
 |7.        6.        24       |5.        189       3.       |128       12489     149      |
@@ -1572,11 +1335,7 @@ Naked single : r9c4=8, r9c5=2, r9c6=7
 |123456    13458     234568   |2589      1258      1289     |789       46789     6789     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c3=6, r8c3=4, r1c3=2, r1c7=8, r3c3=3, r2c3=5, r3c7=7, r5c7=5, r4c7=2, r2c7=3
-Naked single : r4c6=5, r5c2=4, r2c2=8, r5c9=1, r1c9=4, r3c8=9, r1c8=1, r1c5=9, r2c4=1, r2c5=7
-Naked single : r2c6=4, r2c1=9, r2c8=2, r3c1=4, r5c5=8, r3c5=6, r3c6=8, r5c6=9, r5c8=7, r6c1=5
-Naked single : r6c4=6, r6c6=2, r6c5=1, r6c8=4, r8c2=7, r8c6=6, r8c1=8, r8c4=9, r9c1=6, r9c2=5
-Naked single : r9c4=8, r9c5=2, r9c6=7, r8c7=8, r8c8=4, r8c2=1, r8c1=2
+Naked single : r8c7=8, r8c8=4, r8c2=1, r8c1=2
 Hidden single: r1c3=5, r1c9=1, r2c2=7, r2c7=5, r3c1=1, r2c1=9, r6c3=2, r7c1=6, r5c3=6, r7c6=9
 Hidden single: r9c3=8
 Naked single : r7c2=5, r7c5=8
@@ -1634,13 +1393,7 @@ Naked single : r9c2=3, r9c4=2, r9c5=5, r9c6=1, r9c7=7, r9c8=9, r9c9=6
 |7.        89        6.       |1349      19        1349     |1489      2.        5.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r6c6=6
-Naked single : r1c6=3
-Hidden single: r5c6=4
-Naked single : r5c1=3, r5c2=8, r4c2=9, r5c4=7, r1c4=9, r4c5=2, r4c6=8, r2c6=2, r3c4=8, r4c4=3
-Naked single : r4c8=7, r1c8=6, r1c5=7, r2c9=8, r2c8=3, r2c3=4, r2c5=6, r3c3=3, r3c5=4, r5c7=1
-Naked single : r6c2=4, r6c4=5, r6c5=1, r6c9=9, r3c9=7, r3c7=9, r3c8=2, r6c7=3, r6c8=8, r9c1=4
-Naked single : r9c2=3, r9c4=2, r9c5=5, r9c6=1, r9c7=7, r9c8=9, r9c9=6, r1c3=2, r1c4=9, r1c1=6
+Naked single : r1c3=2, r1c4=9, r1c1=6
 Hidden single: r2c4=8, r3c8=3, r7c9=8, r9c2=8, r9c4=4, r9c6=3
 
 Naked quadruple: 2,5,7,9 in r2357c2 => r46c2<>2, r46c2<>5, r46c2<>7
@@ -1696,15 +1449,7 @@ Naked single : r5c1=8, r6c1=5, r7c5=7, r7c6=1, r7c8=4, r9c5=9
 |679       2.        679      |179       3.        67       |8.        14        5.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c3=7, r6c8=7, r8c9=7, r2c9=6, r7c7=6, r4c5=6
-Naked single : r4c2=3, r6c2=6, r6c6=2, r4c4=1, r5c6=9, r5c5=5, r5c2=2, r6c4=3, r7c2=9, r8c4=2
-Hidden single: r3c1=9
-Naked single : r3c9=2, r4c9=9
-Hidden single: r2c5=2, r3c3=8, r2c3=4
-Naked single : r5c3=1, r8c3=5, r8c1=1, r7c1=2, r8c6=6, r8c8=9, r9c7=1, r3c7=5, r2c7=9, r2c8=1
-Naked single : r2c6=7, r2c2=5, r3c2=7, r3c5=1, r3c6=4, r6c7=8, r5c7=4, r4c7=2, r4c8=5, r4c1=4
-Naked single : r5c1=8, r6c1=5, r7c5=7, r7c6=1, r7c8=4, r9c5=9, r8c9=3, r1c9=8, r7c8=2, r7c7=6
-Naked single : r8c8=1, r9c8=4
+Naked single : r8c9=3, r1c9=8, r7c8=2, r7c7=6, r8c8=1, r9c8=4
 Hidden single: r1c7=1, r4c1=4, r5c7=4, r6c8=8, r9c4=1, r7c4=9
 Naked single : r7c2=3
 
@@ -1760,13 +1505,7 @@ Naked single : r9c6=6
 |4.        289       28       |3.        1.        78       |259       59        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c5=9, r5c8=3, r1c8=7, r1c5=6, r1c1=3, r3c8=9, r4c7=2, r3c7=3, r4c5=1, r6c5=2
-Naked single : r6c9=9
-Hidden single: r2c4=3
-Naked single : r6c4=5, r5c6=7, r4c4=8, r4c6=3, r5c3=5, r6c1=6, r6c2=1, r6c3=3, r7c3=8, r7c6=5
-Naked single : r3c6=8, r2c5=7, r2c2=9, r2c1=8, r2c3=2, r2c9=4, r3c1=7, r3c2=6, r3c3=1, r3c4=4
-Naked single : r3c5=5, r3c9=2, r4c2=7, r4c3=9, r8c1=5, r8c4=7, r8c3=6, r8c5=8, r9c1=9, r9c3=7
-Naked single : r9c6=6, r8c8=1
+Naked single : r8c8=1
 Hidden single: r2c8=8, r3c1=5
 Naked single : r1c3=1, r2c3=2, r9c3=8, r6c3=5, r7c3=6, r9c6=7
 Hidden single: r2c7=1, r1c7=6, r1c9=9
@@ -1809,7 +1548,7 @@ Naked single : r9c7=9, r9c8=5
 |4.        2+        8+       |3.        1.        7+       |9+        5+        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/h2.txt         Result: True Solved: 5/5 
+Test file: tests/h2.txt         Result: True Solved: 5/5 Time: 0.0292
 3.29......7134................12...6...8..7...83.64.9...6..5.31...4...5...8...4..
 +-----------------------------+-----------------------------+-----------------------------+
 |3.        456       2.       |9.        1578      1678     |1568      14678     4578     |
@@ -1883,20 +1622,8 @@ Naked single : r9c5=9, r9c8=7, r9c9=2
 |4567      267       2457     |1345      9.        1345     |123467    8.        123467   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r6c4=7
-Naked single : r7c4=2, r9c4=6, r3c4=5
-Hidden single: r5c5=5, r4c3=5, r4c1=7, r7c5=7, r7c7=8
-Naked single : r4c7=3, r4c6=9, r4c2=4, r4c8=8, r5c3=9, r3c3=4, r5c6=3, r7c2=9, r3c2=6, r1c2=5
-Naked single : r7c1=4, r8c3=7, r9c6=1, r8c6=8
-Hidden single: r3c9=3, r5c1=6, r8c7=6
-Naked single : r1c7=1, r1c5=8, r3c5=1
-Hidden single: r2c9=8
-Naked single : r2c1=9, r3c1=8
-Hidden single: r2c7=5
-Naked single : r6c7=2, r3c7=9, r5c9=4, r1c9=7, r1c6=6, r1c8=4, r2c6=2, r2c8=6, r3c6=7, r3c8=2
-Naked single : r5c8=1, r5c2=2, r6c1=1, r6c9=5, r8c1=2, r8c9=9, r8c5=3, r8c2=1, r9c1=5, r9c2=3
-Naked single : r9c5=9, r9c8=7, r9c9=2, r3c2=7, r3c3=4, r2c1=5, r2c3=2, r1c2=1, r5c2=6, r4c1=9
-Naked single : r4c3=3, r5c1=7, r6c3=8, r7c3=7, r9c2=2, r8c2=8, r9c3=5, r8c3=9
+Naked single : r3c2=7, r3c3=4, r2c1=5, r2c3=2, r1c2=1, r5c2=6, r4c1=9, r4c3=3, r5c1=7, r6c3=8
+Naked single : r7c3=7, r9c2=2, r8c2=8, r9c3=5, r8c3=9
 Hidden single: r1c7=9, r3c6=9, r6c4=9, r7c4=8, r8c5=7, r7c5=2
 Naked single : r7c7=4, r5c7=3
 Hidden single: r8c7=2
@@ -1952,13 +1679,7 @@ Naked single : r8c6=1, r8c9=3, r8c4=5, r9c4=3, r9c6=4, r9c9=7
 |4568      1456      4        |1256789   234569    123589   |123469    13469     124679   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c4=1, r2c4=6
-Naked single : r2c7=7, r3c5=3, r3c9=6
-Hidden single: r2c8=3
-Naked single : r8c8=6, r8c1=4, r9c1=6, r9c7=1, r6c7=6, r6c5=5, r1c5=4, r1c8=2, r1c9=8, r1c6=5
-Naked single : r2c6=8, r2c9=4, r4c5=6, r4c8=4, r4c9=2, r5c4=4, r5c8=5, r6c6=3, r6c8=7, r6c9=1
-Naked single : r8c6=1, r8c9=3, r8c4=5, r9c4=3, r9c6=4, r9c9=7, r5c2=3, r5c1=9, r4c1=4, r4c2=7
-Naked single : r6c4=9, r6c9=4, r6c8=3, r9c3=4, r1c3=9, r3c3=7
+Naked single : r5c2=3, r5c1=9, r4c1=4, r4c2=7, r6c4=9, r6c9=4, r6c8=3, r9c3=4, r1c3=9, r3c3=7
 Hidden single: r1c2=4, r2c7=4, r3c1=3, r8c4=7, r9c1=8, r9c7=3, r9c9=7, r8c7=2
 Naked single : r5c7=6, r5c8=5, r5c9=2
 
@@ -2013,14 +1734,8 @@ Naked single : r4c6=2, r4c5=5, r8c5=4, r9c4=6, r9c5=2, r9c6=1, r9c8=9
 |3569      3567      3569     |1367      15679     1379     |2379      8.        4.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c1=5
-Naked single : r3c2=6, r7c2=1, r8c1=6, r9c2=5
-Hidden single: r1c8=6, r2c4=5
-Naked single : r2c9=9, r2c6=3, r2c5=6, r3c5=9, r4c9=1, r3c9=5, r7c9=6, r7c4=8, r3c4=1, r1c4=2
-Naked single : r1c6=8, r1c7=1, r3c7=8, r4c7=9, r4c8=8, r7c6=9, r7c8=4, r7c5=3, r8c8=1, r8c6=5
-Naked single : r4c6=2, r4c5=5, r8c5=4, r9c4=6, r9c5=2, r9c6=1, r9c8=9, r4c5=8, r4c3=3, r4c2=4
-Naked single : r5c8=3, r7c8=7, r8c8=1, r2c8=2, r1c7=3, r1c8=4, r7c7=9, r5c7=8, r2c7=7, r2c4=1
-Naked single : r1c5=2, r2c6=9, r3c4=7, r6c9=9, r9c7=2
+Naked single : r4c5=8, r4c3=3, r4c2=4, r5c8=3, r7c8=7, r8c8=1, r2c8=2, r1c7=3, r1c8=4, r7c7=9
+Naked single : r5c7=8, r2c7=7, r2c4=1, r1c5=2, r2c6=9, r3c4=7, r6c9=9, r9c7=2
 
 Naked quadruple: 3,4,6,8 in r789c4,r7c6 => r9c6<>3, r79c5<>6
 +-----------------------------+-----------------------------+-----------------------------+
@@ -2071,11 +1786,7 @@ Naked single : r8c4=3, r8c2=7, r9c1=9, r9c2=3, r9c3=5, r9c4=6, r9c5=1, r9c6=7
 |129       257       6.       |129       8.        4.       |3.        59        579      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c5=5, r7c9=3, r7c6=4, r5c6=1, r5c5=6, r5c2=5, r6c5=7, r6c6=3, r6c4=2, r5c4=4
-Naked single : r8c5=9, r8c9=5, r8c3=8, r3c3=2, r5c3=9, r5c1=2, r6c3=6, r7c1=6, r1c1=1, r1c9=6
-Naked single : r2c9=8, r2c1=5, r2c2=6, r3c9=1, r6c1=8, r3c1=3, r3c2=8, r6c2=1, r7c4=8, r8c1=4
-Naked single : r8c4=3, r8c2=7, r9c1=9, r9c2=3, r9c3=5, r9c4=6, r9c5=1, r9c6=7, r2c5=3, r2c1=6
-Naked single : r2c8=5, r3c1=3, r1c3=8, r3c2=5, r9c8=9
+Naked single : r2c5=3, r2c1=6, r2c8=5, r3c1=3, r1c3=8, r3c2=5, r9c8=9
 Hidden single: r1c5=4, r7c8=4, r8c7=8, r8c9=6, r9c9=5
 Naked single : r7c9=7
 Hidden single: r9c2=7
@@ -2116,7 +1827,7 @@ Naked single : r9c4=1
 |2+        7+        6.       |1+        8.        4.       |3.        9+        5+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/h3.txt         Result: True Solved: 5/5 
+Test file: tests/h3.txt         Result: True Solved: 5/5 Time: 0.0156
 ......9..5.....6.3.4912.....1.6..............96..87.............84....7.6..915.42
 +-----------------------------+-----------------------------+-----------------------------+
 |12378     237       123678   |34578     34567     3468     |9.        1258      14578    |
@@ -2188,11 +1899,6 @@ Naked single : r7c9=1
 |3457      134578    1478     |12359     123569    1359     |45689     145678    146789   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c5=5
-Naked single : r1c5=7, r1c4=5, r7c5=4, r2c5=9, r5c5=3, r7c6=8, r2c6=4, r2c4=8, r4c6=9, r4c8=8
-Naked single : r3c8=5, r3c9=8, r4c9=7, r4c1=4, r5c1=7, r5c9=6, r5c8=9, r6c8=3, r4c7=2, r4c3=3
-Naked single : r5c7=4, r5c4=2, r5c3=8, r6c3=2, r6c4=4, r6c7=1, r6c9=5, r7c4=7, r7c7=3, r7c8=6
-Naked single : r7c9=1
 Hidden single: r2c6=7
 Naked single : r2c2=2, r1c2=4, r3c2=7
 Hidden single: r1c8=2, r1c4=8, r9c5=6, r9c4=2
@@ -2376,15 +2082,7 @@ Naked single : r8c3=7, r8c4=5, r8c5=1, r9c1=3, r9c7=5, r9c8=4, r9c9=7
 |13469     1359      35689    |2.        3456      369      |348       134589    7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r9c6=9, r2c7=9
-Naked single : r2c9=1, r2c8=5
-Hidden single: r7c6=3
-Naked single : r7c1=5
-Hidden single: r7c8=1, r8c9=9, r9c2=1
-Naked single : r6c2=8, r4c2=5, r4c4=3, r3c4=9, r3c5=3, r4c5=2, r5c2=3, r5c1=9, r1c1=6, r1c3=9
-Naked single : r4c1=7, r4c3=6, r4c9=8, r5c3=1, r5c6=5, r1c6=1, r1c5=5, r6c3=4, r6c1=2, r6c4=1
-Naked single : r6c5=9, r6c8=7, r7c9=6, r3c9=4, r7c7=8, r3c7=6, r3c8=8, r5c7=4, r5c8=6, r8c1=4
-Naked single : r8c3=7, r8c4=5, r8c5=1, r9c1=3, r9c7=5, r9c8=4, r9c9=7, r3c1=3, r3c6=8
+Naked single : r3c1=3, r3c6=8
 Hidden single: r8c6=7
 
 Naked pair: 4,5 in r3c89 => r1c89<>4, r1c89<>5
@@ -2535,15 +2233,6 @@ Naked single : r8c7=8, r8c3=6, r9c3=8, r9c5=5, r9c7=4
 |1589      7.        2.       |1589      58        59       |6.        3.        4.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c8=7, r4c8=3, r1c8=2
-Naked single : r2c7=6, r1c9=9, r2c4=1, r2c5=2, r6c7=2
-Hidden single: r4c6=2, r4c9=1
-Naked single : r6c8=4, r3c8=5, r3c9=4, r6c9=8, r5c9=6, r5c5=3, r5c2=2, r5c4=8, r6c4=5, r6c5=1
-Naked single : r8c9=5
-Hidden single: r7c2=5, r6c2=7, r6c3=3, r8c1=2, r8c8=1
-Naked single : r9c8=9, r9c2=3, r8c2=9, r7c3=7, r2c3=9, r2c1=7, r7c1=4, r7c7=3, r7c4=9, r4c4=6
-Naked single : r4c1=9, r6c1=6, r6c6=9, r9c1=1, r9c6=6, r1c6=3, r1c4=4, r1c5=6, r8c4=3, r8c5=4
-Naked single : r8c7=8, r8c3=6, r9c3=8, r9c5=5, r9c7=4
 Hidden single: r4c9=3, r5c6=3, r3c4=3, r6c8=1, r6c7=9
 
 Naked pair: 5,8 in r78c3 => r23c3<>5
@@ -2723,18 +2412,7 @@ Naked single : r7c9=2, r8c3=8, r8c8=9, r9c4=5, r9c5=8, r9c6=9
 |12678     5.        127      |137       1378      17       |9.        4.        136      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c6=6, r2c4=9
-Naked single : r8c4=6, r7c4=1, r7c2=9, r8c1=3, r7c1=6, r9c1=1
-Hidden single: r1c1=9, r1c2=8
-Naked single : r5c2=5, r4c2=2, r2c2=1, r5c7=4, r5c1=8
-Hidden single: r2c8=6, r2c3=4
-Naked single : r3c3=7
-Hidden single: r3c8=4, r4c5=6, r4c1=4
-Naked single : r6c1=7
-Hidden single: r7c5=3, r6c5=4
-Naked single : r6c6=5, r3c6=2, r3c1=5, r2c1=2, r4c4=8, r6c9=8, r8c6=7, r7c6=4, r8c5=2, r8c9=5
-Naked single : r2c9=7, r1c8=5, r1c5=7, r1c7=2, r2c5=5, r4c8=7, r4c7=5, r7c7=7, r7c8=8, r7c3=5
-Naked single : r7c9=2, r8c3=8, r8c8=9, r9c4=5, r9c5=8, r9c6=9, r7c3=1
+Naked single : r7c3=1
 Hidden single: r2c6=6, r7c6=9, r7c8=5
 Naked single : r8c9=1, r8c5=7, r3c5=3, r2c5=1, r8c6=5, r8c7=2, r8c1=4, r9c5=8, r9c6=1, r9c4=3
 Naked single : r9c9=6, r7c7=3
@@ -2901,7 +2579,7 @@ Naked single : r6c7=1, r7c1=6, r7c2=8
 |7+        5.        2+       |3+        8+        1+       |9.        4.        6+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/h4.txt         Result: True Solved: 5/5 
+Test file: tests/h4.txt         Result: True Solved: 5/5 Time: 0.196
 ..9.5.......9.782....6..7.5285..6....3..........8..2.4.4.....6396.7.4.....8.....9
 +-----------------------------+-----------------------------+-----------------------------+
 |134678    127       9.       |1234      5.        1238     |1346      134       16       |
@@ -2988,12 +2666,6 @@ Naked single : r5c3=7, r7c3=2, r7c5=9, r7c6=8, r9c1=5, r9c2=1
 |2379      2479      2347     |1.        5.        247      |6.        349       3489     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c4=4, r9c4=3
-Naked single : r8c5=1, r4c5=3, r2c5=4, r3c5=8, r4c8=1, r5c8=5, r6c5=7, r6c8=3, r8c3=3
-Hidden single: r1c1=8, r1c9=6
-Naked single : r2c9=1, r2c2=5, r2c3=6, r2c1=3, r6c3=1, r6c1=6, r6c6=5, r9c6=2, r1c6=1, r1c4=2
-Naked single : r3c6=3, r5c4=1, r5c6=9, r5c5=2, r7c4=5, r7c1=7, r5c1=4, r3c1=1, r3c2=2, r3c3=4
-Naked single : r5c3=7, r7c3=2, r7c5=9, r7c6=8, r9c1=5, r9c2=1
 Hidden single: r1c3=6, r1c4=3, r2c4=9, r2c7=8, r3c2=8, r1c2=4
 Naked single : r1c5=2, r1c8=5, r1c9=7
 Hidden single: r2c8=2
@@ -3064,10 +2736,6 @@ Naked single : r9c1=9, r9c2=7, r9c3=2, r9c6=4, r9c8=3
 |123469    12469     5.       |1247      126       246      |8.        679       1679     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c9=3, r4c8=1, r6c8=4, r5c7=2, r4c7=5, r4c4=2, r8c7=4, r8c4=6, r5c4=4, r5c5=1
-Naked single : r3c5=4, r2c6=1, r2c9=4, r3c9=1, r6c4=5, r8c6=2, r8c2=1, r8c3=3, r5c3=7, r5c2=9
-Naked single : r5c9=6, r5c6=3, r6c1=3, r6c2=2, r6c3=1, r6c6=6, r6c9=9, r7c3=4, r7c6=7, r8c9=5
-Naked single : r9c1=9, r9c2=7, r9c3=2, r9c6=4, r9c8=3
 Hidden single: r4c2=5, r1c2=7, r1c5=5, r4c3=7, r4c5=3, r5c6=5, r6c8=3, r6c9=9, r8c8=5, r8c4=7
 Hidden single: r5c4=8
 Naked single : r4c6=2
@@ -3125,11 +2793,6 @@ Naked single : r5c9=7, r9c9=1
 |1.        2458      7.       |6.        2345      235      |589       48        24589    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r8c2=1
-Naked single : r7c3=6, r2c3=8, r2c2=6, r3c2=2, r1c3=1, r3c9=6, r6c2=8, r6c1=2, r7c5=1, r2c5=2
-Naked single : r2c4=1, r8c1=8, r8c3=2, r8c7=6, r9c4=2, r9c5=6, r9c8=7, r5c8=6, r5c1=1, r4c1=6
-Naked single : r5c7=2, r1c7=4, r1c1=9, r1c8=8, r1c9=2, r2c1=4, r2c8=9, r4c7=1, r4c8=4, r4c9=8
-Naked single : r5c9=7, r9c9=1
 Hidden single: r1c2=7, r2c7=1, r4c2=2, r5c7=6, r6c5=6, r1c6=6, r7c8=7, r8c1=3, r3c1=9, r1c4=9
 Hidden single: r4c6=9, r5c6=7, r6c9=9, r4c9=7, r6c1=7, r8c3=9, r7c3=2
 Naked single : r7c6=5
@@ -3248,12 +2911,7 @@ Naked single : r9c8=4, r9c9=5
 |7.        1346      8.       |349       5.        2.       |1         69        16       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c1=6, r7c2=4, r3c2=6, r3c9=8, r2c9=6
-Hidden single: r2c6=8
-Naked single : r1c5=1, r1c3=8, r2c1=5, r2c3=4, r2c4=2, r3c3=1, r3c6=3, r6c3=5, r6c4=3, r6c8=8
-Naked single : r4c7=5, r4c4=1, r4c5=8, r4c1=4, r4c8=3, r5c1=8, r5c4=5, r3c4=4, r3c5=5, r5c5=2
-Naked single : r5c9=4, r5c8=1, r8c5=4, r8c7=8, r8c2=5, r8c9=2, r8c6=1, r9c2=8, r9c5=3, r9c6=2
-Naked single : r9c8=4, r9c9=5, r3c1=8, r3c3=4, r1c3=9, r2c3=1, r3c2=7, r9c7=1, r9c9=6, r9c8=9
+Naked single : r3c1=8, r3c3=4, r1c3=9, r2c3=1, r3c2=7, r9c7=1, r9c9=6, r9c8=9
 Hidden single: r3c5=2, r3c8=6
 Naked single : r2c8=7
 Hidden single: r5c9=1, r6c1=9, r7c6=1, r4c2=1, r8c1=1, r8c7=2
@@ -3328,7 +2986,7 @@ Naked single : r8c4=3, r8c9=7, r9c2=3, r9c4=4
 |7.        3+        8.       |4+        5.        2.       |1+        9+        6+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/lc1.txt        Result: True Solved: 5/5 
+Test file: tests/lc1.txt        Result: True Solved: 5/5 Time: 0.0348
 ..275...3......578...9..........6...9.821....4....9617.34.....1...3..96......8...
 +-----------------------------+-----------------------------+-----------------------------+
 |168       14689     2.       |7.        5.        14       |14        49        3.       |
@@ -3400,9 +3058,6 @@ Naked single : r8c9=4, r5c9=5, r5c8=3, r5c7=4, r9c1=1, r9c4=4, r9c5=7, r9c7=3, r
 |367       2.        4.       |8.        1369      139      |136       356       1356     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c8=4, r1c7=1, r1c6=4, r2c4=1, r2c2=4, r3c7=2, r4c7=8, r4c8=2, r7c7=7, r7c1=2
-Naked single : r7c8=8, r8c6=1, r8c3=7, r3c3=1, r8c2=5, r3c2=7, r3c1=5, r4c2=1, r4c1=7, r8c5=2
-Naked single : r8c9=4, r5c9=5, r5c8=3, r5c7=4, r9c1=1, r9c4=4, r9c5=7, r9c7=3, r9c8=5, r9c9=2
 Hidden single: r6c5=7, r7c2=1, r7c7=4, r7c8=2, r7c1=8, r5c3=8, r5c1=2, r5c2=5, r4c2=4, r8c7=1
 Hidden single: r5c9=1, r8c8=8, r4c6=8
 Naked single : r6c6=3, r5c6=9, r6c2=6, r2c2=3, r4c1=3, r4c8=6, r4c4=1, r6c9=8, r8c1=6, r8c3=3
@@ -3457,10 +3112,8 @@ Naked single : r5c4=6, r5c5=4, r5c7=3, r5c8=7, r7c4=3, r7c5=6, r9c7=6, r9c8=5, r
 |29        3789      4.       |1257      12578     6.       |135789    12357     12578    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c9=6, r2c3=2, r2c6=5, r1c6=2, r2c1=9, r1c1=5, r3c3=1, r1c3=6, r3c5=3, r1c4=9
-Naked single : r1c8=3, r1c7=8, r1c5=1, r2c7=7, r2c4=4, r2c5=8, r3c4=7, r3c7=2, r3c9=5, r3c8=9
-Naked single : r5c4=6, r5c5=4, r5c7=3, r5c8=7, r7c4=3, r7c5=6, r9c7=6, r9c8=5, r9c9=3, r3c2=8
-Naked single : r3c3=1, r2c1=9, r1c3=5, r2c3=3, r3c1=4, r3c4=7, r8c4=2, r9c1=2, r6c1=1, r7c1=6
+Naked single : r3c2=8, r3c3=1, r2c1=9, r1c3=5, r2c3=3, r3c1=4, r3c4=7, r8c4=2, r9c1=2, r6c1=1
+Naked single : r7c1=6
 Hidden single: r1c6=4, r1c5=9, r4c4=4, r5c6=9, r6c4=6, r7c8=4, r7c9=2, r5c5=2
 Naked single : r2c5=1, r2c6=2
 
@@ -3519,16 +3172,6 @@ Naked single : r7c5=5, r8c3=7, r8c9=8, r9c2=9, r9c5=8, r9c9=7
 |139       12489     1248     |5.        6.        7.       |12348     48        1238     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c9=5
-Hidden single: r4c2=5, r5c4=5
-Naked single : r9c4=1
-Hidden single: r4c6=1, r1c8=1, r5c9=1
-Naked single : r5c7=7, r2c7=5, r2c8=7, r8c8=6
-Hidden single: r1c9=6
-Naked single : r1c7=8, r8c7=9, r9c7=3, r4c7=6, r7c7=1, r9c8=5
-Hidden single: r6c3=9
-Naked single : r6c2=7, r4c3=2, r4c8=3, r4c5=7, r6c6=8, r6c5=3, r6c8=2, r7c2=3, r7c6=7, r7c3=8
-Naked single : r7c5=5, r8c3=7, r8c9=8, r9c2=9, r9c5=8, r9c9=7
 Hidden single: r1c7=9, r1c9=5, r2c2=2, r2c7=3, r3c4=4, r3c5=2, r2c5=8
 Naked single : r2c8=7
 Hidden single: r1c4=7, r3c1=7, r4c5=5, r4c8=9, r5c4=9, r2c4=6
@@ -3587,9 +3230,7 @@ Naked single : r8c6=8, r8c7=7, r9c3=8, r9c7=1, r9c9=2
 |9.        5.        1.       |6.        24        248      |3478      47        347      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c8=5, r7c8=8, r7c6=4, r7c2=1, r4c2=8, r4c7=2, r4c6=1, r5c3=1, r5c6=6, r5c9=8
-Naked single : r3c9=1, r3c7=8, r6c6=2, r6c9=6, r7c3=7, r7c7=6, r7c1=5, r8c1=6, r8c2=4, r8c3=2
-Naked single : r8c6=8, r8c7=7, r9c3=8, r9c7=1, r9c9=2, r6c3=3
+Naked single : r6c3=3
 Hidden single: r1c5=3, r4c3=6, r4c6=3, r5c5=6, r7c7=1, r7c5=5, r8c1=3, r8c2=2
 Naked single : r4c2=8, r6c2=1, r7c2=4, r7c3=8, r8c3=7, r2c3=4
 Hidden single: r2c1=8, r5c9=1, r2c8=1
@@ -3631,7 +3272,7 @@ Naked single : r9c8=7, r9c9=4
 |9.        5.        1.       |6.        2+        8+       |3+        7+        4+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/lc2.txt        Result: True Solved: 5/5 
+Test file: tests/lc2.txt        Result: True Solved: 5/5 Time: 0.0167
 ....81..6.6......243...........4...........1...769.5....4..83....12...85.2.3..6..
 +-----------------------------+-----------------------------+-----------------------------+
 |2579      579       259      |4579      8.        1.       |479       34579     6.       |
@@ -3703,12 +3344,6 @@ Naked single : r9c8=7
 |149       3.        6.       |179       1789      5.       |2.        18        48       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c5=7
-Naked single : r7c5=5
-Hidden single: r1c2=5
-Naked single : r1c4=9, r2c3=9, r7c4=7, r3c4=5, r2c6=7, r2c8=5, r3c8=9, r3c9=7, r4c9=9, r4c1=5
-Naked single : r4c6=2, r4c7=7, r5c1=9, r5c6=5, r5c7=2, r7c2=9, r8c2=7, r8c7=9, r9c3=5, r9c6=9
-Naked single : r9c8=7
 Hidden single: r1c3=4, r7c2=7
 Naked single : r7c5=1, r7c4=2, r8c4=9, r9c4=7, r9c5=8, r9c8=1, r9c9=4, r7c9=3, r5c9=9, r7c8=5
 Naked single : r7c1=4, r9c1=9, r6c1=1, r6c4=6, r3c4=3, r3c1=2, r4c4=5, r1c4=1, r8c1=5, r2c1=3
@@ -3764,10 +3399,6 @@ Naked single : r6c8=7, r8c8=8, r8c9=6
 |1259      12459     124      |2459      259       23458    |12346     2456      7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c8=9, r1c7=3
-Naked single : r5c7=4, r5c2=5, r2c2=8, r2c8=6, r2c9=2, r1c9=8, r1c6=2, r2c6=7, r2c5=9, r2c3=5
-Naked single : r3c2=9, r3c6=8, r5c3=7, r4c3=9, r5c5=3, r4c5=7, r4c8=3, r6c2=4, r6c6=9, r6c7=8
-Naked single : r6c8=7, r8c8=8, r8c9=6
 Hidden single: r1c7=9, r3c8=7, r3c9=8, r8c4=9, r4c5=9, r7c5=7, r9c6=8, r7c6=3, r9c7=3, r9c8=6
 Naked single : r6c8=2, r6c4=6, r6c6=1
 Hidden single: r2c6=6, r2c4=7
@@ -3822,11 +3453,6 @@ Naked single : r7c1=5, r7c2=4, r7c9=2, r8c7=1, r8c8=4, r8c9=5, r9c1=9, r9c3=2
 |167       12678     3.       |256789    4.        1678     |15678     178       156      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c6=4, r9c4=4, r3c3=4
-Naked single : r2c2=2, r2c9=4, r3c7=2, r3c4=5, r3c5=1, r1c5=2, r3c1=6, r3c2=3, r4c4=2, r6c2=9
-Naked single : r6c9=3, r9c5=5, r8c6=2, r9c2=1, r1c2=5, r1c1=1, r4c1=7, r4c6=5, r4c9=1, r4c3=3
-Naked single : r5c1=2, r5c3=1, r5c6=7, r5c7=6, r4c7=4, r4c8=8, r4c2=6, r5c2=8, r5c8=5, r5c9=9
-Naked single : r7c1=5, r7c2=4, r7c9=2, r8c7=1, r8c8=4, r8c9=5, r9c1=9, r9c3=2
 Hidden single: r1c5=9, r4c7=2
 Naked single : r2c7=1
 Hidden single: r3c1=1, r3c7=5, r5c4=8, r5c1=5, r1c2=5, r4c1=9, r1c1=3, r1c3=7
@@ -3886,12 +3512,6 @@ Naked single : r9c1=7, r9c6=1, r9c7=6, r9c8=8
 |1247      1247      127      |1237      137       6.       |478       5.        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r7c2=1
-Naked single : r8c2=8
-Hidden single: r3c5=8
-Naked single : r1c6=4, r1c7=8, r3c8=4, r4c8=1, r4c6=7, r4c4=4, r6c4=6, r3c4=3, r3c6=6, r6c5=1
-Naked single : r6c9=4, r7c6=8, r7c8=7, r8c4=7, r8c5=6, r8c1=4, r7c1=6, r7c7=4, r8c6=3, r8c9=1
-Naked single : r9c1=7, r9c6=1, r9c7=6, r9c8=8
 Hidden single: r1c2=5, r1c5=4, r1c8=2, r7c3=5, r7c1=9
 Naked single : r7c5=7, r7c8=6, r7c2=2, r8c8=7, r8c7=4, r8c9=2, r8c6=9, r8c4=1, r8c2=6, r8c5=5
 Naked single : r9c5=3, r9c4=2, r9c7=8
@@ -3932,7 +3552,7 @@ Naked single : r2c2=7, r2c1=1, r6c3=7, r9c1=7, r9c2=4, r9c3=1
 |7+        4+        1+       |2+        3+        6.       |8+        5.        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/bf2.txt        Result: True Solved: 5/5 
+Test file: tests/bf2.txt        Result: True Solved: 5/5 Time: 0.0219
 76.5....2......8.7.....814...........7...95....5..6.2..86...2.55..9.1..3.92.....4
 +-----------------------------+-----------------------------+-----------------------------+
 |7.        6.        13489    |5.        1349      34       |39        39        2.       |
@@ -4017,11 +3637,6 @@ Naked single : r6c4=7, r6c7=3, r7c4=4, r7c5=3
 |8.        2.        34       |346       13467     13457    |9.        34567     346      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c4=6, r2c5=9, r2c1=4, r2c3=1, r9c4=8, r9c5=6
-Hidden single: r4c9=8
-Naked single : r5c9=1, r6c9=9, r6c1=8, r5c1=2, r3c1=9, r3c3=3, r2c2=2, r2c6=3, r3c5=7, r3c4=2
-Naked single : r4c6=2, r5c3=4, r4c3=9, r5c4=3, r5c5=8, r6c5=4, r4c4=1, r4c2=3, r4c7=4, r6c2=1
-Naked single : r6c4=7, r6c7=3, r7c4=4, r7c5=3
 Hidden single: r1c1=7, r1c6=8, r1c9=9, r2c8=2
 Naked single : r2c1=3, r3c3=2, r3c1=9
 Hidden single: r5c5=7, r6c3=6, r6c5=9, r6c9=1, r7c2=1, r7c4=9, r7c9=2, r8c2=9
@@ -4159,15 +3774,6 @@ Naked single : r9c4=3, r9c9=6
 |2.        46789     5.       |46        146       1468     |3789      346789    3479     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c4=6, r2c5=4, r4c5=8, r7c5=6
-Hidden single: r4c8=6
-Naked single : r4c9=3
-Hidden single: r4c7=5
-Naked single : r8c7=7, r8c6=5, r9c6=7, r9c8=5
-Hidden single: r6c8=7, r7c7=8
-Naked single : r6c7=4, r1c7=3, r1c8=4, r5c9=8, r5c3=5, r2c3=8, r2c2=5, r5c2=3, r5c4=4, r4c6=2
-Naked single : r4c1=4, r6c1=2, r6c2=8, r6c6=3, r7c6=4, r7c8=3, r8c9=4, r8c3=3, r8c4=8, r9c3=4
-Naked single : r9c4=3, r9c9=6
 Hidden single: r1c6=6, r1c8=3, r1c1=5, r2c3=8, r3c1=1, r3c2=4, r3c6=3, r5c3=6
 Naked single : r6c3=4, r4c3=9, r1c3=7, r1c2=9, r6c1=8, r6c2=2, r7c1=4, r7c3=3, r8c1=9, r8c3=1
 
@@ -4373,11 +3979,7 @@ Naked single : r8c8=8, r8c9=4, r9c4=4, r9c5=1, r9c6=8, r9c7=9, r9c8=6, r9c9=3
 |24579     3.        6.       |79        78        789      |257       1.        45       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c7=7, r7c9=5, r3c9=7, r2c8=9, r2c4=7, r3c4=9, r3c8=5, r6c8=7
-Hidden single: r5c7=5
-Naked single : r5c6=4, r2c6=5, r2c5=4, r4c4=2, r4c6=1, r4c7=8, r4c8=4, r5c9=9, r6c5=6, r6c4=5
-Naked single : r7c4=6, r7c2=8, r7c6=2, r8c2=6, r8c5=5, r8c7=2, r2c7=1, r2c9=2, r6c7=3, r6c9=1
-Naked single : r8c8=8, r8c9=4, r9c4=4, r9c5=1, r9c6=8, r9c7=9, r9c8=6, r9c9=3, r7c3=2, r7c1=7
+Naked single : r7c3=2, r7c1=7
 Hidden single: r1c1=8, r5c4=4, r7c8=8, r8c5=1, r9c7=2
 
 Pointing: 6 in b1 => r2c4<>6
@@ -4558,10 +4160,6 @@ Naked single : r3c6=7, r5c6=5, r5c8=9, r6c6=8, r7c6=6, r7c7=3, r8c1=5, r8c3=9, r
 |3.        7.        468      |1568      145       14568    |124       128       9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c9=4, r1c9=3, r1c7=9, r1c4=2, r1c2=4, r2c4=9, r2c8=5, r3c3=5, r3c7=1, r5c7=6
-Naked single : r4c9=1, r6c2=7, r6c7=5, r6c1=6, r2c1=2, r2c2=6, r4c1=9, r5c1=1, r5c3=3, r4c3=8
-Naked single : r6c3=4, r6c8=3, r4c8=7, r4c5=2, r4c2=5, r4c6=3, r4c4=6, r5c2=2, r5c5=7, r3c5=6
-Naked single : r3c6=7, r5c6=5, r5c8=9, r6c6=8, r7c6=6, r7c7=3, r8c1=5, r8c3=9, r8c4=3, r8c9=6
 Naked single : r7c8=8, r7c1=6
 Hidden single: r2c3=7
 Naked single : r6c3=1, r5c1=5, r6c1=7, r4c1=8, r1c1=1, r1c9=3, r2c9=1, r4c9=4, r8c1=2, r8c9=7
@@ -4636,7 +4234,7 @@ Naked single : r9c6=6, r9c7=2
 |3.        7.        4+       |8+        5+        6+       |2+        1+        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/bf3.txt        Result: True Solved: 5/5 
+Test file: tests/bf3.txt        Result: True Solved: 5/5 Time: 0.0869
 ..67....18........4.12.38.6..3.1..65.....497.........33..9..68.6.2........8.....2
 +-----------------------------+-----------------------------+-----------------------------+
 |259       2359      6.       |7.        4589      589      |2345      23459     1.       |
@@ -4711,13 +4309,8 @@ Naked single : r8c5=8, r9c2=9, r9c4=4, r9c5=3, r9c6=6, r9c7=7, r9c8=1
 |13459     1579      6.       |135       45        2.       |8.        14579     13579    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c5=4
-Naked single : r2c5=6, r6c5=7, r4c6=9, r6c3=4, r4c2=2, r4c1=7, r4c7=4, r6c1=9, r7c3=7, r7c9=4
-Naked single : r2c9=7, r9c1=5, r1c1=2, r1c7=3, r1c2=5, r1c6=8, r2c2=3, r2c7=2, r2c8=4, r6c7=1
-Naked single : r6c8=2, r8c2=4, r8c4=1, r2c4=5, r2c6=1, r6c4=6, r6c6=5, r8c6=7, r8c7=5, r8c8=3
-Naked single : r8c5=8, r9c2=9, r9c4=4, r9c5=3, r9c6=6, r9c7=7, r9c8=1, r4c7=9, r1c7=1, r2c7=3
-Naked single : r4c6=5, r4c2=8, r4c9=7, r5c6=3, r5c9=1, r5c1=5, r6c2=1, r6c3=3, r6c6=9, r6c9=6
-Naked single : r6c8=4, r7c6=1, r2c6=7, r8c6=6, r8c7=4
+Naked single : r4c7=9, r1c7=1, r2c7=3, r4c6=5, r4c2=8, r4c9=7, r5c6=3, r5c9=1, r5c1=5, r6c2=1
+Naked single : r6c3=3, r6c6=9, r6c9=6, r6c8=4, r7c6=1, r2c6=7, r8c6=6, r8c7=4
 Hidden single: r1c2=6, r1c3=7, r1c9=8, r3c8=6, r9c5=4
 
 Naked pair: 2,5 in r7c28 => r7c19<>2, r7c39<>5
@@ -4863,13 +4456,8 @@ Naked single : r8c2=9, r8c5=8, r8c9=5, r8c4=3, r8c1=2, r9c1=3, r9c4=5, r9c9=9
 |125679    12679     8.       |3.        147       79       |1246      456       245      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c3=1, r3c3=4, r7c3=8, r2c3=5, r7c1=4, r8c8=7, r9c8=1
-Hidden single: r2c1=8, r2c4=1
-Naked single : r3c4=9, r3c1=1
-Hidden single: r9c2=7, r7c2=5
-Naked single : r7c8=2, r2c8=9, r1c8=5, r1c4=2, r1c1=9, r2c2=2, r3c5=5, r3c9=2, r6c4=8, r6c5=2
-Naked single : r8c2=9, r8c5=8, r8c9=5, r8c4=3, r8c1=2, r9c1=3, r9c4=5, r9c9=9, r4c6=8, r7c9=5
-Naked single : r7c8=3, r7c3=1, r7c2=9, r7c4=8, r8c6=7, r9c6=9, r5c6=3, r6c6=6, r1c6=5
+Naked single : r4c6=8, r7c9=5, r7c8=3, r7c3=1, r7c2=9, r7c4=8, r8c6=7, r9c6=9, r5c6=3, r6c6=6
+Naked single : r1c6=5
 Hidden single: r2c3=5, r6c4=9, r6c8=5, r5c8=8, r9c1=5, r9c2=7
 
 Naked pair: 6,7 in r12c4 => r13c5<>7
@@ -5075,10 +4663,6 @@ Naked single : r8c1=6, r8c2=3, r9c5=1, r9c7=2, r9c8=6, r9c9=4
 |235       59        2359     |149       8.        1459     |6.        29        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c7=1, r8c4=4, r4c4=1, r4c1=2, r2c1=7, r2c4=6, r1c4=7, r2c8=4, r1c9=9, r1c1=8
-Naked single : r1c5=3, r1c3=4, r1c7=6, r2c2=2, r3c2=6, r3c1=9, r3c3=3, r3c5=8, r3c9=7, r4c5=4
-Naked single : r5c1=1, r5c2=4, r5c5=7, r5c9=2, r5c7=9, r6c1=3, r6c2=8, r6c3=7, r6c5=2, r6c7=4
-Naked single : r8c1=6, r8c2=3, r9c5=1, r9c7=2, r9c8=6, r9c9=4
 Hidden single: r4c6=2, r4c4=1, r2c5=1, r6c2=1, r9c6=1, r9c4=4
 
 Naked pair: 4,8 in r4c13 => r5c13,r6c13<>4, r5c13,r6c13<>8
@@ -5329,11 +4913,7 @@ Naked single : r6c5=9, r6c6=6, r6c9=4, r8c3=6, r9c1=2, r9c2=5, r9c3=3, r9c8=9
 |7.        345       6.       |245       245       8.       |1.        3         9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c8=6, r1c9=2, r1c7=9, r1c6=7, r1c1=6, r2c4=9, r5c8=1, r3c8=7, r8c6=9, r7c5=7
-Naked single : r7c2=9, r8c8=8, r7c8=2, r7c3=8, r4c3=4, r3c3=5, r2c2=7, r2c3=2, r2c1=4, r2c6=8
-Naked single : r2c7=3, r2c9=5, r3c6=4, r3c9=8, r3c7=1, r4c1=8, r7c7=4, r5c7=8, r5c4=7, r6c4=8
-Naked single : r6c7=2, r7c9=3, r8c1=7, r6c1=3, r5c1=5, r5c3=9, r5c5=4, r5c9=6, r5c6=3, r6c3=7
-Naked single : r6c5=9, r6c6=6, r6c9=4, r8c3=6, r9c1=2, r9c2=5, r9c3=3, r9c8=9, r9c8=3, r3c8=9
+Naked single : r9c8=3, r3c8=9
 Hidden single: r1c5=1, r1c1=9, r2c8=7, r2c9=1, r5c5=9, r2c6=9, r4c5=8, r4c3=7, r4c6=2, r6c4=7
 Hidden single: r6c7=9, r5c9=3, r7c1=8, r7c4=1, r6c6=1
 Naked single : r6c8=6, r4c8=1, r6c5=5, r5c4=6, r8c8=8
@@ -5389,7 +4969,7 @@ Naked single : r3c5=6, r8c7=2, r9c2=4, r9c4=5, r9c5=2
 |7.        4+        6.       |5+        2+        8.       |1.        3+        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sc1.txt        Result: True Solved: 5/5 
+Test file: tests/sc1.txt        Result: True Solved: 5/5 Time: 0.0552
 ..69...7.....1...28.........2......4........1..5..6..........6......2.5..1..43...
 +-----------------------------+-----------------------------+-----------------------------+
 |12345     345       6.       |9.        2358      458      |13458     7.        358      |
@@ -5482,8 +5062,7 @@ Naked single : r8c1=3, r8c9=9, r9c3=9, r9c7=7, r9c8=2
 |2.        1468      3.       |1467      1469      147      |478       5.        478      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c3=3, r2c2=9, r5c8=3, r5c1=9, r6c2=3, r6c9=7, r6c7=2, r6c8=9, r7c3=7, r7c9=3
-Naked single : r8c1=3, r8c9=9, r9c3=9, r9c7=7, r9c8=2, r2c7=8, r2c1=1, r2c8=6
+Naked single : r2c7=8, r2c1=1, r2c8=6
 Hidden single: r1c1=3, r1c3=6
 Naked single : r7c3=8, r3c3=2, r3c2=8
 Hidden single: r1c5=8, r1c6=5, r3c9=9, r4c2=2, r5c1=8, r6c8=8, r1c8=2, r6c7=2, r4c7=5, r3c7=3
@@ -5553,7 +5132,7 @@ Naked single : r3c4=4, r5c9=3, r6c3=1, r6c9=7, r8c2=1, r8c3=5, r9c2=4, r9c7=7
 |2.        4+        3.       |6+        9+        1+       |7+        5.        8+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sc2.txt        Result: True Solved: 2/2 
+Test file: tests/sc2.txt        Result: True Solved: 2/2 Time: 0.00806
 .8.1....31.3..928.6.......53....5.1.....8.5...4.7...............9.....78.1.678..2
 +-----------------------------+-----------------------------+-----------------------------+
 |24579     8.        24579    |1.        2456      2467     |4679      469       3.       |
@@ -5625,9 +5204,7 @@ Naked single : r7c4=9, r7c5=2, r8c5=1, r8c6=3, r9c1=4, r9c3=5
 |9         2.        89       |14        5.        7.       |349       1349      6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c6=4, r5c6=6, r5c2=7, r3c2=2, r1c3=4, r1c1=7, r1c6=2, r3c5=3, r3c6=7, r4c2=6
-Naked single : r5c1=9, r5c9=4, r4c9=9, r4c4=2, r4c5=4, r6c1=5, r6c3=2, r6c6=1, r6c5=9, r6c9=6
-Naked single : r7c4=9, r7c5=2, r8c5=1, r8c6=3, r9c1=4, r9c3=5, r9c1=9, r9c3=8
+Naked single : r9c1=9, r9c3=8
 Hidden single: r2c4=7, r3c3=9, r3c2=3
 Naked single : r2c2=5, r3c1=2, r2c3=1
 Hidden single: r1c6=1, r2c6=2, r5c2=8, r6c1=1, r7c6=3, r8c2=4, r8c8=1, r9c4=1
@@ -5775,10 +5352,6 @@ Naked single : r6c9=7, r6c7=5, r7c3=7, r7c9=2, r8c3=5, r8c5=8, r8c6=6, r8c7=7, r
 |248       6.        2489     |2478      2489      1.       |3.        5.        2789     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c8=3, r5c3=2, r5c5=7, r6c3=3, r6c5=2, r9c8=4, r1c8=2, r1c7=4, r9c7=3, r2c7=9
-Naked single : r2c8=8, r2c9=3, r4c8=6, r4c6=5, r3c6=8, r3c5=4, r3c4=5, r4c1=7, r4c7=2, r4c9=8
-Naked single : r5c4=6, r5c1=5, r6c2=6, r1c2=7, r1c3=6, r7c1=6, r7c4=4, r7c5=9, r7c8=5, r6c8=9
-Naked single : r6c9=7, r6c7=5, r7c3=7, r7c9=2, r8c3=5, r8c5=8, r8c6=6, r8c7=7, r8c9=9
 Hidden single: r1c3=9, r1c6=7
 Naked single : r1c8=1, r1c7=2, r2c8=7, r2c9=9, r3c7=8, r3c8=3, r5c8=8, r8c8=4, r7c8=6
 Hidden single: r4c7=7, r5c1=7, r6c7=5, r5c2=5, r8c1=5, r7c1=3, r8c3=1
@@ -5852,10 +5425,8 @@ Naked single : r7c6=4, r7c9=8, r8c9=7, r9c9=2
 |2.        3.        1478     |4678      5.        14679    |69        79        69       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c4=7, r8c4=8, r4c4=4, r4c6=5, r3c6=2, r2c4=1, r2c5=4, r1c5=6, r1c1=4, r2c1=2
-Naked single : r3c3=6, r3c1=1, r3c5=5, r4c5=8, r5c3=2, r5c4=6, r5c5=1, r6c1=6, r6c4=2, r7c5=2
-Naked single : r7c6=4, r7c9=8, r8c9=7, r9c9=2, r5c5=7, r5c2=1, r5c3=3, r5c1=6, r5c9=5, r7c9=2
-Naked single : r8c2=7, r2c2=4, r1c2=2, r8c3=8, r1c3=9, r8c1=5
+Naked single : r5c5=7, r5c2=1, r5c3=3, r5c1=6, r5c9=5, r7c9=2, r8c2=7, r2c2=4, r1c2=2, r8c3=8
+Naked single : r1c3=9, r8c1=5
 Hidden single: r2c7=5, r1c4=5, r3c7=2, r4c7=1, r4c8=8
 Naked single : r1c8=3, r1c1=8
 Hidden single: r4c1=9, r6c6=5, r6c9=3
@@ -5910,9 +5481,7 @@ Naked single : r2c3=7, r6c3=2, r7c1=4, r7c4=7, r7c6=1, r8c4=6, r9c3=1, r9c6=4
 |6.        1479      134578   |1578      2.        1789     |179       1379      379      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c6=6, r1c9=4, r3c9=8, r2c9=6, r8c6=9, r8c5=2, r6c5=4, r3c5=9, r2c5=8, r3c8=1
-Naked single : r2c8=9, r4c6=3, r3c6=7, r2c4=3, r3c1=3, r3c4=4, r4c4=2, r4c3=4, r6c1=7, r2c1=1
-Naked single : r2c3=7, r6c3=2, r7c1=4, r7c4=7, r7c6=1, r8c4=6, r9c3=1, r9c6=4, r7c1=1, r1c1=4
+Naked single : r7c1=1, r1c1=4
 Hidden single: r1c8=3, r2c5=3, r5c3=3, r5c2=6, r8c1=3, r8c2=2, r8c7=9, r2c9=9, r2c8=2, r5c8=9
 Hidden single: r9c9=3
 
@@ -6136,7 +5705,7 @@ Naked single : r9c3=5, r9c4=8, r9c7=1, r9c8=7
 |6.        4+        5+       |8+        2.        9+       |1+        7+        3+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/mc1.txt        Result: True Solved: 5/5 
+Test file: tests/mc1.txt        Result: True Solved: 5/5 Time: 0.0638
 .............9...463....21.1..3...2..56...94.........78..........14.3.6..9..285..
 +-----------------------------+-----------------------------+-----------------------------+
 |24579     12478     245789   |125678    1345678   124567   |3678      35789     35689    |
@@ -6253,10 +5822,6 @@ Naked single : r7c6=5
 |23478     23467     9.       |1346      1367      1467     |1345678   4578      12457    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c1=7, r5c1=2, r7c3=7, r4c3=8, r4c9=5, r3c9=8, r2c8=5, r2c3=2, r1c3=5, r6c2=4
-Naked single : r4c2=7, r4c5=4, r6c8=8, r8c1=5, r8c2=2, r8c5=7, r3c5=5, r3c4=7, r3c6=4, r7c5=1
-Naked single : r5c5=8, r5c4=1, r2c4=8, r1c4=2, r1c6=1, r1c2=8, r2c2=1, r5c6=7, r6c4=5, r6c6=2
-Naked single : r7c6=5
 Hidden single: r3c2=2, r6c4=9, r6c7=1
 
 Naked pair: 4,5 in r26c3 => r578c3<>4, r5c3<>5
@@ -6451,9 +6016,6 @@ Naked single : r7c5=9, r8c8=4, r8c1=7, r6c1=4, r6c2=7, r9c2=4, r9c4=3, r9c5=7, r
 |58        9.        4568     |3.        67        67       |5678      258       1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c4=4, r4c6=5, r4c7=4, r1c7=8, r1c4=1, r1c1=9, r1c9=4, r2c1=1, r3c7=7, r3c6=9
-Naked single : r2c6=7, r2c5=3, r2c4=5, r2c9=9, r3c4=8, r3c9=5, r5c7=5, r5c8=7, r7c6=4, r7c9=7
-Naked single : r7c5=9, r8c8=4, r8c1=7, r6c1=4, r6c2=7, r9c2=4, r9c4=3, r9c5=7, r9c6=1
 Hidden single: r2c6=6
 Naked single : r8c6=1, r8c4=5, r9c6=7, r3c6=9, r7c4=4, r9c5=6
 Hidden single: r5c4=9, r9c3=4, r9c8=2, r4c3=2, r1c2=2, r4c7=6, r7c9=6, r5c3=6, r7c7=7, r1c7=9
@@ -6613,9 +6175,6 @@ Naked single : r6c3=8, r6c6=3, r6c7=1, r6c9=2, r7c1=3, r7c3=5, r8c7=3, r8c8=8
 |349       1.        39       |589       569       2.       |3489      3459      7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c7=8, r4c1=7, r4c4=8, r2c4=7, r1c5=8, r1c3=3, r1c9=7, r2c2=8, r3c2=7, r3c9=3
-Naked single : r4c8=3, r5c5=7, r5c6=2, r5c9=8, r6c2=4, r5c2=3, r5c1=1, r3c1=5, r3c3=1, r5c7=4
-Naked single : r6c3=8, r6c6=3, r6c7=1, r6c9=2, r7c1=3, r7c3=5, r8c7=3, r8c8=8
 Hidden single: r1c2=7, r2c3=8, r2c5=2, r2c8=6, r3c1=6, r4c7=8, r5c3=5, r3c2=5, r6c6=6, r7c1=7
 Hidden single: r8c9=8, r8c7=1, r3c7=2, r9c1=4, r1c7=4, r9c4=8, r4c4=5, r9c5=6, r1c5=5, r7c6=5
 Hidden single: r9c8=5
@@ -6790,7 +6349,7 @@ Naked single : r6c9=4, r7c3=9, r7c8=4, r7c9=2, r8c2=2, r8c4=9, r8c5=7, r8c8=3, r
 |4+        1.        3+       |8+        6+        2.       |9+        5+        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/mc2.txt        Result: True Solved: 4/4 
+Test file: tests/mc2.txt        Result: True Solved: 4/4 Time: 0.0955
 .......6....97.8.5.8........495...37....3.596.........4.....3...6..54.727..21...9
 +-----------------------------+-----------------------------+-----------------------------+
 |12359     123579    123457   |1348      248       12358    |12479     6.        134      |
@@ -6952,10 +6511,7 @@ Naked single : r9c6=3
 |2359      23589     3589     |4.        6.        7.       |3589      138       189      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c4=1, r3c8=2, r2c8=1, r2c2=2, r3c6=5, r1c6=2, r7c2=1, r7c3=2, r5c3=1, r4c1=8
-Naked single : r4c5=6, r3c5=4, r1c5=8, r1c4=3, r1c3=5, r1c1=1, r1c9=4, r2c6=6, r2c1=3, r3c1=6
-Naked single : r3c9=3, r4c6=1, r5c1=2, r5c6=8, r6c1=5, r6c2=3, r8c4=8, r8c3=3, r9c2=5, r9c3=8
-Naked single : r9c6=3, r4c6=8, r4c9=4
+Naked single : r4c6=8, r4c9=4
 Hidden single: r1c3=1, r2c2=4, r3c7=2, r3c8=8
 Naked single : r5c8=7, r2c8=1, r5c7=8, r5c9=2, r6c7=3, r9c8=3, r7c8=4
 Hidden single: r6c6=1, r8c1=7, r8c3=4, r9c9=1
@@ -7030,9 +6586,7 @@ Naked single : r2c7=7, r7c7=6, r7c2=3, r8c2=6, r8c7=5, r9c3=5, r9c7=9
 |1.        6.        45789    |24789     478       3.       |2458      48        258      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c2=9
-Naked single : r1c1=6, r5c1=5, r3c1=3, r3c2=5, r4c1=9, r4c3=3, r5c3=6, r7c3=9, r7c9=7, r2c9=9
-Naked single : r2c7=7, r7c7=6, r7c2=3, r8c2=6, r8c7=5, r9c3=5, r9c7=9, r8c1=3
+Naked single : r8c1=3
 Hidden single: r2c2=2, r1c2=1, r2c6=1, r3c8=9, r5c2=3, r5c5=1, r1c5=5, r1c4=3, r3c9=5, r5c4=5
 Hidden single: r5c6=4
 Naked single : r3c6=6, r3c4=4
@@ -7163,10 +6717,7 @@ Naked single : r9c3=5, r9c4=9, r9c7=2
 |238       4.        289      |2369      236       1.       |5.        7.        239      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c9=7, r1c6=8, r1c7=4, r1c3=6, r2c1=5, r2c3=4, r2c4=7, r2c7=8, r2c8=6, r4c3=8
-Naked single : r4c4=6, r4c5=3, r4c7=7, r5c3=7, r5c1=6, r5c8=8, r6c5=8, r6c4=2, r6c6=7, r6c7=3
-Naked single : r6c9=6, r7c1=7, r7c6=2, r7c7=5, r7c3=9, r7c4=8, r7c2=4, r7c5=6, r8c2=8, r8c5=4
-Naked single : r9c3=5, r9c4=9, r9c7=2, r7c7=2
+Naked single : r7c7=2
 Hidden single: r2c6=6, r3c2=6, r3c8=9
 Naked single : r7c8=3, r7c6=9, r7c2=5, r7c3=1, r9c9=9, r8c9=4, r8c7=8
 Hidden single: r5c1=5, r5c4=9, r6c1=1, r6c8=5, r9c1=3, r9c3=8, r5c2=8, r5c5=3, r6c2=3
@@ -7296,12 +6847,7 @@ Naked single : r8c4=5, r8c6=3, r9c4=6, r9c5=2
 |1234      9.        123      |7.        236       8.       |1456      16        12456    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r2c7=4
-Naked single : r1c8=8, r1c1=4, r2c8=2, r2c1=8, r2c5=5, r3c1=2, r4c8=4, r8c5=7, r3c5=8, r6c5=6
-Naked single : r4c4=7, r3c4=1, r2c4=3, r1c4=2, r1c6=7, r1c9=3, r2c9=1, r3c7=7, r4c2=2, r4c3=6
-Naked single : r5c7=1, r5c9=7, r5c3=4, r6c3=7, r2c3=9, r2c2=7, r6c4=4, r6c9=2, r8c2=9, r8c3=2
-Naked single : r8c4=5, r8c6=3, r9c4=6, r9c5=2, r7c2=3, r8c5=2, r7c4=1, r7c5=6, r7c8=9, r7c9=2
-Naked single : r8c4=5, r9c5=3
+Naked single : r7c2=3, r8c5=2, r7c4=1, r7c5=6, r7c8=9, r7c9=2, r8c4=5, r9c5=3
 Hidden single: r1c2=5, r3c6=5, r1c6=6, r1c4=2, r5c4=8
 
 Pointing: 3 in b2 => r6c4<>3
@@ -7432,7 +6978,7 @@ Naked single : r6c7=6, r8c7=4, r8c9=8, r9c7=5, r9c8=6, r9c9=1
 |4+        9.        2+       |7.        3+        8.       |5+        6+        1+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/xy.txt         Result: True Solved: 5/5 
+Test file: tests/xy.txt         Result: True Solved: 5/5 Time: 0.0869
 ..92.8..38..41....5.......7.......28.3...6..1..47.13...1.54....3.5......9....3...
 +-----------------------------+-----------------------------+-----------------------------+
 |1467      467       9.       |2.        567       8.       |1456      1456      3.       |
@@ -7520,13 +7066,7 @@ Naked single : r7c3=2, r9c2=4, r9c3=7, r9c4=8, r9c8=1, r9c9=5
 |1367      1357      8.       |1457      134567    1456     |2.        569       1369     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c3=8
-Naked single : r5c4=9, r4c4=3, r3c4=6, r3c5=3, r4c5=5, r4c2=9, r5c5=2, r5c1=7, r4c3=6, r4c7=7
-Naked single : r6c1=2, r6c2=5, r6c5=8, r7c1=6, r9c5=6, r8c5=9
-Hidden single: r7c7=8
-Naked single : r3c7=4, r3c8=8, r5c7=5, r1c7=1, r1c8=5, r5c8=4, r9c7=2, r7c9=9, r6c9=6, r2c9=2
-Naked single : r6c8=9, r2c8=6, r2c7=9, r8c7=6, r8c9=4, r8c2=8, r8c4=1, r8c8=7, r8c6=2, r7c6=7
-Naked single : r7c3=2, r9c2=4, r9c3=7, r9c4=8, r9c8=1, r9c9=5, r3c7=1, r3c9=2
+Naked single : r3c7=1, r3c9=2
 Hidden single: r5c8=2, r5c7=6, r6c3=6, r7c2=2
 
 Locked pair: 6,9 in r12c9 => r1c8,r89c9<>6, r1c78,r4c9,r9c9<>9
@@ -7598,12 +7138,6 @@ Naked single : r6c6=2, r8c1=6, r8c8=5, r7c8=6, r7c6=5, r8c2=7, r8c6=1, r9c1=3, r
 |2589      7.        2589     |23459     6.        2349     |248       1.        4        |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c3=7
-Naked single : r1c8=4, r3c1=8, r3c5=4, r3c8=7, r4c5=5, r4c6=4
-Hidden single: r2c2=4, r2c4=5, r9c4=4, r5c4=7, r9c5=7, r7c5=3
-Naked single : r7c3=1, r2c3=9, r2c9=6, r1c9=9, r5c3=3, r7c4=8, r1c4=1, r1c2=3, r1c1=2, r2c1=1
-Naked single : r2c5=2, r4c1=7, r4c2=1, r6c5=8, r1c5=6, r1c6=8, r5c5=1, r5c6=9, r5c2=8, r6c2=9
-Naked single : r6c6=2, r8c1=6, r8c8=5, r7c8=6, r7c6=5, r8c2=7, r8c6=1, r9c1=3, r9c2=5, r9c6=6
 Naked single : r2c9=5, r5c5=9, r9c9=4, r1c9=1, r3c9=7, r8c9=6
 Hidden single: r3c1=6, r2c4=6, r3c6=8, r4c8=6, r6c6=6, r7c3=6, r7c6=4
 
@@ -7657,11 +7191,7 @@ Naked single : r9c6=3, r9c7=8
 |27        1         127      |4.        6.        1279     |8.        5.        3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c4=3, r4c6=2, r4c1=9, r4c7=1, r6c1=2, r6c4=4, r6c2=1, r6c3=7, r6c7=9, r7c2=2
-Naked single : r7c8=7, r5c8=4, r5c7=7, r7c5=1, r3c5=2, r1c4=9, r1c2=4, r1c3=2, r3c4=1, r3c8=9
-Naked single : r2c8=2, r2c7=3, r3c7=4, r4c2=3, r3c2=5, r3c3=3, r4c3=4, r8c5=7, r8c6=9, r8c2=8
-Naked single : r2c2=9, r2c3=8, r5c3=5, r5c1=8, r8c3=1, r8c7=2, r8c4=5, r9c1=5, r9c3=9, r9c4=2
-Naked single : r9c6=3, r9c7=8, r4c1=3, r4c3=5, r5c1=4, r6c8=4, r6c7=5, r6c5=3, r6c6=6, r9c2=1
+Naked single : r4c1=3, r4c3=5, r5c1=4, r6c8=4, r6c7=5, r6c5=3, r6c6=6, r9c2=1
 Hidden single: r1c3=1, r1c1=7
 Naked single : r9c1=2, r7c3=4, r2c3=2, r7c9=9, r5c9=8, r3c9=4, r1c9=5, r4c9=7, r8c1=8, r7c1=6
 Naked single : r2c1=9, r8c2=3, r7c2=5, r9c3=7, r9c6=9
@@ -7715,10 +7245,7 @@ Naked single : r7c5=8, r8c5=7, r8c6=2, r8c8=1
 |3.        1458      14589    |1459      6.        1489     |15        2.        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c4=9, r5c4=1, r4c4=8, r4c5=9, r4c7=1, r5c8=9, r3c8=8, r2c8=3, r1c8=2, r1c7=6
-Naked single : r1c2=8, r1c6=3, r2c6=8, r3c2=6, r3c7=9, r7c4=3, r7c7=2, r7c6=1, r3c6=7, r3c5=1
-Naked single : r7c5=8, r8c5=7, r8c6=2, r8c8=1, r1c6=4, r3c2=4, r2c2=5, r1c2=8, r2c1=9, r9c2=1
-Naked single : r9c7=5
+Naked single : r1c6=4, r3c2=4, r2c2=5, r1c2=8, r2c1=9, r9c2=1, r9c7=5
 Hidden single: r2c4=6, r6c3=6, r4c3=1
 
 Locked pair: 2,6 in r78c2 => r45c2,r7c1<>2
@@ -7759,7 +7286,7 @@ Naked single : r9c6=8
 |3.        1+        9+       |4+        6.        8+       |5+        2.        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/l2.txt         Result: True Solved: 5/5 
+Test file: tests/l2.txt         Result: True Solved: 5/5 Time: 0.0168
 ...75.4.............3....269..82......6937........48...5...61..6.....24..3.175...
 +-----------------------------+-----------------------------+-----------------------------+
 |128       12689     1289     |7.        5.        12389    |4.        1389      1389     |
@@ -7844,12 +7371,7 @@ Naked single : r9c8=6, r9c9=8
 |5.        168       2.       |14        3.        9.       |148       47        1478     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c1=8, r7c3=9
-Hidden single: r2c1=7, r1c1=1, r2c9=1, r3c5=1, r3c7=7, r5c2=8
-Naked single : r3c2=9, r3c6=8, r2c5=9, r2c7=3, r2c6=2, r1c6=3, r2c2=4, r2c3=8, r1c3=2, r4c2=7
-Naked single : r4c7=6, r4c8=3, r4c9=4, r5c9=2, r5c1=4, r6c3=1, r6c2=2, r7c8=7, r6c8=9, r1c8=8
-Naked single : r1c9=9, r6c9=7, r7c9=3, r8c2=1, r8c3=7, r8c5=8, r8c6=9, r9c1=2, r9c3=4, r9c7=9
-Naked single : r9c8=6, r9c9=8, r4c6=2, r6c6=3, r5c4=9
+Naked single : r4c6=2, r6c6=3, r5c4=9
 Hidden single: r1c3=6, r2c3=4, r3c4=6, r4c1=6, r6c8=6, r7c5=7
 Naked single : r1c5=9
 Hidden single: r2c1=9, r3c1=8
@@ -7908,14 +7430,7 @@ Naked single : r7c4=2, r7c9=3, r7c3=9, r8c3=3, r8c4=5, r8c6=1, r8c7=9, r8c9=2, r
 |34689     1346      134689   |12348     12348     2348     |1289      5.        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c2=5, r5c7=8
-Hidden single: r9c9=8, r5c9=7
-Naked single : r5c8=2
-Hidden single: r9c8=7, r8c8=4
-Naked single : r9c7=1, r2c7=5, r2c8=3, r2c4=1, r3c6=4, r1c6=5, r1c4=3, r1c1=1, r1c9=4, r3c2=3
-Naked single : r3c9=1, r4c9=9, r4c2=4, r5c1=3, r5c3=1, r6c2=9, r6c7=4, r6c9=5, r7c2=1, r7c8=5
-Naked single : r7c4=2, r7c9=3, r7c3=9, r8c3=3, r8c4=5, r8c6=1, r8c7=9, r8c9=2, r9c4=4, r6c8=4
-Naked single : r4c8=9, r4c9=2, r4c7=3, r8c8=8, r1c8=6
+Naked single : r6c8=4, r4c8=9, r4c9=2, r4c7=3, r8c8=8, r1c8=6
 Hidden single: r4c5=1, r5c1=2, r5c5=9, r6c5=6, r8c9=1
 Naked single : r1c9=5, r2c9=9, r7c9=4
 
@@ -7972,15 +7487,7 @@ Naked single : r9c7=9
 |1278      167       12678    |12458     248       9.       |15678     3.        1568     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c7=8, r2c3=5, r2c5=3, r3c7=1, r6c3=3
-Hidden single: r5c2=5
-Naked single : r5c7=7, r6c7=5, r7c2=1
-Hidden single: r1c3=1, r6c6=7
-Naked single : r6c4=2, r1c4=7, r1c5=2, r7c4=8, r3c4=4, r5c4=3, r7c3=9, r3c3=6, r3c1=9, r7c1=5
-Naked single : r7c5=7, r7c7=2, r9c4=1, r9c5=4, r8c5=5, r3c5=8, r3c6=5, r8c6=3, r8c1=4, r1c1=3
-Naked single : r1c2=4, r4c2=6, r4c1=8, r4c6=4, r5c3=4, r5c6=8, r9c1=6, r9c2=3, r9c3=8, r9c6=2
-Naked single : r9c7=9, r3c6=4, r1c6=2, r7c5=8, r8c5=2, r8c4=1, r9c5=4, r5c5=9, r9c4=5, r7c4=3
-Naked single : r7c6=7
+Naked single : r3c6=4, r1c6=2, r7c5=8, r8c5=2, r8c4=1, r9c5=4, r5c5=9, r9c4=5, r7c4=3, r7c6=7
 Hidden single: r1c7=4, r2c1=5, r2c3=7, r2c4=9, r4c9=4, r7c9=5
 
 Locked triple: 2,6,8 in r2c789 => r3c79<>6, r3c79<>8
@@ -8065,13 +7572,6 @@ Naked single : r5c3=2, r5c9=6, r6c3=1, r6c7=3, r6c8=7, r8c7=9, r8c9=8
 |1347      6.        9.       |8.        12457     1245     |1347      127       2347     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c2=5, r4c6=1, r5c2=7, r6c6=5
-Hidden single: r3c1=9
-Naked single : r7c1=1, r1c1=8, r1c4=6, r1c2=1, r3c3=6, r3c4=8, r7c8=6, r7c2=9, r8c1=7, r9c1=2
-Naked single : r9c2=6, r9c3=8, r9c9=1, r3c9=3, r3c7=1, r9c7=7
-Hidden single: r5c7=5, r2c7=6, r5c1=3
-Naked single : r6c1=4, r6c4=2, r5c4=4, r6c9=9, r4c7=8, r4c8=2, r2c8=8, r2c9=2, r4c3=9, r5c8=1
-Naked single : r5c3=2, r5c9=6, r6c3=1, r6c7=3, r6c8=7, r8c7=9, r8c9=8
 Hidden single: r5c1=6, r5c6=3, r8c6=6, r3c4=6, r3c5=7, r2c5=8, r2c6=5, r7c4=7, r9c5=5
 
 Locked triple: 1,4,7 in r8c123 => r7c23,r8c58,r9c1<>1, r7c23,r8c5,r9c1<>4, r8c8,r9c1<>7
@@ -8112,7 +7612,7 @@ Naked single : r8c3=1, r9c6=1, r9c7=4, r9c8=7, r9c9=2
 |3+        6.        9.       |8.        5+        1+       |4+        7+        2+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/l3.txt         Result: True Solved: 5/5 
+Test file: tests/l3.txt         Result: True Solved: 5/5 Time: 0.0187
 7...8..35...........9623..88....2.43..34......6.8.7.....1.....9......3.749.....6.
 +-----------------------------+-----------------------------+-----------------------------+
 |7.        124       246      |19        8.        149      |12469     3.        5.       |
@@ -8258,11 +7758,7 @@ Naked single : r9c9=2
 |3.        1678      4.       |5678      9.        25678    |1268      2568      1258     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c7=6, r1c7=9, r1c4=1, r1c2=2, r1c3=6, r2c3=8, r2c2=3, r2c1=1, r2c6=5, r2c4=7
-Naked single : r2c5=9, r2c8=2, r5c6=1, r5c5=5, r4c4=9, r5c2=7, r4c3=5, r4c2=1, r4c7=7, r3c7=1
-Naked single : r3c8=7, r5c8=9, r5c1=2, r6c1=9, r6c8=5, r6c7=2, r6c9=1, r7c1=3, r7c5=7, r7c8=8
-Naked single : r7c2=5, r7c4=2, r8c1=6, r8c2=8, r8c3=2, r8c4=5, r8c8=1, r9c3=7, r9c5=1, r9c7=5
-Naked single : r9c9=2, r1c7=9, r1c8=5, r1c4=7, r1c1=1, r1c3=3, r5c5=1
+Naked single : r1c7=9, r1c8=5, r1c4=7, r1c1=1, r1c3=3, r5c5=1
 Hidden single: r2c2=4, r2c6=1, r3c1=5, r3c2=6
 Naked single : r3c4=9
 Hidden single: r3c7=4, r6c2=3, r6c3=2, r4c3=9, r4c2=1, r6c9=1, r7c1=6, r8c3=1, r9c7=1, r5c7=2
@@ -8437,11 +7933,6 @@ Naked single : r7c8=3, r8c8=6, r9c6=7, r9c8=2
 |1356      15678     13578    |12379     234579    1357     |14567     1247      124567   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r2c8=8
-Naked single : r2c3=7, r2c9=2, r3c3=8, r3c9=7, r9c9=5, r8c9=9, r5c9=8, r4c7=6, r5c6=9, r6c8=9
-Naked single : r8c7=8, r8c2=7, r9c2=8, r9c4=6, r2c4=5, r2c5=6, r8c4=4, r6c4=8, r6c1=7, r4c1=8
-Naked single : r6c5=4, r6c6=6, r8c5=5, r4c5=7, r4c6=5, r8c6=3, r3c6=2, r3c5=3, r7c5=2, r7c6=8
-Naked single : r7c8=3, r8c8=6, r9c6=7, r9c8=2
 Hidden single: r2c6=6, r4c1=4, r5c1=9, r5c3=5, r2c7=5, r5c4=2, r6c3=2, r6c7=9, r7c5=2, r7c7=4
 Hidden single: r8c9=5, r9c5=4, r1c5=9, r6c5=5
 Naked single : r6c6=3
@@ -8652,12 +8143,6 @@ Naked single : r9c7=6, r9c8=7, r9c9=2
 |578       358       3578     |4579      34569     345679   |2.        1.        3456     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c5=3
-Hidden single: r9c3=3, r4c3=8
-Naked single : r4c5=7, r3c5=8, r1c4=1, r1c6=7, r1c2=5, r1c1=3, r1c7=8, r3c1=1, r2c3=7, r2c8=1
-Naked single : r3c7=3, r3c9=7, r4c4=6, r4c2=1, r5c9=6, r5c7=7, r6c2=6, r6c4=8, r6c8=4, r1c8=2
-Naked single : r1c9=4, r6c9=1, r7c2=7, r7c3=1, r7c6=5, r8c4=7, r8c7=1, r9c1=5, r9c2=8, r9c6=1
-Naked single : r9c7=6, r9c8=7, r9c9=2
 Hidden single: r1c1=4, r2c2=6, r4c5=8, r5c7=6, r6c9=2, r1c9=7, r2c3=7, r5c2=2, r6c7=7, r7c3=2
 Hidden single: r7c7=9, r4c8=9
 
@@ -8857,12 +8342,6 @@ Naked single : r5c4=4, r8c4=2, r8c9=3, r9c4=7, r9c6=9, r9c9=4
 |128       289       12789    |137       5.        134      |23479     2379      6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c8=5, r1c8=8, r1c3=5, r3c2=8, r6c2=3, r5c3=1, r6c3=8, r6c8=4, r5c8=3, r9c2=5
-Naked single : r9c3=3
-Hidden single: r2c7=5
-Naked single : r2c5=4, r3c4=5, r4c7=1, r3c7=4, r3c9=1, r4c9=5, r5c5=9, r8c7=8, r9c5=6, r1c5=2
-Naked single : r1c4=9, r1c6=6, r7c6=5, r6c6=1, r6c5=5, r7c5=3, r7c9=6, r8c5=1, r8c6=4, r5c6=7
-Naked single : r5c4=4, r8c4=2, r8c9=3, r9c4=7, r9c6=9, r9c9=4
 Hidden single: r1c2=5, r2c7=6, r3c3=9, r3c9=8, r4c4=8, r6c4=5, r4c3=5, r7c1=6, r7c7=9, r5c7=5
 Hidden single: r7c9=5, r7c6=4, r8c6=6, r9c2=9, r9c7=4, r1c7=7
 Naked single : r1c5=4
@@ -8980,7 +8459,7 @@ Naked single : r9c3=8, r9c4=1, r9c8=7
 |2+        9+        8+       |1+        5.        3+       |4+        7+        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/bf4-ssts.txt   Result: True Solved: 5/5 
+Test file: tests/bf4-ssts.txt   Result: True Solved: 5/5 Time: 0.208
 17...52..28......1.6.....4.938..7.56......8.....689.3.49.3......52941....1...6924
 +-----------------------------+-----------------------------+-----------------------------+
 |1.        7.        349      |48        369       5.       |2.        689       389      |
@@ -9131,7 +8610,7 @@ Finned X-wing: 2 c28 r58 fr6c2 => r5c1<>2
 |1.        7+        6.       |348       348       2+       |49        89        5.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/fbf2.txt       Result: True Solved: 5/5 
+Test file: tests/fbf2.txt       Result: True Solved: 5/5 Time: 0.0
 793526841851794632624..8.9.478..59..5.9....8.2.6..9.54....53.....56....9.6.......
 +-----------------------------+-----------------------------+-----------------------------+
 |7+        9+        3.       |5+        2+        6.       |8.        4+        1.       |
@@ -9282,7 +8761,7 @@ Sashimi X-wing: 6 r18 c15 fr1c46 => r2c5<>6
 |4.        36        2+       |5678      5678      567      |13589     1389      1589     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sbf2.txt       Result: True Solved: 5/5 
+Test file: tests/sbf2.txt       Result: True Solved: 5/5 Time: 0.000998
 .9.6.7534.7.3...2....8..9713.7....9545..3.7..9625784137...53......7.........81.57
 +-----------------------------+-----------------------------+-----------------------------+
 |128       9.        18       |6.        12        7.       |5.        3+        4.       |
@@ -9433,7 +8912,7 @@ Finned swordfish: 2 c269 r145 fr6c6 => r4c4<>2
 |12        5.        18       |4.        237       9.       |37        3678      367      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/fbf3.txt       Result: True Solved: 5/5 
+Test file: tests/fbf3.txt       Result: True Solved: 5/5 Time: 0.0166
 9125.....58..319..37..9251.7.....2.524...91.68..2..74.1289..3...39.2.851.57183...
 +-----------------------------+-----------------------------+-----------------------------+
 |9+        1.        2.       |5.        467       4678     |46        367       3478     |
@@ -9584,7 +9063,7 @@ Sashimi swordfish: 7 r158 c169 fr8c2 => r9c1<>7
 |7x8       2+        1+       |5+        6.        9.       |4+        78        3+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sbf3.txt       Result: True Solved: 5/5 
+Test file: tests/sbf3.txt       Result: True Solved: 5/5 Time: 0.0202
 1.685432.35.1.2846842.63..1....1.46...13..9...8.5....376.48......86....491423.6..
 +-----------------------------+-----------------------------+-----------------------------+
 |1+        79        6.       |8+        5+        4.       |3+        2.        79       |
@@ -9735,7 +9214,7 @@ Finned jellyfish: 6 r2348 c1489 fr3c6 => r1c4<>6
 |7.        15        2+       |9.        36        15       |346       8+        346      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/fbf4.txt       Result: True Solved: 5/5 
+Test file: tests/fbf4.txt       Result: True Solved: 5/5 Time: 0.049
 4.71.82..6....3...8.32......7.6.5..1.64.2157.1853.76.254..1......173685473....1.9
 +-----------------------------+-----------------------------+-----------------------------+
 |4+        59        7.       |1.        569       8.       |2.        369       356      |
@@ -9886,7 +9365,7 @@ Sashimi jellyfish: 9 r2467 c1249 fr7c7 => r8c9<>9
 |28        28        9.       |457       6+        45       |1+        47        3+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sbf4.txt       Result: True Solved: 5/5 
+Test file: tests/sbf4.txt       Result: True Solved: 5/5 Time: 0.0168
 .2.84...3.6..13............8..67.21964.....5.2..........4..13..75..6.1.........75
 +-----------------------------+-----------------------------+-----------------------------+
 |159       2.        1579     |8.        4.        5679     |5679      69        3.       |
@@ -10032,10 +9511,7 @@ Naked single : r9c5=2, r9c6=8, r9c7=9
 |16        3.        68       |246       7.        26       |12568     12468     9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c2=7, r1c3=9, r1c8=6, r1c6=7, r3c6=6, r5c3=1, r6c2=9, r6c3=7, r6c4=1, r7c8=2
-Naked single : r7c9=6, r6c9=4, r6c7=6, r8c9=8, r5c9=7, r2c9=2, r5c7=8, r8c6=9, r5c6=2, r5c4=9
-Naked single : r2c4=5, r2c1=4, r2c8=9, r2c7=7, r3c1=5, r3c4=2, r3c5=9, r3c7=4, r3c8=8, r8c8=4
-Naked single : r9c5=2, r9c6=8, r9c7=9, r8c6=6, r9c6=2, r4c6=3, r9c4=4
+Naked single : r8c6=6, r9c6=2, r4c6=3, r9c4=4
 Hidden single: r1c2=1, r2c8=9, r4c9=5, r6c6=1, r1c6=9, r8c9=4, r9c7=5
 
 Pointing: 4 in b4 => r2c2<>4
@@ -10141,13 +9617,6 @@ Naked single : r2c7=8, r2c9=3, r6c7=6, r1c7=2, r1c9=6, r6c9=8, r7c7=1, r7c8=6, r
 |2689      3.        2689     |5.        124678    246      |1489      14689     4689     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r9c8=8
-Naked single : r8c7=7, r8c3=8, r9c3=6, r6c3=3, r5c3=5, r2c3=2, r1c3=7, r5c1=6, r9c1=1, r7c1=7
-Hidden single: r2c6=7
-Naked single : r3c6=5, r3c1=3, r1c1=4, r2c1=5
-Hidden single: r2c5=4, r1c5=3, r1c4=8
-Naked single : r5c4=2, r3c4=6, r3c5=2, r3c9=1, r3c8=7, r4c5=6, r4c8=2, r5c5=8, r5c8=1, r5c7=3
-Naked single : r2c7=8, r2c9=3, r6c7=6, r1c7=2, r1c9=6, r6c9=8, r7c7=1, r7c8=6, r7c9=2
 Hidden single: r2c3=1, r2c7=7, r3c7=5, r2c6=5, r4c5=5, r6c1=7, r4c1=1
 Naked single : r4c7=9
 Hidden single: r5c4=7, r5c5=6, r6c6=9, r6c8=1, r4c9=3
@@ -10269,9 +9738,6 @@ Naked single : r9c3=2, r9c8=9, r9c9=6
 |4.        5.        89       |6.        2789      2389     |2379      139       12379    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c1=9, r1c8=6, r2c2=8, r1c2=5, r1c3=3, r1c5=8, r2c4=6, r2c9=9, r3c6=3, r5c2=9
-Naked single : r5c3=5, r7c4=8, r7c1=6, r3c1=2, r3c3=6, r7c3=9, r8c5=3, r8c6=6, r8c9=8, r9c1=8
-Naked single : r9c3=2, r9c8=9, r9c9=6
 Hidden single: r1c5=6, r3c5=4, r4c9=4, r1c7=4, r2c7=5, r6c2=4, r6c3=6, r2c2=6, r6c5=1, r7c8=4
 Hidden single: r9c7=7, r7c5=7
 
@@ -10435,14 +9901,6 @@ Naked single : r1c1=1, r1c3=3, r1c6=5, r3c1=2, r3c6=1, r4c3=9, r4c5=5, r5c1=5, r
 |12345679  1379      13679    |1678      14678     1478     |3679      123468    1234689  |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c8=6, r8c8=9, r7c9=6, r7c1=9, r8c5=8, r8c1=6, r9c3=8
-Hidden single: r4c1=8
-Naked single : r6c1=3, r6c7=9, r5c7=3, r6c4=2, r6c9=8, r5c9=2
-Hidden single: r1c2=8, r4c4=3
-Naked single : r7c4=5, r7c6=3
-Hidden single: r5c6=8, r9c5=2
-Naked single : r9c6=9, r2c6=2, r2c1=7, r2c9=9, r3c2=9, r3c4=7, r1c4=9, r3c9=3, r1c9=7, r3c3=5
-Naked single : r1c1=1, r1c3=3, r1c6=5, r3c1=2, r3c6=1, r4c3=9, r4c5=5, r5c1=5, r5c2=7, r5c5=9
 Hidden single: r1c5=2, r4c4=3
 Naked single : r4c7=6, r4c9=4
 Hidden single: r3c8=6, r5c9=2, r5c6=5, r3c4=5, r9c1=5, r7c1=2, r8c1=4
@@ -10562,7 +10020,7 @@ Naked single : r9c3=3, r9c5=4, r9c6=1, r9c7=9, r9c9=8
 |5+        7+        3+       |6+        4+        1+       |9+        2+        8+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/x.txt          Result: True Solved: 5/5 
+Test file: tests/x.txt          Result: True Solved: 5/5 Time: 0.483
 .7.......2657..........187......2..9..3.9.....51....8.....8......96...324...3..5.
 +-----------------------------+-----------------------------+-----------------------------+
 |1389      7.        48       |234589    2456      345689   |1234569   12469     13456    |
@@ -10638,10 +10096,7 @@ Naked single : r9c6=7, r9c7=9
 |4.        56        256      |123       7.        9.       |16        8.        135      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c4=1, r8c5=5, r4c5=1, r4c8=6, r4c3=7, r4c1=8, r4c4=3, r4c7=5, r1c7=4, r1c9=5
-Naked single : r5c1=6, r6c4=4, r5c4=8, r5c6=5, r6c9=3, r2c9=1, r2c8=9, r2c7=3, r7c8=4, r5c8=1
-Naked single : r5c7=7, r5c9=4, r7c9=7, r7c1=5, r7c6=9, r7c7=6, r8c1=7, r8c6=4, r8c7=1, r9c3=6
-Naked single : r9c6=7, r9c7=9, r8c4=2, r8c7=4, r8c9=7, r8c3=8
+Naked single : r8c4=2, r8c7=4, r8c9=7, r8c3=8
 Hidden single: r4c8=4, r5c1=2, r5c3=3, r5c8=6, r6c5=2, r6c8=5
 Naked single : r6c3=9
 Hidden single: r7c1=9, r7c2=7, r7c5=4, r9c2=6
@@ -10698,12 +10153,7 @@ Naked single : r2c4=7, r2c1=5, r3c1=7, r3c3=1, r3c4=6, r3c5=8, r3c8=3, r5c5=9
 |5.        146789    3.       |69        2.        149      |69        6789      1689     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c4=9
-Hidden single: r3c9=9
-Naked single : r5c9=8, r2c9=4, r4c7=9, r4c5=6, r4c4=5, r4c1=8, r5c2=5, r1c2=8, r1c7=2, r2c7=8
-Naked single : r5c6=1, r3c6=4, r1c6=5, r1c1=3, r1c5=1, r1c3=4, r2c5=3, r2c6=2, r2c8=1, r2c3=6
-Naked single : r2c4=7, r2c1=5, r3c1=7, r3c3=1, r3c4=6, r3c5=8, r3c8=3, r5c5=9, r4c6=9, r4c5=6
-Naked single : r5c5=7, r6c4=8, r6c6=1, r9c6=4, r8c6=3, r2c6=5
+Naked single : r4c6=9, r4c5=6, r5c5=7, r6c4=8, r6c6=1, r9c6=4, r8c6=3, r2c6=5
 Hidden single: r2c5=4
 Naked single : r1c5=9, r3c5=3, r3c1=9, r8c5=1
 Hidden single: r2c9=9
@@ -10761,12 +10211,8 @@ Naked single : r8c7=2, r8c8=5
 |9.        258       258      |245       6.        3.       |1         18        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c9=8, r5c9=6, r9c8=7, r9c2=8, r5c2=9, r5c8=8, r4c8=3, r4c2=2, r4c1=8, r6c3=7
-Naked single : r6c2=3, r6c7=4, r1c7=5, r1c8=4, r6c8=9, r7c8=6, r7c2=1, r1c2=7, r1c4=2, r1c1=1
-Naked single : r1c3=8, r2c2=6, r2c3=2, r2c1=3, r2c4=7, r7c1=2, r7c3=9, r7c7=3, r8c1=7, r8c3=6
-Naked single : r8c7=2, r8c8=5, r6c5=7, r7c4=2, r7c5=9, r8c4=5, r1c4=1, r1c5=5, r2c5=3, r4c5=1
-Naked single : r8c6=7, r8c2=6, r9c4=4, r9c7=1, r8c9=3, r7c7=6, r2c7=2, r5c7=7, r6c7=5, r3c7=3
-Naked single : r8c1=1, r9c8=8
+Naked single : r6c5=7, r7c4=2, r7c5=9, r8c4=5, r1c4=1, r1c5=5, r2c5=3, r4c5=1, r8c6=7, r8c2=6
+Naked single : r9c4=4, r9c7=1, r8c9=3, r7c7=6, r2c7=2, r5c7=7, r6c7=5, r3c7=3, r8c1=1, r9c8=8
 Hidden single: r3c8=5, r1c8=7, r4c4=3, r6c6=4
 
 2 string kite: 9 r2c8 =9= r4c8 -9- r6c9 =9= r6c3 => r2c3<>9
@@ -10818,11 +10264,8 @@ Naked single : r7c1=3, r9c2=5, r9c3=2
 |7.        26        235      |1459      3469      134569   |8.        123569    1236     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c3=8, r5c3=3, r7c3=7, r7c2=8, r5c2=4, r2c2=9, r2c6=6, r2c8=1, r2c9=4, r1c9=9
-Naked single : r1c6=2, r1c1=4, r3c4=8, r3c6=9, r3c9=6, r4c6=8, r4c9=2, r5c8=6, r4c8=9, r4c3=5
-Naked single : r4c2=7, r3c2=2, r3c1=7, r4c1=6, r5c1=8, r5c9=1, r6c1=2, r6c3=9, r6c4=6, r6c9=8
-Naked single : r7c1=3, r9c2=5, r9c3=2, r4c3=2, r2c3=3, r1c3=1, r4c1=9, r1c1=2, r2c1=6, r6c2=8
-Naked single : r8c2=6, r9c2=2, r9c3=5, r8c1=3, r7c1=4, r8c3=8
+Naked single : r4c3=2, r2c3=3, r1c3=1, r4c1=9, r1c1=2, r2c1=6, r6c2=8, r8c2=6, r9c2=2, r9c3=5
+Naked single : r8c1=3, r7c1=4, r8c3=8
 Hidden single: r2c8=5, r2c9=2, r1c9=8, r1c8=4, r3c6=1, r6c9=4, r7c7=5, r6c7=2, r5c5=2, r7c8=2
 Hidden single: r8c4=5, r9c4=1, r2c4=9
 Naked single : r2c2=7, r3c2=9
@@ -10876,7 +10319,7 @@ Naked single : r3c9=3, r3c8=7, r8c8=9, r9c5=4, r9c6=9, r9c8=3, r9c9=6
 |7.        2+        5+       |1+        4+        9+       |8.        3+        6+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/2sk.txt        Result: True Solved: 5/5 
+Test file: tests/2sk.txt        Result: True Solved: 5/5 Time: 0.101
 .2....3..9...2...616...34.7..3.6.1..4.9.....87..1..............6..75.9....1...27.
 +-----------------------------+-----------------------------+-----------------------------+
 |58        2.        4578     |45689     14789     1456789  |3.        1589      159      |
@@ -10947,9 +10390,7 @@ Naked single : r9c6=8, r9c9=5
 |23569     3569      256      |12689     1368      23689    |4.        7.        1569     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c6=2, r5c6=5, r5c4=2, r8c3=8, r3c3=5, r1c1=8, r1c6=6, r1c4=5, r3c4=9, r3c5=8
-Naked single : r7c3=2, r7c4=3, r7c1=5, r7c9=4, r7c6=9, r6c6=4, r6c5=9, r9c1=3, r9c4=6, r9c5=4
-Naked single : r9c6=8, r9c9=5, r7c3=6, r8c5=6
+Naked single : r7c3=6, r8c5=6
 Hidden single: r2c9=3, r4c6=3, r7c1=3, r5c2=3, r7c8=8
 Naked single : r7c6=9, r7c9=1, r8c4=2, r8c6=7, r9c6=8, r9c4=1, r3c4=6, r9c5=3
 Hidden single: r1c5=1, r2c5=8
@@ -11006,10 +10447,7 @@ Naked single : r8c7=9, r8c9=5, r9c1=9, r9c2=5
 |4578      1458      3.       |178       147       178      |6.        2.        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c2=9, r6c4=8, r5c4=9, r5c8=6, r5c7=5, r5c1=8, r5c3=4, r1c3=5, r1c6=2, r3c2=4
-Naked single : r3c6=5, r3c8=2, r4c8=9, r1c8=4, r1c9=9, r1c7=6, r4c9=2, r4c1=5, r6c1=2, r6c9=4
-Naked single : r8c7=9, r8c9=5, r9c1=9, r9c2=5, r6c9=5, r6c7=3, r5c7=4, r1c7=5, r1c6=8, r6c8=9
-Naked single : r4c8=6, r6c1=2, r6c2=1
+Naked single : r6c9=5, r6c7=3, r5c7=4, r1c7=5, r1c6=8, r6c8=9, r4c8=6, r6c1=2, r6c2=1
 Hidden single: r1c4=9, r1c8=3, r5c4=2, r7c5=3
 Naked single : r5c5=9
 Hidden single: r4c2=9, r7c4=6, r7c8=5, r8c1=9, r8c4=7
@@ -11081,10 +10519,7 @@ Naked single : r8c8=4
 |16        4.        19       |125678    12568     1267     |125       1289      3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c9=7, r7c7=1, r3c7=7, r3c5=6, r3c6=5, r2c4=1, r2c5=7, r4c4=5, r4c3=4, r1c3=6
-Naked single : r1c9=4, r3c8=1, r3c9=2, r2c9=6, r4c1=3, r2c1=5, r2c3=2, r2c2=3, r4c5=1, r4c6=7
-Naked single : r5c2=8, r3c2=4, r3c1=8, r5c1=6, r5c3=5, r5c6=3, r7c1=4, r7c2=2, r7c3=8, r8c3=1
-Naked single : r8c8=4, r5c8=1, r4c8=7, r5c2=5, r6c8=8, r6c9=5, r4c9=6, r6c4=1, r6c2=9, r6c6=3
+Naked single : r5c8=1, r4c8=7, r5c2=5, r6c8=8, r6c9=5, r4c9=6, r6c4=1, r6c2=9, r6c6=3
 Hidden single: r1c5=3, r2c3=5, r3c3=7, r4c3=4
 Naked single : r4c1=1, r9c1=6
 Hidden single: r7c3=3, r7c9=8, r8c2=2, r8c5=5
@@ -11142,10 +10577,6 @@ Naked single : r2c2=8, r2c5=4, r2c1=3, r2c8=2, r3c1=4, r3c2=1, r3c5=6, r3c8=3, r
 |134       9.        145      |145       6.        1235     |8.        7.        4        |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c4=4, r7c5=1, r7c7=2, r9c5=8, r9c8=9, r8c8=4, r8c9=1, r8c3=9, r9c3=1
-Hidden single: r1c9=4
-Naked single : r3c9=9, r2c9=7, r3c4=2, r2c6=1, r1c6=7, r1c4=8, r2c4=9, r2c7=6, r1c7=1, r1c2=6
-Naked single : r2c2=8, r2c5=4, r2c1=3, r2c8=2, r3c1=4, r3c2=1, r3c5=6, r3c8=3, r9c4=7, r9c6=2
 Naked single : r2c7=4, r2c8=8, r3c8=9, r1c7=3, r3c7=2, r3c9=7, r9c9=4, r5c9=9, r5c7=1, r5c6=3
 Naked single : r5c8=4, r8c9=6, r6c9=2, r4c9=8
 Hidden single: r2c6=6
@@ -11189,7 +10620,7 @@ Naked single : r8c6=8, r8c7=9
 |3+        9.        1+       |5+        6.        2+       |8.        7.        4+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sk.txt         Result: True Solved: 5/5 
+Test file: tests/sk.txt         Result: True Solved: 5/5 Time: 0.0703
 57..413....97....6.2.5......1.2..574..4.7...............3.....84...6.....5.....1.
 +-----------------------------+-----------------------------+-----------------------------+
 |5.        7.        68       |689       4.        1.       |3.        289       29       |
@@ -11420,11 +10851,6 @@ Naked single : r9c9=2
 |169       679       3.       |4.        2.        17       |167       8.        1567     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r6c2=9
-Naked single : r8c2=8, r8c6=7, r7c6=2, r7c8=4, r3c8=8, r3c7=4, r7c7=7, r8c7=9, r5c7=8, r5c4=6
-Naked single : r1c4=8, r1c3=6, r2c6=3, r2c1=8, r2c5=2, r3c1=3, r3c5=9, r3c6=6, r4c1=6, r4c3=8
-Naked single : r4c5=3, r4c6=9, r5c8=9, r1c8=2, r1c9=9, r6c6=8, r6c7=2, r6c8=6, r9c1=9, r9c5=8
-Naked single : r9c9=2
 Hidden single: r1c8=4, r2c3=7, r3c3=5, r3c5=4, r4c3=9
 Naked single : r1c3=6
 Hidden single: r6c9=4, r7c7=4, r8c3=4, r9c9=5
@@ -11634,11 +11060,6 @@ Naked single : r6c4=3, r6c5=8, r7c8=3, r7c9=1
 |246789    2478      469      |124569    124689    1234568  |134569    13679     4679     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c4=7, r7c2=6, r6c2=2, r3c2=9, r3c1=2, r6c1=6, r8c6=3, r6c6=7, r8c9=7, r4c9=8
-Naked single : r4c7=7, r9c1=9, r9c2=7, r9c7=6
-Hidden single: r2c8=6
-Naked single : r4c8=1, r4c5=6, r5c5=1, r5c7=3, r2c7=8, r2c5=3, r3c4=8, r3c7=1, r3c9=3, r5c9=6
-Naked single : r6c4=3, r6c5=8, r7c8=3, r7c9=1
 Hidden single: r1c8=8, r5c2=1, r2c2=3, r2c1=8, r5c3=3, r1c3=5, r7c6=8, r4c5=8, r9c2=8, r8c2=7
 Hidden single: r9c1=2, r9c6=3, r9c7=5
 
@@ -11802,14 +11223,6 @@ Naked single : r4c6=5, r4c4=7, r6c5=4, r8c5=1, r8c6=2, r8c8=9, r8c4=5, r9c4=9, r
 |1279      12479     3.       |16        179       4679     |5.        8.        1279     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c9=9
-Naked single : r1c1=6, r2c3=9, r3c7=6, r3c6=4, r3c5=9, r5c7=4, r7c1=9, r7c7=3, r4c7=1, r6c7=9
-Naked single : r7c8=6, r7c4=4, r8c9=4, r8c3=6, r9c3=4, r9c9=7, r4c9=6
-Hidden single: r2c6=6
-Naked single : r2c4=2
-Hidden single: r4c1=4
-Naked single : r6c1=7, r5c1=5, r6c8=2, r5c8=7, r4c8=3, r5c4=6, r5c5=2, r6c6=1, r1c6=7, r1c4=1
-Naked single : r4c6=5, r4c4=7, r6c5=4, r8c5=1, r8c6=2, r8c8=9, r8c4=5, r9c4=9, r9c5=6, r9c8=1
 Naked single : r2c8=1, r3c6=3, r1c6=7, r2c5=8, r2c9=6, r2c3=7, r3c9=8, r1c7=3, r1c9=4, r1c8=5
 Hidden single: r3c2=6, r5c1=5, r4c1=3, r5c7=8, r6c4=5, r6c7=6, r8c5=5
 
@@ -11912,15 +11325,7 @@ Naked single : r7c1=8, r9c1=9, r9c2=4, r9c5=7, r9c9=2
 |7.        349       3469     |1349      12469     123469   |169       8.        5.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c6=4
-Hidden single: r4c3=4
-Naked single : r4c8=7
-Hidden single: r4c4=6
-Naked single : r5c6=9, r4c5=2, r3c5=1, r1c4=2, r3c1=2, r9c4=1, r9c6=6
-Hidden single: r5c3=6, r6c8=4, r8c3=2
-Naked single : r8c8=3, r5c8=2, r5c2=1, r4c2=9, r1c2=8, r4c7=1, r5c9=3, r6c1=7, r6c2=2, r6c9=9
-Naked single : r8c2=7, r8c4=8, r7c4=3, r8c7=9, r8c9=1, r7c9=7, r7c5=9, r7c3=1, r1c3=9, r1c1=1
-Naked single : r7c1=8, r9c1=9, r9c2=4, r9c5=7, r9c9=2, r3c1=8, r7c8=6
+Naked single : r3c1=8, r7c8=6
 Hidden single: r2c8=2, r4c1=2, r5c9=6
 Naked single : r1c9=8
 Hidden single: r4c7=8, r4c9=9
@@ -12072,7 +11477,7 @@ Naked single : r6c2=4, r6c5=5, r7c1=9, r7c6=5, r8c2=5, r8c3=6, r8c4=3, r8c5=9
 |7.        3+        4+       |1+        6+        2+       |9+        8.        5.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/tf.txt         Result: True Solved: 5/5 
+Test file: tests/tf.txt         Result: True Solved: 5/5 Time: 0.426
 .......7.1..87..2595..4.3..6..98......5621.....17....8.16...4............8.41.2..
 +-----------------------------+-----------------------------+-----------------------------+
 |2348      2346      2348     |1235      3569      23569    |1689      7.        1469     |
@@ -12143,12 +11548,6 @@ Naked single : r7c5=5, r7c8=3, r8c2=4, r8c4=3, r8c1=5, r8c8=6, r9c1=3, r9c6=6, r
 |1479      47        179      |1789      5.        2.       |6.        3.        4789     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c1=2
-Hidden single: r6c2=2, r5c2=9
-Naked single : r5c9=3, r5c8=4, r6c8=9, r9c9=7, r7c9=9
-Hidden single: r7c1=7, r8c6=7, r1c6=9, r8c5=9, r1c5=6
-Naked single : r1c2=3, r1c4=5, r2c3=4, r2c2=6, r2c6=3, r4c3=3, r4c6=4, r6c1=4, r6c6=5, r6c5=3
-Naked single : r7c5=5, r7c8=3, r8c2=4, r8c4=3, r8c1=5, r8c8=6, r9c1=3, r9c6=6, r9c8=5
 Hidden single: r1c9=8, r2c1=4, r3c3=8, r7c8=8, r4c6=8, r3c6=4, r4c5=4, r5c6=5
 Naked single : r5c2=7, r9c2=4
 Hidden single: r4c4=7, r6c2=8, r7c9=4, r8c8=2, r2c8=1, r4c8=5
@@ -12205,9 +11604,6 @@ Naked single : r2c7=7, r2c9=5, r8c9=9, r9c3=9, r9c9=7
 |2389      3589      2589     |3489      12489     6.       |14589     159       7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c3=2, r2c4=6, r1c4=1, r7c4=9, r6c4=2, r6c5=9, r7c3=7, r7c1=2, r7c7=1, r7c6=3
-Naked single : r1c6=7, r1c1=6, r1c5=3, r3c1=7, r3c5=2, r3c9=6, r7c5=6, r8c5=7, r8c6=1, r8c7=5
-Naked single : r2c7=7, r2c9=5, r8c9=9, r9c3=9, r9c9=7
 Hidden single: r1c4=6, r2c3=4, r3c8=2, r1c3=2, r4c2=6, r5c2=1, r5c7=2, r5c5=5, r6c5=6, r6c8=3
 Hidden single: r7c3=6, r7c8=5, r8c1=3, r3c2=3, r8c5=2, r8c6=7, r1c7=7, r2c5=7, r4c8=7, r8c8=6
 Hidden single: r9c1=2, r9c4=3, r9c7=4, r9c8=1
@@ -12265,13 +11661,7 @@ Naked single : r7c5=1, r8c7=8, r8c9=9, r9c2=5, r9c3=8, r9c5=9
 |1.        2.        7        |579       6.        459      |8.        3.        45       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c1=9
-Hidden single: r1c2=9, r6c6=9
-Naked single : r6c7=1, r6c9=4
-Hidden single: r2c6=1
-Naked single : r7c6=8, r1c6=5, r1c9=8, r2c7=5, r2c2=8, r3c1=7, r3c3=5, r3c9=1, r4c7=9, r4c9=5
-Naked single : r5c1=4, r4c1=8, r4c5=4, r5c4=7, r5c3=9, r6c3=7, r6c4=8, r3c4=9, r3c5=8, r7c4=4
-Naked single : r7c5=1, r8c7=8, r8c9=9, r9c2=5, r9c3=8, r9c5=9, r9c3=7, r7c3=6, r7c2=8, r8c1=9
+Naked single : r9c3=7, r7c3=6, r7c2=8, r8c1=9
 Hidden single: r2c3=1, r2c8=6, r2c9=8, r4c6=6, r1c2=6, r4c5=9, r4c9=1, r4c7=3
 Naked single : r4c2=7
 Hidden single: r6c1=6, r6c4=8, r7c4=7, r7c5=3, r8c6=8, r8c9=6, r8c7=4
@@ -12343,13 +11733,7 @@ Naked single : r3c8=2, r3c9=4, r4c1=8, r4c8=5, r4c3=2, r5c1=3, r5c2=4, r5c3=5, r
 |9.        5.        7.       |16        346       2.       |8.        346       36       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c5=1, r8c5=2, r6c5=5, r6c7=2, r8c4=1, r5c4=2, r5c6=1
-Hidden single: r2c1=2, r1c6=2
-Naked single : r3c6=9
-Hidden single: r1c7=9
-Naked single : r2c7=5, r2c4=3, r1c4=5, r1c3=4, r1c9=3, r1c1=7, r2c2=9, r3c2=3, r3c1=5, r3c7=7
-Naked single : r3c8=2, r3c9=4, r4c1=8, r4c8=5, r4c3=2, r5c1=3, r5c2=4, r5c3=5, r5c8=8, r8c4=6
-Naked single : r9c4=1
+Naked single : r8c4=6, r9c4=1
 Hidden single: r3c9=5, r2c3=5, r3c3=6, r1c3=9, r7c1=3, r3c6=3
 Naked single : r3c7=7, r3c1=8, r3c8=9, r6c7=6, r6c9=8
 Hidden single: r2c8=6, r1c8=8, r4c5=6, r7c2=6, r7c3=1, r7c7=5, r5c6=5, r7c8=2, r8c5=5, r8c8=3
@@ -12388,7 +11772,7 @@ Naked single : r5c3=3, r5c5=8, r6c1=7, r6c5=4, r6c6=1, r7c5=9, r7c6=4, r8c2=8, r
 |9.        5.        7.       |1+        3+        2.       |8.        4+        6+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/er.txt         Result: True Solved: 5/5 
+Test file: tests/er.txt         Result: True Solved: 5/5 Time: 0.0177
 1.87....2.9...36...2.6..7....5.82..9....3..5.............4.5..62.......7.....693.
 +-----------------------------+-----------------------------+-----------------------------+
 |1.        3456      8.       |7.        459       49       |345       49        2.       |
@@ -12476,9 +11860,7 @@ Naked single : r8c8=8, r9c1=7, r9c4=8, r9c5=2
 |1256789   1578      12569    |4.        56789     15678    |3589      2579      12358    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c4=2, r2c5=4, r2c1=5, r3c1=4, r3c5=1, r3c6=8, r3c9=5, r7c5=7, r7c2=3, r4c2=7
-Naked single : r4c1=3, r7c1=8, r7c7=1, r6c7=8, r5c9=1, r2c9=8, r2c8=1, r5c2=8, r6c2=1, r8c6=1
-Naked single : r8c8=8, r9c1=7, r9c4=8, r9c5=2, r2c7=5, r3c1=5, r1c1=1, r1c3=3, r4c2=4, r4c6=6
+Naked single : r2c7=5, r3c1=5, r1c1=1, r1c3=3, r4c2=4, r4c6=6
 Hidden single: r3c9=2, r4c5=3, r3c4=3, r3c5=6, r5c3=6, r5c8=9, r6c7=6, r6c9=3, r7c4=6, r9c1=6
 Hidden single: r9c7=3
 
@@ -12563,10 +11945,6 @@ Naked single : r8c1=8, r7c1=2, r8c3=4, r8c7=9, r7c7=8, r7c5=9, r8c5=5, r9c5=8
 |469       2369      4569     |8.        1.        7.       |2359      2359      259      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c9=5, r5c2=8, r5c6=4, r3c6=8, r1c4=9, r1c5=4, r1c9=8, r3c7=4, r6c1=7, r6c8=4
-Naked single : r9c9=1, r7c9=4, r9c6=7, r2c6=1, r2c4=2, r2c5=7, r6c4=8, r6c5=2, r8c4=1, r9c2=5
-Naked single : r6c2=1, r6c3=5, r7c2=7, r9c8=2, r7c8=5, r8c8=7, r9c3=9, r4c3=2, r4c1=9, r7c3=1
-Naked single : r8c1=8, r7c1=2, r8c3=4, r8c7=9, r7c7=8, r7c5=9, r8c5=5, r9c5=8
 Hidden single: r3c2=7, r2c1=8
 Naked single : r8c1=7
 Hidden single: r6c7=6, r6c6=4, r1c5=4, r7c4=4, r2c4=6, r7c6=6
@@ -12642,9 +12020,6 @@ Naked single : r9c7=3, r9c8=9, r9c9=5
 |356789    345789    345679   |248       24        489      |48        468       1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c7=1, r8c3=5, r7c3=1, r8c4=3, r4c4=5, r4c6=3, r1c6=1, r1c9=2, r1c8=3, r2c6=5
-Naked single : r2c7=9, r2c9=1, r3c5=3, r3c7=5, r6c9=9, r6c8=1, r7c5=5, r7c8=2, r7c2=3, r9c2=2
-Naked single : r9c7=3, r9c8=9, r9c9=5
 Hidden single: r1c1=6, r5c5=6, r8c5=1, r8c9=3
 Naked single : r8c3=4, r8c2=8, r7c2=9, r7c3=6
 Hidden single: r1c7=9
@@ -12792,10 +12167,7 @@ Naked single : r9c1=3, r9c2=5, r9c3=7, r9c7=4
 |27        267       3.       |267       9.        4.       |8.        1.        57       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c5=2, r3c5=3, r6c5=4, r6c7=8, r6c6=3, r9c4=8, r7c6=4, r1c6=1, r1c2=3, r1c4=4
-Naked single : r2c6=5, r2c4=2, r2c2=1, r4c6=8, r4c1=7, r3c1=5, r5c2=4, r4c2=2, r3c2=7, r3c3=2
-Naked single : r4c3=1, r4c4=5, r4c8=4, r3c8=8, r3c9=4, r5c3=3, r5c1=8, r5c4=1, r5c8=5, r7c9=8
-Naked single : r9c1=3, r9c2=5, r9c3=7, r9c7=4, r8c7=9
+Naked single : r8c7=9
 Hidden single: r2c1=3, r7c3=4, r7c5=5
 Naked single : r7c8=7, r7c9=3, r9c9=5
 Hidden single: r2c8=5, r2c9=6, r3c7=4, r5c6=6, r1c6=7, r1c4=9, r1c5=3, r4c8=6, r4c3=9, r2c2=9
@@ -12841,7 +12213,7 @@ Naked single : r3c3=1, r8c3=8, r8c4=1, r8c5=6
 |2+        6+        3.       |7+        9.        4.       |8.        1.        5+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/rp.txt         Result: True Solved: 5/5 
+Test file: tests/rp.txt         Result: True Solved: 5/5 Time: 0.0552
 13...8....4.....9...9.7..6.8.5......92....37..7.54......84.9...2..36.......1....6
 +-----------------------------+-----------------------------+-----------------------------+
 |1.        3.        267      |269       259       8.       |2457      245       2457     |
@@ -12927,10 +12299,8 @@ Naked single : r9c6=5, r9c8=3
 |789       26789     6789     |245689    459       3.       |2456      1.        2567     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c7=2, r1c7=4, r1c8=2, r4c7=6, r4c2=1, r4c8=4, r6c3=3, r6c1=6, r6c7=8, r6c8=1
-Naked single : r7c1=3, r7c8=5, r7c2=6, r8c2=5, r8c6=7, r8c3=1, r8c7=9, r8c8=8, r9c2=9, r9c3=7
-Naked single : r9c6=5, r9c8=3, r3c6=4, r6c6=8, r5c4=3, r7c1=1, r7c3=6, r7c5=4, r6c5=1, r4c4=4
-Naked single : r7c4=2, r7c7=3, r8c6=6, r2c6=2
+Naked single : r3c6=4, r6c6=8, r5c4=3, r7c1=1, r7c3=6, r7c5=4, r6c5=1, r4c4=4, r7c4=2, r7c7=3
+Naked single : r8c6=6, r2c6=2
 Hidden single: r2c5=3, r1c5=7, r3c9=3
 Naked single : r4c9=9
 Hidden single: r2c9=1, r2c8=7
@@ -12986,8 +12356,6 @@ Naked single : r2c2=4, r2c3=5, r2c1=8, r2c4=9, r2c7=6, r5c1=5, r5c3=7, r6c2=6, r
 |69        2.        456      |4567      13456     134567   |49        14689     16789    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c3=1, r3c2=7, r4c3=3, r4c8=8, r4c2=1, r5c8=6, r5c2=8, r1c2=9, r1c4=6, r1c7=8
-Naked single : r2c2=4, r2c3=5, r2c1=8, r2c4=9, r2c7=6, r5c1=5, r5c3=7, r6c2=6, r6c3=4, r6c8=3
 Naked single : r3c6=6, r3c2=9, r3c8=2, r3c3=1, r7c1=6, r9c1=9, r9c7=4, r7c7=2, r7c4=4, r2c4=5
 Naked single : r7c5=1, r8c7=9, r8c8=6, r1c8=3, r1c7=5, r1c9=6, r2c9=9, r4c8=8, r6c7=3, r8c9=7
 Naked single : r8c6=5, r4c6=3, r8c2=4, r1c2=7, r8c5=2, r9c3=5, r9c6=7, r9c4=6, r4c4=2, r4c9=5
@@ -13041,9 +12409,7 @@ Naked single : r6c8=9, r6c9=1
 |168       5.        7.       |689       24689     249      |1469      3.        12469    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c2=3, r2c2=6, r2c3=4, r1c3=2, r1c1=8, r1c6=4, r2c1=3, r2c5=8, r5c6=1, r5c9=2
-Naked single : r5c1=7, r5c4=9, r5c8=4, r5c5=5, r6c1=2, r6c2=5, r6c3=6, r6c4=7, r6c5=4, r6c6=8
-Naked single : r6c8=9, r6c9=1, r7c3=6, r7c1=3, r7c2=9, r7c7=4
+Naked single : r7c3=6, r7c1=3, r7c2=9, r7c7=4
 Hidden single: r2c1=2, r2c4=3, r3c2=3, r5c9=4, r4c8=2
 Naked single : r7c8=7, r7c4=5, r3c4=1, r1c4=9, r3c9=7, r7c5=2
 Hidden single: r1c1=7, r1c2=6
@@ -13100,9 +12466,6 @@ Naked single : r2c7=5, r8c6=7, r8c8=1, r8c1=8, r8c4=6, r8c7=9, r9c1=1, r9c4=8, r
 |28        2348      6.       |5.        12489     12478    |12349     13489     1249     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r9c5=9
-Naked single : r4c5=1, r4c3=5, r4c6=9, r5c5=8, r5c4=7, r5c6=5, r5c7=1, r6c3=1, r6c8=5, r2c8=9
-Naked single : r2c7=5, r8c6=7, r8c8=1, r8c1=8, r8c4=6, r8c7=9, r9c1=1, r9c4=8, r9c7=6
 Hidden single: r4c1=5, r4c2=9, r5c4=3, r4c3=3, r4c7=7
 Naked single : r6c7=1, r4c8=4, r5c9=9
 Hidden single: r5c6=4, r6c3=7, r6c2=2
@@ -13149,7 +12512,7 @@ Naked single : r8c3=4, r8c6=8, r8c7=2
 |2+        3+        6.       |5.        4+        7+       |9+        8+        1+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/xyc.txt        Result: True Solved: 5/5 
+Test file: tests/xyc.txt        Result: True Solved: 5/5 Time: 0.0369
 ..........7.124...64.97..159....2..82..3......8..1.7.68.4.3.9.1716...8...........
 +-----------------------------+-----------------------------+-----------------------------+
 |135       2359      123589   |568       568       3568     |2346      2346789   23479    |
@@ -13329,10 +12692,7 @@ Naked single : r9c7=2, r9c8=6, r9c9=7
 |24        2347      5.       |1369      8.        234679   |123679    12679     369      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c7=3, r2c7=6, r2c8=8, r1c8=7, r1c9=2, r2c3=5, r2c1=3, r1c2=9, r1c3=8, r1c4=6
-Naked single : r1c6=3, r3c3=2, r3c6=8, r5c6=7, r4c4=4, r4c5=6, r4c2=5, r4c7=1, r4c3=7, r5c2=6
-Naked single : r5c3=1, r5c5=8, r5c7=5, r7c4=7, r7c6=6, r9c1=5, r9c2=3, r9c3=9, r9c4=8, r9c5=4
-Naked single : r9c7=2, r9c8=6, r9c9=7, r5c9=6, r6c9=9, r9c9=3, r1c9=8, r7c9=5
+Naked single : r5c9=6, r6c9=9, r9c9=3, r1c9=8, r7c9=5
 Hidden single: r3c6=8, r1c6=5
 Naked single : r1c1=4, r2c3=3, r1c2=9, r1c5=3, r2c4=9, r2c8=4, r3c3=2, r3c2=5, r3c5=4, r3c8=9
 Naked single : r3c7=3, r9c1=2, r5c1=1, r7c1=8, r4c1=5, r8c3=7, r9c2=4, r7c2=3, r7c4=1, r9c4=6
@@ -13386,10 +12746,9 @@ Naked single : r6c2=7, r6c5=1, r6c8=2, r7c8=7, r9c7=9, r9c8=1
 |38        5.        4.       |9.        238       368      |1.        2367      2367     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c6=7, r6c6=6, r4c6=9, r7c5=9, r7c7=2, r4c7=1, r4c5=2, r4c2=6, r5c5=7, r5c2=2
-Naked single : r6c2=7, r6c5=1, r6c8=2, r7c8=7, r9c7=9, r9c8=1, r3c4=2, r2c4=8, r3c2=9, r1c1=8
-Naked single : r3c8=1, r3c1=5, r2c1=1, r3c3=7, r9c1=3, r6c1=9, r7c2=6, r1c2=2, r1c3=6, r1c7=9
-Naked single : r1c5=3, r1c9=4, r4c7=8, r4c2=3, r4c3=1, r6c2=8, r7c3=9, r8c3=8, r8c5=4
+Naked single : r3c4=2, r2c4=8, r3c2=9, r1c1=8, r3c8=1, r3c1=5, r2c1=1, r3c3=7, r9c1=3, r6c1=9
+Naked single : r7c2=6, r1c2=2, r1c3=6, r1c7=9, r1c5=3, r1c9=4, r4c7=8, r4c2=3, r4c3=1, r6c2=8
+Naked single : r7c3=9, r8c3=8, r8c5=4
 Hidden single: r4c8=4, r6c4=4
 
 Naked pair: 2,6 in r56c7 => r5c89,r6c89<>2, r5c89,r6c89<>6
@@ -13532,9 +12891,6 @@ Naked single : r2c9=2, r2c8=6, r8c8=9, r9c5=8, r9c6=6, r9c8=2, r9c9=7
 |3.        12789     4.       |2579      6.        79       |15789     1789      258      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c4=3, r7c4=1, r5c4=6, r5c7=2, r5c3=5, r5c9=1, r6c3=2, r6c6=3, r5c6=8, r5c5=9
-Naked single : r4c5=7, r4c9=9, r5c8=3, r6c5=1, r6c7=6, r6c8=7, r6c9=5, r7c5=2, r7c9=3, r8c9=6
-Naked single : r2c9=2, r2c8=6, r8c8=9, r9c5=8, r9c6=6, r9c8=2, r9c9=7
 Hidden single: r2c7=5, r6c5=1, r6c1=5, r6c8=6, r5c3=6, r5c2=2, r5c7=4
 Naked single : r4c8=8, r6c7=3
 Hidden single: r7c5=3
@@ -13774,11 +13130,7 @@ Naked single : r9c8=1, r9c9=2
 |15679     8.        1679     |45        469       4569     |1347      137       2.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r8c4=9, r5c4=3, r2c4=8, r1c4=6, r3c4=2, r2c5=4, r1c5=7, r3c1=6, r5c6=9, r8c1=8
-Naked single : r8c5=2, r8c3=7, r6c3=8, r6c2=7, r8c6=4, r8c9=5, r9c2=9, r2c2=3, r1c3=9, r1c1=4
-Naked single : r1c7=1, r1c6=3, r1c9=8, r2c3=2, r2c6=1, r2c8=9, r3c2=8, r3c7=7, r3c8=4, r3c9=3
-Naked single : r4c1=9, r4c2=4, r4c3=3, r7c1=2, r7c7=9, r7c8=7, r7c9=4, r9c4=5, r9c6=7, r9c7=8
-Naked single : r9c8=1, r9c9=2, r7c8=7, r7c1=6, r7c2=2, r7c6=4, r9c4=5
+Naked single : r7c8=7, r7c1=6, r7c2=2, r7c6=4, r9c4=5
 Hidden single: r2c5=3, r5c2=7, r4c6=7, r6c5=4, r5c5=8, r8c2=5, r8c5=2
 Naked single : r4c5=9, r4c9=1, r4c1=5, r8c9=8, r2c9=4, r2c4=1, r6c4=2, r1c4=4, r8c8=1, r8c3=9
 Naked single : r9c5=6, r9c6=9, r9c8=3, r9c7=4
@@ -13865,7 +13217,7 @@ Naked single : r5c1=9, r6c1=3, r6c6=1, r6c7=5, r6c8=9, r9c1=1, r9c3=7
 |1+        8.        7+       |5+        6+        9+       |4+        3+        2.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/xyc-ssts.txt   Result: True Solved: 5/5 
+Test file: tests/xyc-ssts.txt   Result: True Solved: 5/5 Time: 0.136
 ..............915.....7.2.3..5.......6..849.5.18....6...4..17...8.75.69.9.2..8...
 +-----------------------------+-----------------------------+-----------------------------+
 |12345678  234579    13679    |1234568   12346     2356     |48        478       46789    |
@@ -13937,8 +13289,7 @@ Naked single : r3c6=6, r4c5=1, r4c6=3, r9c4=4, r9c5=6
 |1.        569       34569    |8.        2.        36       |3569      39        7.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c4=6, r3c4=1, r1c5=2, r1c2=3, r1c6=5, r1c1=1, r2c2=2, r2c5=4, r2c4=3, r3c1=5
-Naked single : r3c6=6, r4c5=1, r4c6=3, r9c4=4, r9c5=6, r5c1=5, r3c1=7, r6c1=2
+Naked single : r5c1=5, r3c1=7, r6c1=2
 Hidden single: r1c4=2, r3c5=8, r6c2=8, r4c6=8, r6c4=5, r5c4=9, r9c3=4
 Naked single : r7c1=3, r2c1=4
 Hidden single: r1c3=3, r1c7=4, r7c3=5, r8c3=9
@@ -13996,9 +13347,7 @@ Naked single : r7c2=7, r7c4=4, r8c2=2, r8c4=7, r8c6=1, r8c7=6
 |5.        9.        8.       |3.        127       267      |1467      1467      147      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c9=6, r4c5=4, r4c4=1, r4c7=2, r5c9=1, r5c3=6, r6c3=1, r6c6=6, r7c5=6, r7c9=2
-Naked single : r7c2=7, r7c4=4, r8c2=2, r8c4=7, r8c6=1, r8c7=6, r4c6=7, r4c4=4, r4c5=3, r5c2=4
-Naked single : r7c2=1, r8c2=2
+Naked single : r4c6=7, r4c4=4, r4c5=3, r5c2=4, r7c2=1, r8c2=2
 Hidden single: r1c5=4, r3c4=8, r3c6=6
 Naked single : r9c6=2, r1c6=5, r1c2=8, r4c2=5, r4c9=1, r4c3=6, r4c8=8, r6c6=9, r6c4=2
 Hidden single: r2c5=2, r2c8=5, r1c8=9
@@ -14053,8 +13402,7 @@ Naked single : r8c5=1, r8c8=3, r9c5=7, r9c7=6, r9c9=4
 |9.        248       5.       |6.        2348      12348    |12378     138       2378     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c8=1, r3c8=4, r3c9=2, r3c7=1, r5c9=3, r5c8=6, r5c7=2, r7c9=7, r7c3=3, r8c3=7
-Naked single : r8c5=1, r8c8=3, r9c5=7, r9c7=6, r9c9=4, r1c3=8, r1c7=3
+Naked single : r1c3=8, r1c7=3
 Hidden single: r2c6=6, r7c4=7, r8c4=9, r6c4=1, r8c8=6, r9c9=3, r6c9=7
 Naked single : r6c3=9, r4c3=2, r2c3=1, r3c3=7, r3c1=2, r3c9=8, r3c5=3, r2c4=8, r3c2=9, r3c8=1
 Naked single : r8c9=2, r2c9=4, r2c1=5, r2c2=3, r2c8=9, r2c7=2, r9c8=8, r7c8=5, r5c8=3, r4c8=4
@@ -14108,8 +13456,7 @@ Naked single : r8c6=8, r9c2=2, r9c5=4
 |457       6.        8.       |125       137       9.       |1235      1235      1        |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c5=8, r4c5=6, r4c1=8, r6c2=6, r1c2=4, r1c1=6, r6c6=4, r7c5=2, r7c2=8, r8c1=4
-Naked single : r8c6=8, r9c2=2, r9c5=4, r9c9=1
+Naked single : r9c9=1
 Hidden single: r2c1=6, r3c5=9, r3c8=6, r3c9=4, r1c9=7, r4c5=1
 Naked single : r6c4=8, r4c4=9, r5c4=2, r9c4=5, r7c4=1
 Hidden single: r1c8=1
@@ -14149,7 +13496,7 @@ Naked single : r4c7=7, r5c6=6, r5c3=9, r5c7=8, r6c2=4, r6c3=6, r6c6=7, r7c1=7, r
 |4+        6.        8.       |5+        7+        9.       |3+        2+        1+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/bug1.txt       Result: True Solved: 5/5 
+Test file: tests/bug1.txt       Result: True Solved: 5/5 Time: 0.0178
 .4.5....8..64381...3..........26.97.....4......3...26........172.1...5..87.6.....
 +-----------------------------+-----------------------------+-----------------------------+
 |179       4.        279      |5.        1279      12679    |367       239       8.       |
@@ -14220,9 +13567,7 @@ Naked single : r7c6=2, r3c6=1, r3c5=2, r7c5=8, r9c5=1, r9c6=5
 |2         289       28       |7.        1.        23569    |2568      2568      4.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c6=9, r5c4=1, r3c4=7, r4c6=3, r4c9=1, r5c9=3, r6c4=8, r6c5=5, r6c6=7, r7c4=9
-Naked single : r7c6=2, r3c6=1, r3c5=2, r7c5=8, r9c5=1, r9c6=5, r9c1=2, r8c1=7, r2c1=4, r9c3=8
-Naked single : r7c2=1, r9c2=9
+Naked single : r9c1=2, r8c1=7, r2c1=4, r9c3=8, r7c2=1, r9c2=9
 Hidden single: r3c2=8, r3c1=6, r4c2=7, r4c3=4, r5c3=5, r7c7=7, r7c8=8
 Naked single : r7c5=2, r5c5=9, r4c5=5, r6c5=4, r7c4=6, r8c5=8
 Hidden single: r6c6=6
@@ -14277,8 +13622,6 @@ Naked single : r3c3=7, r3c5=3, r3c6=9, r3c7=2, r3c8=1, r3c9=5, r8c4=9, r8c6=5
 |257       235       2357     |4.        12359     8.       |137       6.        1379     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c4=4, r1c4=8, r1c7=3, r1c5=7, r1c3=1, r1c8=4, r2c4=5, r2c9=7, r2c3=2, r2c7=8
-Naked single : r3c3=7, r3c5=3, r3c6=9, r3c7=2, r3c8=1, r3c9=5, r8c4=9, r8c6=5
 Hidden single: r4c1=1
 Naked single : r4c9=3, r4c4=2, r4c3=5, r4c7=6, r4c5=4, r5c3=2, r5c8=1, r5c9=7, r6c3=8, r6c7=5
 Naked single : r6c9=9, r6c8=2, r9c9=1
@@ -14337,9 +13680,7 @@ Naked single : r9c2=5
 |2469      24569     14569    |8.        145       1245     |12469     267       3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c2=3, r1c2=1, r1c4=9, r1c3=6, r1c5=3, r2c2=2, r2c6=1, r3c1=5, r3c3=9, r3c4=7
-Naked single : r5c5=5, r5c6=3, r6c4=1, r6c6=6, r3c6=2, r3c5=6, r6c5=7, r7c5=2, r7c6=5, r9c1=2
-Naked single : r9c2=5, r5c4=5
+Naked single : r5c4=5
 Hidden single: r1c6=7
 Naked single : r3c4=2, r2c4=1, r6c4=7
 Hidden single: r1c5=4
@@ -14399,8 +13740,6 @@ Naked single : r5c3=6, r5c2=9, r7c2=4, r7c9=8, r8c8=6, r8c9=4, r8c6=2, r9c1=2, r
 |15679     3.        2.       |149       14        1579     |146       8.        1467     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c9=6, r4c3=8, r4c6=1, r5c8=8, r6c6=8, r6c9=1, r7c8=2, r7c1=9, r2c1=6, r2c3=9
-Naked single : r5c3=6, r5c2=9, r7c2=4, r7c9=8, r8c8=6, r8c9=4, r8c6=2, r9c1=2, r9c2=6, r9c6=4
 Naked single : r4c8=1, r4c1=8
 Hidden single: r1c8=3, r1c9=5, r2c9=1, r2c8=7
 Naked single : r2c1=2
@@ -14442,7 +13781,7 @@ Naked single : r9c1=6, r9c9=7
 |6+        3.        2.       |9+        4+        5+       |1+        8.        7+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u1.txt         Result: True Solved: 5/5 
+Test file: tests/u1.txt         Result: True Solved: 5/5 Time: 0.0169
 ..1.......7...........23..4..6..43...5.2.1.68....6..717.8.....296...5.17.......3.
 +-----------------------------+-----------------------------+-----------------------------+
 |234568    23489     1.       |456789    45789     6789     |256789    2589      3569     |
@@ -14514,10 +13853,7 @@ Naked single : r7c4=9, r4c4=7, r4c5=9, r7c6=6, r9c1=5, r9c2=1, r9c3=4, r9c4=8, r
 |12689     125689    158      |6789      1678      3.       |2679      4.        256789   |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c6=8, r6c1=3, r6c3=9, r3c3=5, r1c1=8, r3c2=9, r1c2=4, r2c3=3, r2c9=6, r1c9=3
-Naked single : r2c6=9, r1c4=6, r1c5=5, r1c8=9, r2c5=8, r2c4=4, r2c8=5, r3c8=8, r4c1=1, r4c2=8
-Naked single : r7c4=9, r4c4=7, r4c5=9, r7c6=6, r9c1=5, r9c2=1, r9c3=4, r9c4=8, r9c5=7, r6c6=4
-Naked single : r5c6=8, r6c3=1, r5c3=4, r8c6=9, r2c6=5, r7c6=1
+Naked single : r6c6=4, r5c6=8, r6c3=1, r5c3=4, r8c6=9, r2c6=5, r7c6=1
 Hidden single: r4c2=8
 Naked single : r8c2=6, r8c8=7, r4c8=6
 Hidden single: r4c5=3, r5c9=1, r5c8=5, r5c7=9, r5c1=2
@@ -14576,12 +13912,7 @@ Naked single : r9c9=6
 |18        138       6.       |13789     4.        5.       |2.        18        789      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r9c3=5, r3c3=8
-Hidden single: r3c2=5, r3c5=1
-Naked single : r1c5=4, r3c4=9, r1c4=3, r2c4=8, r2c5=2, r3c8=2, r7c5=6, r5c5=7, r5c4=6, r7c4=4
-Naked single : r7c8=9, r7c1=8, r7c2=2, r7c7=3, r2c7=7, r1c9=9, r1c2=1, r1c1=7, r2c1=9, r2c9=3
-Naked single : r4c7=4, r3c7=6, r3c9=4, r4c9=7, r7c9=5, r9c1=1, r9c2=9, r9c4=7, r9c5=8, r9c7=2
-Naked single : r9c9=6, r6c3=3
+Naked single : r6c3=3
 Hidden single: r2c2=9, r1c2=7, r2c5=5, r3c7=3, r4c2=1, r4c4=3, r5c8=3, r6c8=8
 Naked single : r9c8=1, r9c1=8, r9c2=3
 Hidden single: r2c7=1
@@ -14638,10 +13969,7 @@ Naked single : r6c5=7, r7c4=2, r7c1=1, r7c5=9, r7c6=8, r8c1=2, r8c4=6, r8c5=3, r
 |4.        58        378      |9.        1.        678      |568       568       2.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c8=4, r2c9=6, r5c9=7, r5c7=6, r9c9=9, r4c9=4, r4c7=9, r7c7=4, r7c2=5, r7c8=6
-Naked single : r8c2=4, r8c7=7, r8c8=5, r9c4=7, r2c4=8, r2c6=7, r6c6=2, r1c6=3, r1c5=2, r6c4=9
-Naked single : r6c5=7, r7c4=2, r7c1=1, r7c5=9, r7c6=8, r8c1=2, r8c4=6, r8c5=3, r8c6=1, r2c1=8
-Naked single : r2c2=9, r1c3=1, r3c1=2, r3c6=8, r3c4=3, r3c5=9, r3c7=1, r3c9=7
+Naked single : r2c1=8, r2c2=9, r1c3=1, r3c1=2, r3c6=8, r3c4=3, r3c5=9, r3c7=1, r3c9=7
 Hidden single: r9c3=3
 Naked single : r5c3=8, r4c3=2, r7c3=9, r8c3=7
 Hidden single: r4c5=7, r7c2=2, r7c1=1, r8c1=6, r8c8=9, r8c2=5
@@ -14699,13 +14027,8 @@ Naked single : r6c6=2, r6c4=1, r6c7=8, r6c9=5, r7c7=4, r7c9=8, r8c4=2, r8c5=8, r
 |579       59        57       |1.        3.        2.       |578       4.        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c6=5
-Naked single : r4c1=3, r4c8=1, r4c2=4, r5c1=5, r5c2=1, r6c8=3
-Hidden single: r1c6=6
-Naked single : r1c4=4, r5c4=6, r4c4=8, r4c7=9, r1c7=5, r1c9=9, r4c9=6, r5c9=4, r5c5=3, r6c5=4
-Naked single : r6c6=2, r6c4=1, r6c7=8, r6c9=5, r7c7=4, r7c9=8, r8c4=2, r8c5=8, r8c6=4, r8c4=4
-Naked single : r7c4=8, r3c4=5, r3c3=2, r3c1=8, r2c1=5, r4c4=2, r5c4=3, r7c5=6, r3c5=4, r2c5=8
-Naked single : r2c6=1, r2c8=2, r3c6=6, r1c6=3, r3c7=1, r3c8=9, r4c5=9, r7c6=7, r8c6=9
+Naked single : r8c4=4, r7c4=8, r3c4=5, r3c3=2, r3c1=8, r2c1=5, r4c4=2, r5c4=3, r7c5=6, r3c5=4
+Naked single : r2c5=8, r2c6=1, r2c8=2, r3c6=6, r1c6=3, r3c7=1, r3c8=9, r4c5=9, r7c6=7, r8c6=9
 Hidden single: r8c1=6
 Naked single : r4c1=1, r6c3=4
 Hidden single: r4c3=6, r7c2=4, r7c3=1, r9c7=8
@@ -14744,7 +14067,7 @@ Naked single : r6c2=3, r8c2=2, r8c9=1, r9c1=7, r9c2=9, r9c3=5
 |7+        9+        5+       |1.        3.        2.       |8+        4.        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u2.txt         Result: True Solved: 5/5 
+Test file: tests/u2.txt         Result: True Solved: 5/5 Time: 0.0194
 ...69...4..3......9.47..........59.6637....8.......1....21.63....5....47.7..43...
 +-----------------------------+-----------------------------+-----------------------------+
 |12578     1258      18       |6.        9.        128      |2578      12357     4.       |
@@ -14816,9 +14139,7 @@ Naked single : r9c9=9
 |14789     1456789   45678    |236       689       12689    |5679      2679      2569     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r2c4=8, r2c7=7, r1c7=5, r1c2=2, r1c6=1, r1c1=7, r2c1=1, r2c2=6, r2c8=9, r2c9=2
-Naked single : r3c2=5, r3c6=2, r3c7=8, r3c9=1, r3c8=6, r5c6=9, r5c4=2, r8c4=9, r8c6=8, r9c8=1
-Naked single : r9c9=9, r1c6=9, r8c4=6, r7c4=2, r7c6=1, r7c1=9, r8c9=9, r9c4=3, r9c6=8, r9c5=9
+Naked single : r1c6=9, r8c4=6, r7c4=2, r7c6=1, r7c1=9, r8c9=9, r9c4=3, r9c6=8, r9c5=9
 Hidden single: r1c2=7
 Naked single : r8c2=8, r8c1=7
 Hidden single: r2c7=8, r2c8=9, r3c1=8, r3c8=1, r2c9=6
@@ -14874,11 +14195,7 @@ Naked single : r6c7=6, r7c3=6, r7c7=5, r9c1=1, r9c2=5, r9c3=4, r9c7=7, r9c8=6, r
 |4.        12569     289      |123567    12378     12568    |135789    35789     157      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c5=8, r4c5=6
-Hidden single: r4c3=8, r6c3=7
-Naked single : r6c4=4, r4c4=7, r4c8=2, r6c9=3, r1c9=4, r1c7=3, r5c9=1, r4c9=5, r5c2=6, r5c8=7
-Naked single : r5c7=4, r4c7=9, r4c2=1, r4c1=4, r5c3=3, r2c3=5, r2c2=2, r2c1=3, r6c1=2, r6c2=9
-Naked single : r6c7=6, r7c3=6, r7c7=5, r9c1=1, r9c2=5, r9c3=4, r9c7=7, r9c8=6, r9c9=2, r8c3=8
+Naked single : r8c3=8
 Hidden single: r3c1=8, r3c2=7, r4c9=2, r2c9=6
 Naked single : r2c4=1
 Hidden single: r1c4=6, r1c8=5
@@ -14935,10 +14252,8 @@ Naked single : r9c5=3, r9c6=6, r9c8=9, r9c9=5
 |2589      9         6.       |3.        4.        1.       |28        7.        28       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c1=9, r7c8=4, r6c8=7, r2c8=3, r2c7=7, r6c7=4, r7c6=5, r7c9=1, r8c7=3, r8c5=1
-Naked single : r8c1=6, r4c1=3, r1c1=1, r1c2=9, r1c3=3, r4c2=6, r4c3=9, r8c2=5, r8c6=4, r9c2=1
-Naked single : r9c5=3, r9c6=6, r9c8=9, r9c9=5, r5c5=9, r5c6=4, r4c6=2, r5c3=7, r6c1=9, r4c3=4
-Naked single : r6c2=6, r6c6=3, r6c5=1, r7c4=2, r8c4=9, r1c4=4, r9c2=9
+Naked single : r5c5=9, r5c6=4, r4c6=2, r5c3=7, r6c1=9, r4c3=4, r6c2=6, r6c6=3, r6c5=1, r7c4=2
+Naked single : r8c4=9, r1c4=4, r9c2=9
 Hidden single: r1c5=3, r1c6=8, r2c2=4, r9c1=5
 Naked single : r7c3=1, r7c8=6, r8c3=2
 Hidden single: r1c2=1, r2c7=1, r4c8=1
@@ -14992,11 +14307,9 @@ Naked single : r3c6=9, r3c8=4, r5c9=5, r3c9=7, r3c7=5, r5c7=6, r6c7=7, r6c8=2, r
 |145689    1239      234568   |123568    1236      23568    |134678    45678     13578    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c8=9, r1c3=5, r2c3=9, r2c6=7, r2c1=2, r1c1=7, r1c9=6, r1c7=2, r2c5=5, r3c5=2
-Naked single : r3c6=9, r3c8=4, r5c9=5, r3c9=7, r3c7=5, r5c7=6, r6c7=7, r6c8=2, r6c9=4, r4c3=6
-Naked single : r4c1=7, r2c1=5, r2c3=2, r2c2=7, r1c2=1, r2c8=6, r2c7=3, r2c4=9, r3c4=2, r5c1=9
-Naked single : r6c3=3, r6c4=8, r4c4=1, r6c6=7, r3c6=4, r3c3=8, r1c1=4, r3c8=7, r3c7=1, r3c9=9
-Naked single : r4c6=2, r4c5=4, r4c9=8, r5c8=4, r6c5=9, r8c2=3, r7c2=2, r9c2=9
+Naked single : r4c3=6, r4c1=7, r2c1=5, r2c3=2, r2c2=7, r1c2=1, r2c8=6, r2c7=3, r2c4=9, r3c4=2
+Naked single : r5c1=9, r6c3=3, r6c4=8, r4c4=1, r6c6=7, r3c6=4, r3c3=8, r1c1=4, r3c8=7, r3c7=1
+Naked single : r3c9=9, r4c6=2, r4c5=4, r4c9=8, r5c8=4, r6c5=9, r8c2=3, r7c2=2, r9c2=9
 Hidden single: r1c5=7, r9c5=2
 
 Uniqueness test 3: 3/6 in r1c46,r9c46 => r9c39<>5, r9c17<>8
@@ -15032,7 +14345,7 @@ Naked single : r8c7=4, r9c1=1, r9c4=3, r9c6=8, r9c7=6, r9c8=5, r9c9=7
 |1+        9+        4+       |3+        2+        8+       |6+        5+        7+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u3.txt         Result: True Solved: 5/5 
+Test file: tests/u3.txt         Result: True Solved: 5/5 Time: 0.0179
 ..5....8624...53....1.....7.5.82..........26...8.17.5....691...36......1.........
 +-----------------------------+-----------------------------+-----------------------------+
 |79        379       5.       |123479    347       2349     |149       8.        6.       |
@@ -15211,10 +14524,7 @@ Naked single : r9c6=3, r9c8=4, r9c9=5
 |23789     23789     6.       |12479     24578     124589   |3478      1358      14578    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c4=9, r3c6=4, r8c6=8, r8c7=7, r7c7=8, r7c2=7, r1c2=9, r1c1=7, r5c2=1, r5c1=4
-Naked single : r4c1=9, r4c3=3, r4c9=4, r5c3=7, r5c5=5, r5c4=3, r5c6=9, r6c4=4, r6c9=3, r7c1=5
-Naked single : r7c9=2, r7c3=4, r8c5=4, r8c8=9, r8c3=2, r8c4=5, r9c1=1, r9c2=8, r9c3=9, r9c4=2
-Naked single : r9c6=3, r9c8=4, r9c9=5, r4c7=6, r4c9=1, r5c9=8, r1c9=4, r5c7=9, r6c8=2
+Naked single : r4c7=6, r4c9=1, r5c9=8, r1c9=4, r5c7=9, r6c8=2
 Hidden single: r1c2=9, r3c7=7
 Naked single : r7c7=8, r2c7=3, r1c8=8, r1c5=2, r1c3=3, r7c3=2, r8c3=8, r9c7=4
 Hidden single: r8c2=3
@@ -15304,11 +14614,6 @@ Naked single : r8c5=7, r8c6=5, r8c9=6, r9c4=1, r9c6=2
 |458       47        578      |1479      1245789   12457    |6.        134578    1258     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c1=3
-Hidden single: r3c4=3
-Naked single : r3c6=9, r7c6=6, r6c6=1, r6c4=7, r4c5=5, r4c1=7, r4c6=3, r5c5=6, r5c2=1, r3c2=8
-Naked single : r3c1=5, r3c3=1, r5c3=5, r6c1=8, r6c2=6, r7c4=9, r7c9=7, r8c4=4, r5c4=2, r5c6=4
-Naked single : r8c5=7, r8c6=5, r8c9=6, r9c4=1, r9c6=2
 Hidden single: r2c1=8, r4c2=2, r1c1=2, r5c1=9
 Naked single : r3c1=3
 Hidden single: r5c6=4, r6c1=4
@@ -15461,12 +14766,6 @@ Naked single : r9c6=7
 |3.        45678     1.       |246       456       256      |578       9.        578      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c7=4
-Hidden single: r8c8=4, r5c8=7
-Naked single : r5c7=3, r5c3=5, r4c3=6, r4c8=5, r5c9=1, r6c3=3, r6c7=2, r6c9=8, r6c8=6, r8c7=7
-Naked single : r9c9=2, r8c9=5, r7c7=1, r2c7=5, r7c8=8, r7c5=5, r3c5=4, r3c4=7, r3c6=5, r7c4=4
-Naked single : r7c2=7, r8c6=2, r2c6=1, r1c5=9, r1c8=1, r2c5=2, r2c8=9, r8c5=8, r9c2=4, r9c5=1
-Naked single : r9c6=7
 Hidden single: r2c1=2, r5c3=8, r1c1=8, r5c9=9, r6c1=1, r6c8=2, r6c9=4, r7c8=1, r7c9=3, r7c2=8
 Hidden single: r8c1=7
 Naked single : r8c9=5, r8c2=9, r7c1=6, r3c1=9, r8c3=2, r8c5=1
@@ -15611,11 +14910,7 @@ Naked single : r9c2=4, r9c4=2, r9c5=6, r9c6=5, r9c7=8, r9c9=7
 |134       5.        7.       |13        134       9.       |2.        6.        48       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c2=7, r4c9=6, r2c9=8, r4c5=4, r4c6=2, r4c4=3, r5c4=1, r2c4=9, r2c5=5, r2c2=3
-Naked single : r2c6=1, r2c8=6, r3c6=8, r5c6=6, r6c2=6, r6c3=3, r6c7=7, r7c4=4, r7c3=5, r1c3=6
-Naked single : r1c4=7, r1c8=5, r3c3=4, r3c2=5, r3c4=6, r3c7=3, r3c8=7, r5c7=5, r5c8=3, r7c5=9
-Naked single : r9c2=4, r9c4=2, r9c5=6, r9c6=5, r9c7=8, r9c9=7, r2c8=5, r3c8=2, r7c7=4, r5c7=9
-Naked single : r7c9=5, r9c9=8
+Naked single : r2c8=5, r3c8=2, r7c7=4, r5c7=9, r7c9=5, r9c9=8
 Hidden single: r1c4=8, r1c6=2, r1c8=7, r1c9=4, r2c3=8, r2c9=9, r5c2=7, r5c8=8, r8c2=8, r4c2=4
 Naked single : r4c8=1, r6c8=4
 Hidden single: r5c6=4, r8c1=4, r8c3=9, r4c1=9, r9c5=4
@@ -15731,7 +15026,7 @@ Naked single : r9c4=1
 |3+        5.        7.       |1+        4+        9.       |2.        6.        8+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u4.txt         Result: True Solved: 5/5 
+Test file: tests/u4.txt         Result: True Solved: 5/5 Time: 0.146
 .7..2.6...24....9.61.35.2...62983....836...299.1.72386.9..3.1622..19....13.2.89.7
 +-----------------------------+-----------------------------+-----------------------------+
 |358       7.        589      |48        2.        149      |6.        1345      13458    |
@@ -15882,7 +15177,7 @@ Uniqueness test 5: 2/8 in r1c48,r3c48 => r1c9<>1
 |3.        6.        7.       |4.        5.        9.       |18        18        2.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u5.txt         Result: True Solved: 5/5 
+Test file: tests/u5.txt         Result: True Solved: 5/5 Time: 0.0
 7465..3..213..9..55893..14.97513842616..745.343...5...891.5..346.4893...3.7...9.8
 +-----------------------------+-----------------------------+-----------------------------+
 |7.        4.        6.       |5.        18        12       |3.        89        29       |
@@ -16033,7 +15328,7 @@ Uniqueness test 6: 4/8 in r5c45,r7c45 => r5c4,r7c5<>8
 |6.        8.        47       |3.        2457      1.       |9.        25        57       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/u6.txt         Result: True Solved: 5/5 
+Test file: tests/u6.txt         Result: True Solved: 5/5 Time: 0.000997
 .......6....1.6.4....32.78.893.6.12..56912.3.1.2..3596..42.1.792196..35..87....12
 +-----------------------------+-----------------------------+-----------------------------+
 |3479      2347      18       |4578      45789     78       |29        6.        13       |
@@ -16184,7 +15479,7 @@ Hidden rectangle: 1/3 in r3c78,r4c78 => r3c8<>3
 |1368      13        1368     |2.        5.        18       |7.        9.        4.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/hr.txt         Result: True Solved: 5/5 
+Test file: tests/hr.txt         Result: True Solved: 5/5 Time: 0.0
 649827153..35648292581..476.8.7....2.2.6.85...3.21...8862951...5943762813..482695
 +-----------------------------+-----------------------------+-----------------------------+
 |6.        4.        9+       |8+        2+        7.       |1.        5+        3+       |
@@ -16335,7 +15630,7 @@ Avoidable rectangle type 1: 6/8 in r8c57,r9c57 => r8c5<>6
 |2+        7+        1.       |5.        8+        4.       |6+        3+        9.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/ar1.txt        Result: True Solved: 5/5 
+Test file: tests/ar1.txt        Result: True Solved: 5/5 Time: 0.0
 98..7...532...597.765.....251...7...247..859369.5..7.1172.5.834836724159459381267
 +-----------------------------+-----------------------------+-----------------------------+
 |9+        8.        14       |26        7+        236      |36        14        5+       |
@@ -16486,7 +15781,7 @@ Avoidable rectangle type 2: 5/7 in r7c39,r8c39 => r3c9,r7c7<>4
 |12        4.        8.       |6.        1257      157      |9+        127       3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/ar2.txt        Result: True Solved: 5/5 
+Test file: tests/ar2.txt        Result: True Solved: 5/5 Time: 0.00365
 3....1......4...62.82...5..8..........5.1.37......6.......7.4.5..9154.27........3
 +-----------------------------+-----------------------------+-----------------------------+
 |3.        45679     467      |256789    2689      1.       |789       489       489      |
@@ -16557,10 +15852,7 @@ Naked single : r5c1=4, r6c3=1, r6c2=2, r6c4=3, r7c2=1, r9c1=5, r9c2=7, r9c3=4
 |1246      1289      126      |49        7.        6        |5.        12469     3.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r5c9=6, r4c9=1, r3c9=4, r1c9=9, r1c7=7, r2c7=1, r2c3=7, r3c1=1, r4c7=2, r6c7=9
-Naked single : r7c1=2, r6c1=7, r4c2=6, r1c2=4, r1c3=6, r4c3=3, r4c4=7, r5c2=9, r2c2=5, r2c1=9
-Naked single : r5c1=4, r6c3=1, r6c2=2, r6c4=3, r7c2=1, r9c1=5, r9c2=7, r9c3=4, r9c6=6, r2c6=3
-Naked single : r3c6=8, r7c6=5, r4c6=2
+Naked single : r9c6=6, r2c6=3, r3c6=8, r7c6=5, r4c6=2
 Hidden single: r2c9=4
 Naked single : r7c9=9
 Hidden single: r6c7=8, r8c9=8, r5c9=2, r9c2=8, r8c2=9, r6c2=2, r9c4=9, r2c5=9, r3c5=6, r5c5=1
@@ -16623,10 +15915,7 @@ Naked single : r6c8=5, r7c7=6, r7c8=4, r8c4=4, r8c5=3
 |9.        235       3456     |267       24678     2468     |1.        3478      34578    |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r4c4=5
-Naked single : r4c9=7, r3c9=5, r3c8=7, r4c8=6, r4c7=3, r5c7=4, r5c4=3, r5c1=5, r6c1=3, r6c5=4
-Naked single : r6c8=5, r7c7=6, r7c8=4, r8c4=4, r8c5=3, r3c8=3, r3c7=6, r3c9=1, r3c1=5, r3c3=9
-Naked single : r3c5=2, r8c2=2, r8c1=4
+Naked single : r3c8=3, r3c7=6, r3c9=1, r3c1=5, r3c3=9, r3c5=2, r8c2=2, r8c1=4
 Hidden single: r1c7=7
 Naked single : r8c7=8, r8c6=9, r8c9=7, r9c8=4, r2c8=8, r2c3=3, r1c1=1, r1c2=8, r2c9=4, r2c6=5
 Naked single : r7c8=9
@@ -16684,10 +15973,7 @@ Naked single : r6c1=2, r9c4=7, r9c5=8, r9c6=2
 |5.        1.        4.       |2679      2679      679      |89        3.        689      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c8=2
-Naked single : r6c8=7, r6c3=8, r4c3=7, r6c9=3, r5c9=8, r5c5=7, r5c4=3, r4c4=2, r4c1=3, r4c6=8
-Naked single : r6c1=2, r9c4=7, r9c5=8, r9c6=2, r7c3=6, r7c1=9, r8c1=7, r8c3=2, r3c3=7, r2c3=3
-Naked single : r4c3=8
+Naked single : r7c3=6, r7c1=9, r8c1=7, r8c3=2, r3c3=7, r2c3=3, r4c3=8
 Hidden single: r1c7=7, r1c9=3, r2c4=8, r3c1=6, r2c1=1, r4c2=7, r5c2=9, r6c4=1
 Naked single : r7c4=5, r7c6=3, r7c5=1, r7c9=4, r6c9=9, r6c8=4, r6c6=7, r6c7=3
 Hidden single: r2c5=7, r3c7=4, r9c4=7, r1c4=2
@@ -16742,9 +16028,7 @@ Naked single : r9c9=8
 |4.        169       5.       |12679     123679    1239     |8.        1269      679      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c9=5, r5c7=8, r5c8=6, r5c4=4, r5c1=3, r4c1=4, r5c5=5, r3c5=9, r3c6=5, r4c5=3
-Naked single : r8c8=1, r3c8=8, r3c9=1, r8c9=6, r8c4=9, r4c4=6, r4c6=9, r8c7=5, r9c6=6, r9c7=9
-Naked single : r9c9=8, r4c4=1, r4c5=3, r4c7=6, r4c2=8
+Naked single : r4c4=1, r4c5=3, r4c7=6, r4c2=8
 Hidden single: r3c2=4, r2c2=2, r3c5=2, r5c3=1, r6c3=4, r2c3=3
 Naked single : r3c1=6, r1c2=5, r1c1=7, r3c9=8, r6c2=6, r8c1=8
 Hidden single: r1c5=6, r1c6=1
@@ -16784,7 +16068,7 @@ Naked single : r6c5=7, r6c4=9, r7c4=4, r7c7=1, r8c3=6, r8c4=7, r8c5=5, r8c7=4, r
 |4.        9+        5.       |6+        1+        3+       |8.        2+        7+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/w.txt          Result: True Solved: 5/5 
+Test file: tests/w.txt          Result: True Solved: 5/5 Time: 0.0518
 19.25..73..5....2.3....7....3..458....93.....5.......66.....3...7..........924...
 +-----------------------------+-----------------------------+-----------------------------+
 |1.        9.        468      |2.        5.        68       |46        7.        3.       |
@@ -16860,9 +16144,6 @@ Naked single : r8c7=2, r8c8=8, r8c9=4
 |34567     347       3567     |456       9.        1.       |2.        8.        456      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c9=9, r4c9=7, r4c4=1, r3c4=6, r3c5=1, r4c8=9, r6c4=8, r5c5=7, r6c2=1, r5c2=8
-Naked single : r7c5=8, r7c8=5, r3c8=4, r3c9=5, r5c8=1, r5c9=2, r5c7=5, r7c4=7, r8c4=5, r8c5=6
-Naked single : r8c7=2, r8c8=8, r8c9=4
 Hidden single: r1c2=2, r1c1=3, r2c4=2, r2c6=9, r5c3=3, r5c1=9, r5c9=2, r6c6=2, r6c7=8, r6c8=6
 Hidden single: r7c1=2, r7c5=3, r2c8=3, r7c6=7
 Naked single : r1c6=8
@@ -16924,9 +16205,7 @@ Naked single : r9c9=6
 |568       2.        7.       |3.        1.        9.       |45        45        458      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r4c1=8, r2c1=6, r2c3=8, r4c2=4, r4c5=1, r6c2=7, r3c2=9, r3c3=1, r3c1=7, r6c3=5
-Naked single : r6c1=1, r6c5=4, r7c3=6, r7c9=5, r7c4=8, r8c1=5, r8c2=8, r8c3=9, r8c4=6, r9c4=5
-Naked single : r9c9=6, r4c6=6, r7c6=4
+Naked single : r4c6=6, r7c6=4
 Hidden single: r1c9=6, r2c4=6, r5c5=8, r6c4=9, r5c4=4, r6c7=6, r8c2=4, r8c5=6, r5c3=6, r8c8=9
 Hidden single: r6c8=7, r4c2=7, r4c3=1, r4c9=3, r5c1=3, r6c9=4, r8c9=7, r7c9=1, r7c7=2, r8c1=1
 Naked single : r2c1=7
@@ -16998,9 +16277,6 @@ Naked single : r7c4=5, r7c5=7
 |9.        13        4.       |7.        5.        13       |1238      6.        128      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c4=1, r3c4=7, r3c5=9, r3c1=8, r1c2=3, r1c6=8, r1c8=4, r1c5=2, r1c3=9, r2c2=1
-Naked single : r2c3=2, r2c5=4, r2c8=3, r3c6=3, r3c8=1, r4c5=5, r4c4=2, r7c1=9, r7c2=8, r7c3=3
-Naked single : r7c4=5, r7c5=7
 Hidden single: r1c1=6, r1c6=7, r3c1=8, r1c4=8, r3c2=2, r3c9=5, r1c9=9, r3c4=4, r5c5=6, r3c5=9
 Naked single : r3c3=3, r1c3=1, r1c5=3, r2c4=1, r6c4=5, r8c5=1, r9c6=3, r7c6=9, r7c4=6, r8c4=2
 Naked single : r9c2=1
@@ -17058,10 +16334,8 @@ Naked single : r8c2=7, r8c9=4, r9c7=8, r9c9=2
 |123       129       7.       |14        8.        1249     |5.        6.        2349     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r6c7=4, r1c7=2, r1c8=4, r6c6=1, r4c6=4, r8c8=3, r7c8=5, r4c8=2, r4c9=1, r4c1=3
-Naked single : r4c4=9, r4c3=5, r5c1=1, r5c3=9, r5c4=3, r5c9=8, r5c7=5, r7c7=1, r7c9=7, r7c2=3
-Naked single : r8c2=7, r8c9=4, r9c7=8, r9c9=2, r5c3=6, r3c3=4, r3c7=1, r3c8=8, r3c9=5, r3c6=6
-Naked single : r4c2=2, r4c7=3, r4c6=8, r4c4=6, r6c3=8, r7c3=2, r2c3=3
+Naked single : r5c3=6, r3c3=4, r3c7=1, r3c8=8, r3c9=5, r3c6=6, r4c2=2, r4c7=3, r4c6=8, r4c4=6
+Naked single : r6c3=8, r7c3=2, r2c3=3
 Hidden single: r2c4=8, r2c6=1, r1c6=7, r5c1=7, r5c6=5
 Naked single : r6c4=4, r6c5=9, r6c6=3, r6c7=2, r6c9=6, r8c5=6, r9c4=1, r8c4=7, r7c4=5, r8c7=9
 Naked single : r8c6=2, r9c1=3, r9c2=9, r9c6=4, r7c6=9, r9c9=2
@@ -17099,7 +16373,7 @@ Naked single : r7c9=7, r8c8=3
 |3+        9+        7.       |1+        8.        4+       |5.        6.        2+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/xyz.txt        Result: True Solved: 5/5 
+Test file: tests/xyz.txt        Result: True Solved: 5/5 Time: 0.0432
 ..86.1..7.....2.....6.854.......736527...6.4..6.9..7216871.3.5.4.2..9.....9....7.
 +-----------------------------+-----------------------------+-----------------------------+
 |359       23459     8.       |6.        349       1.       |25        39        7.       |
@@ -17250,7 +16524,7 @@ Sue de Coq: r4c12 - {1,4,6,7,9} (r4c4 - {7,9}, r56c3 - {1,4,6}) => r5c2<>1, r4c6
 |469       19        146      |8+        269       3+       |7.        5+        24       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sdc_first.txt  Result: True Solved: 5/5 
+Test file: tests/sdc_first.txt  Result: True Solved: 5/5 Time: 0.0434
 ..86.1..7.....2.....6.854.......736527...6.4..6.9..7216871.3.5.4.2..9.....9....7.
 +-----------------------------+-----------------------------+-----------------------------+
 |359       23459     8.       |6.        349       1.       |25        39        7.       |
@@ -17401,7 +16675,7 @@ Sue de Coq: r78c7 - {3,4,5,6,8} (r456c7 - {5,6,7,8}, r9c89 - {3,4,7}) => r8c8<>4
 |6.        2+        9+       |34        5.        8.       |1.        4c7c      3c7c     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sdc_best.txt   Result: True Solved: 5/5 
+Test file: tests/sdc_best.txt   Result: True Solved: 5/5 Time: 0.0509
 ....1......13.26...276.851..48...95.9.......1.16...34..694.318...49.67......5....
 +-----------------------------+-----------------------------+-----------------------------+
 |34568     3589      35       |57        1.        4579     |248       2379      234789   |
@@ -17518,11 +16792,7 @@ Naked single : r9c8=9, r9c9=6
 |2378      6.        278      |2379      2379      4.       |589       35        1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r5c7=2
-Naked single : r1c7=8, r1c2=9, r1c8=2, r5c4=8, r8c8=3, r9c4=1, r4c4=2, r6c5=7, r4c6=1, r6c1=2
-Naked single : r6c9=8, r7c5=2, r7c9=5, r7c1=7, r4c1=3, r4c5=6, r4c9=7, r2c9=9, r2c8=7, r5c2=7
-Naked single : r5c5=3, r5c8=6, r8c5=8, r8c2=5, r2c2=8, r2c1=5, r8c9=2, r9c1=8, r9c2=3, r9c6=7
-Naked single : r9c8=9, r9c9=6, r5c6=3
+Naked single : r5c6=3
 Hidden single: r8c6=5
 
 Pointing: 5 in b1 => r46c1<>5
@@ -17594,17 +16864,6 @@ Naked single : r6c9=2, r7c4=6, r7c5=1, r7c6=9, r9c4=3
 |4578      45679     1.       |468       2.        4678     |469       4679      3.       |
 |2.        3467      348      |9.        378       1.       |46        467       5.       |
 +-----------------------------+-----------------------------+-----------------------------+
-
-Hidden single: r5c7=8, r7c9=8
-Naked single : r7c2=3, r1c2=7, r4c2=5, r6c2=8
-Hidden single: r6c6=7
-Naked single : r6c1=4, r5c3=6, r4c3=1, r4c1=7, r5c4=4, r8c1=1, r7c1=2, r8c3=4, r8c7=6, r8c9=3
-Naked single : r8c5=7, r9c1=8, r9c3=7, r9c8=5, r6c8=6, r4c8=4, r3c8=3, r3c1=5, r2c1=3, r9c7=9
-Naked single : r7c7=4
-Hidden single: r1c5=3
-Naked single : r9c5=2, r6c5=9, r4c5=6, r4c4=2, r2c4=7, r3c4=9, r3c6=2, r1c6=1, r1c7=2, r1c3=9
-Naked single : r1c9=4, r2c5=8, r2c3=2, r2c9=5, r2c7=1, r3c3=8, r3c5=4, r3c9=6, r4c9=9, r6c7=5
-Naked single : r6c9=2, r7c4=6, r7c5=1, r7c6=9, r9c4=3
 
 Pointing: 2 in b2 => r3c2<>2
 +-----------------------------+-----------------------------+-----------------------------+
@@ -17689,16 +16948,6 @@ Naked single : r5c9=9, r6c1=4, r6c4=6, r6c6=5, r7c8=2, r7c9=1
 |2567      4.        12567    |267       8.        27       |3.        9.        157      |
 |25789     12578     3.       |279       129       279      |1258      4.        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
-
-Naked single : r7c2=9
-Hidden single: r2c9=7, r3c9=8, r8c1=8, r8c2=5, r9c2=6
-Naked single : r9c7=4, r9c3=3, r7c3=4, r4c3=2, r7c1=7, r7c6=6, r7c4=3, r8c4=4, r8c6=7, r4c6=9
-Naked single : r9c5=8, r1c5=1, r1c2=2, r1c7=6, r1c8=5, r1c3=8, r2c3=5, r2c4=8, r2c6=4, r8c7=9
-Naked single : r8c8=6, r9c8=7
-Hidden single: r3c8=9, r4c5=7
-Naked single : r6c5=3, r6c7=1, r3c7=3, r2c8=1, r2c2=3, r4c9=6, r4c4=1, r5c2=1, r3c2=4, r3c1=1
-Naked single : r6c2=7, r6c9=2, r5c8=3, r4c8=4, r4c1=3, r5c1=5, r5c4=2, r3c4=5, r3c6=2, r5c6=8
-Naked single : r5c9=9, r6c1=4, r6c4=6, r6c6=5, r7c8=2, r7c9=1
 
 Naked triple: 2,7,9 in r8c6,r9c46 => r7c56,r8c4,r9c5<>2, r7c6,r8c4<>7, r7c56,r9c5<>9
 +-----------------------------+-----------------------------+-----------------------------+
@@ -17786,13 +17035,6 @@ Naked single : r9c1=8, r9c4=7, r9c6=9, r9c7=2
 |14568     7.        468      |1389      13489     1389     |2.        3456      38       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Hidden single: r1c8=3
-Naked single : r3c8=8
-Hidden single: r1c3=8
-Naked single : r4c3=7, r3c3=2, r4c8=1, r7c8=7, r7c9=8, r7c2=2, r7c7=1, r8c1=7, r3c1=3, r3c2=7
-Naked single : r5c1=2, r5c5=3, r5c9=7, r7c5=4, r4c5=9, r4c4=4, r3c4=9, r1c4=2, r1c6=4, r1c9=9
-Naked single : r3c9=4, r4c7=8, r4c2=3, r6c2=8, r6c5=2, r6c6=7, r6c7=9, r6c9=3, r7c6=3, r8c6=2
-Naked single : r9c1=8, r9c4=7, r9c6=9, r9c7=2
 Hidden single: r6c8=2
 
 Naked pair: 5,6 in r5c12 => r5c58<>5, r5c5<>6
@@ -17838,7 +17080,7 @@ Naked single : r2c5=8, r3c3=4, r3c5=2, r8c1=1, r8c2=2, r8c3=8, r9c3=6
 |4+        7.        6+       |9+        1+        3+       |2.        5+        8+       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sudocue_The_Learning_Curve_Collection.txt Result: True Solved: 5/5 
+Test file: tests/sudocue_The_Learning_Curve_Collection.txt Result: True Solved: 5/5 Time: 0.0845
 .164.....2....9...4......62.7.23.1..1.......3..3.87.4.96......5...8....7.....682.
 +-----------------------------+-----------------------------+-----------------------------+
 |3578      1.        6.       |4.        257       2358     |3579      35789     89       |
@@ -18125,11 +17367,7 @@ Naked single : r9c5=9, r9c9=1
 |8.        27        4.       |5.        27        12       |3.        9.        1267     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c8=7, r5c8=8, r4c9=6, r4c1=8, r1c1=3, r1c6=2, r1c5=5, r1c7=9, r1c9=8, r2c2=8
-Naked single : r3c4=3, r2c4=6, r2c5=7, r2c3=5, r3c3=7, r3c7=5, r5c4=9, r5c5=6, r6c7=2, r5c7=7
-Naked single : r6c2=5, r6c1=6, r6c9=9, r7c6=1, r7c8=3, r2c8=1, r2c9=4, r2c7=3, r7c7=4, r7c5=2
-Naked single : r8c1=5, r8c5=4, r8c2=2, r5c2=4, r5c3=2, r8c3=1, r8c6=3, r9c2=3, r9c3=4, r9c4=5
-Naked single : r9c5=9, r9c9=1, r5c3=7, r5c7=9
+Naked single : r5c3=7, r5c7=9
 Hidden single: r3c3=8, r6c2=8, r7c3=6, r9c9=6, r9c6=1
 
 Claiming: 1 in c7 => r12c8,r23c9<>1
@@ -18383,11 +17621,7 @@ Naked single : r8c5=8, r8c6=3, r8c8=1, r8c9=7
 |5         257       27       |26789     25789     3.       |25679     4.        1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c9=9, r2c9=8, r2c8=4, r2c5=5, r2c2=2, r1c1=1, r2c7=1, r2c4=9, r3c1=7, r3c2=5
-Naked single : r3c5=4, r3c7=2, r3c4=1, r9c2=7, r9c5=2, r1c5=3, r1c4=2, r6c5=6, r4c5=7, r4c9=1
-Naked single : r4c8=6, r6c4=3, r4c6=2, r4c3=5, r4c1=9, r4c2=3, r5c1=4, r5c9=3, r6c1=2, r6c8=5
-Naked single : r6c7=7, r6c9=4, r7c4=7, r7c7=5, r7c1=3, r7c8=8, r7c5=9, r8c1=5, r8c2=9, r8c3=2
-Naked single : r8c5=8, r8c6=3, r8c8=1, r8c9=7, r9c1=5
+Naked single : r9c1=5
 Hidden single: r3c8=6, r3c2=5, r5c9=4, r7c2=1, r7c7=3, r8c8=8
 
 Naked pair: 2,7 in r9c23 => r9c457<>2, r9c457<>7
@@ -18621,12 +17855,6 @@ Naked single : r2c8=5, r2c7=7, r8c4=9, r8c6=7, r8c7=5, r8c9=2, r9c4=6, r9c5=8
 |17        157       147      |2.        1578      3.       |169       1689      689      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c4=1, r2c4=3, r1c5=4, r1c6=8, r1c3=3, r2c1=4, r3c1=9, r2c2=2, r2c3=1, r2c6=9
-Naked single : r3c3=8, r5c1=1, r6c1=3, r8c3=4, r8c2=3, r9c2=7, r4c2=9, r6c2=4, r9c3=2
-Hidden single: r1c7=1, r4c5=3, r4c8=1, r7c6=4, r7c9=6
-Naked single : r4c9=5, r9c7=9, r5c7=2, r6c7=6, r6c4=8, r6c8=9, r1c8=2, r1c9=9, r6c5=2, r3c5=7
-Naked single : r3c6=2, r7c5=5, r5c5=9, r5c4=7, r4c6=6, r4c3=7, r5c3=6, r5c6=5, r7c4=2, r7c8=7
-Naked single : r2c8=5, r2c7=7, r8c4=9, r8c6=7, r8c7=5, r8c9=2, r9c4=6, r9c5=8
 Hidden single: r1c9=4, r2c9=5, r9c3=4
 
 Naked pair: 1,7 in r7c46 => r7c1<>1, r7c1<>7
@@ -18866,11 +18094,7 @@ Naked single : r9c2=5, r9c5=8, r9c7=1, r9c8=6, r9c9=9
 |9.        1378      5.       |3         237       23       |4.        12378     6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c9=2, r7c1=3, r8c1=2, r8c9=8, r8c6=9, r8c4=5, r8c2=1, r2c2=7, r1c3=9, r1c1=8
-Naked single : r2c1=6, r2c4=1, r2c8=9, r3c1=1, r3c6=8, r3c4=3, r1c5=7, r3c9=6, r4c3=7, r5c1=9
-Naked single : r5c4=8, r4c5=3, r4c2=8, r5c6=7, r5c9=3, r6c2=3, r6c4=9, r6c5=5, r6c7=6, r4c7=9
-Naked single : r4c8=2, r4c6=6, r6c6=2, r6c8=8, r7c4=7, r7c6=1, r8c8=3, r1c8=1, r1c7=3, r9c1=7
-Naked single : r9c2=5, r9c5=8, r9c7=1, r9c8=6, r9c9=9, r9c4=3, r1c4=6, r9c6=2, r9c5=7
+Naked single : r9c4=3, r1c4=6, r9c6=2, r9c5=7
 Hidden single: r6c5=2
 
 Naked pair: 3,8 in r1c56 => r1c28<>3, r1c2<>8
@@ -19079,7 +18303,7 @@ Naked single : r8c2=7, r8c9=2, r9c2=8, r9c8=1
 |9.        8+        5.       |3+        7+        2+       |4.        1+        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sudocue_The_Superiors_Collection.txt Result: True Solved: 5/5 
+Test file: tests/sudocue_The_Superiors_Collection.txt Result: True Solved: 5/5 Time: 0.272
 .164.....2....9...4......62.7.23.1..1.......3..3.87.4.96......5...8....7.....682.
 +-----------------------------+-----------------------------+-----------------------------+
 |3578      1.        6.       |4.        257       2358     |3579      35789     89       |
@@ -19357,32 +18581,6 @@ Full house   : r5c3=2, r9c2=3, r9c3=4
 |8.        27        4.       |5.        27        12       |3.        9.        1267     |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r1c8=7, r5c8=8, r4c9=6
-Full house   : r4c1=8
-Naked single : r1c1=3, r1c6=2, r1c5=5, r1c7=9
-Full house   : r1c9=8
-Naked single : r2c2=8, r3c4=3, r2c4=6
-Full house   : r2c5=7
-Naked single : r2c3=5
-Full house   : r3c3=7, r3c7=5
-Naked single : r5c4=9
-Full house   : r9c4=5, r5c5=6
-Naked single : r6c7=2, r5c7=7
-Full house   : r6c9=9
-Naked single : r6c2=5
-Full house   : r6c1=6, r8c1=5
-Naked single : r7c6=1
-Full house   : r8c6=3
-Naked single : r7c8=3
-Full house   : r2c8=1
-Naked single : r2c9=4
-Full house   : r2c7=3, r7c7=4, r7c5=2, r9c9=1
-Naked single : r8c5=4
-Full house   : r9c5=9
-Naked single : r8c2=2
-Full house   : r8c3=1
-Naked single : r5c2=4
-Full house   : r5c3=2, r9c2=3, r9c3=4
 Naked single : r5c3=7, r5c7=9
 Hidden single: r3c3=8, r6c2=8, r7c3=6, r9c9=6, r9c6=1
 
@@ -19642,30 +18840,6 @@ Full house   : r7c5=9, r8c5=8, r8c8=1
 |5         257       27       |26789     25789     3.       |25679     4.        1.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c9=9, r2c9=8, r2c8=4, r2c5=5, r2c2=2, r1c1=1, r2c7=1
-Full house   : r2c4=9, r3c7=2
-Naked single : r3c1=7
-Full house   : r3c2=5
-Naked single : r3c4=1
-Full house   : r3c5=4
-Naked single : r9c2=7
-Full house   : r9c5=2
-Naked single : r1c5=3
-Full house   : r1c4=2
-Naked single : r6c5=6, r4c5=7, r4c9=1, r4c8=6, r6c4=3
-Full house   : r7c4=7, r4c6=2, r8c6=3
-Naked single : r4c3=5
-Full house   : r8c3=2
-Naked single : r4c1=9
-Full house   : r4c2=3, r8c2=9
-Naked single : r5c1=4
-Full house   : r5c9=3, r6c1=2
-Naked single : r6c8=5, r6c7=7
-Full house   : r6c9=4, r7c7=5, r8c9=7
-Naked single : r7c1=3
-Full house   : r8c1=5
-Naked single : r7c8=8
-Full house   : r7c5=9, r8c5=8, r8c8=1
 Naked single : r9c1=5
 Hidden single: r3c8=6, r3c2=5, r5c9=4, r7c2=1, r7c7=3, r8c8=8
 
@@ -19857,29 +19031,6 @@ Full house   : r7c8=7, r8c4=9, r8c7=5, r2c7=7, r2c8=5
 |17        157       147      |2.        1578      3.       |169       1689      689      |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r3c4=1, r2c4=3, r1c5=4, r1c6=8, r1c3=3, r2c1=4, r3c1=9, r2c2=2, r2c3=1
-Full house   : r3c3=8
-Naked single : r2c6=9, r5c1=1
-Full house   : r6c1=3
-Naked single : r8c3=4, r8c2=3, r9c2=7
-Full house   : r9c3=2
-Naked single : r4c2=9
-Full house   : r6c2=4
-Hidden single: r1c7=1, r4c5=3, r4c8=1, r7c6=4, r7c9=6
-Naked single : r4c9=5, r9c7=9, r5c7=2, r6c7=6
-Full house   : r6c8=9
-Naked single : r1c8=2
-Full house   : r1c9=9, r8c9=2
-Naked single : r6c4=8
-Full house   : r6c5=2
-Naked single : r3c5=7
-Full house   : r3c6=2
-Naked single : r7c5=5, r5c5=9
-Full house   : r9c5=8, r9c4=6
-Naked single : r5c4=7, r4c6=6
-Full house   : r4c3=7, r5c3=6, r5c6=5, r8c6=7
-Naked single : r7c4=2
-Full house   : r7c8=7, r8c4=9, r8c7=5, r2c7=7, r2c8=5
 Hidden single: r1c9=4, r2c9=5, r9c3=4
 
 Locked pair: 1,7 in r7c46 => r7c1,r8c46,r9c5<>1, r7c1,r9c5<>7
@@ -20107,30 +19258,6 @@ Full house   : r4c6=6, r6c6=2, r6c8=8
 |9.        1378      5.       |3         237       23       |4.        12378     6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Naked single : r7c9=2, r7c1=3, r8c1=2, r8c9=8, r8c6=9, r8c4=5, r8c2=1
-Full house   : r8c8=3
-Naked single : r2c2=7, r1c3=9
-Full house   : r4c3=7
-Naked single : r1c1=8, r1c8=1, r1c7=3
-Full house   : r1c5=7
-Naked single : r2c1=6
-Full house   : r3c1=1
-Naked single : r2c4=1
-Full house   : r2c8=9, r3c9=6
-Naked single : r3c6=8
-Full house   : r3c4=3
-Naked single : r5c1=9
-Full house   : r9c1=7, r9c2=5
-Naked single : r5c4=8, r4c5=3, r4c2=8
-Full house   : r6c2=3
-Naked single : r5c6=7
-Full house   : r5c9=3, r9c9=9
-Naked single : r6c4=9
-Full house   : r7c4=7, r7c6=1, r9c5=8, r6c5=5
-Naked single : r6c7=6, r4c7=9
-Full house   : r9c7=1, r9c8=6
-Naked single : r4c8=2
-Full house   : r4c6=6, r6c6=2, r6c8=8
 Naked single : r9c4=3, r1c4=6, r9c6=2, r9c5=7
 Hidden single: r6c5=2
 
@@ -20345,5 +19472,5 @@ Full house   : r8c2=7, r9c2=8, r9c8=1
 |9.        8+        5.       |3+        7+        2+       |4.        1+        6.       |
 +-----------------------------+-----------------------------+-----------------------------+
 
-Test file: tests/sudocue_The_Superiors_Collection.txt Result: True Solved: 5/5 
-BATCH OK 
+Test file: tests/sudocue_The_Superiors_Collection.txt Result: True Solved: 5/5 Time: 0.464
+BATCH OK Time: 3.68
