@@ -53,5 +53,5 @@
 
 --testf tests/sudocue_The_Learning_Curve_Collection.txt  --rand 100 --tech ssts
 --testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech ssts
---testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech hodoku_hard
+--testf tests/sudocue_The_Superiors_Collection.txt  --rand 100 --tech hodoku-hard
 

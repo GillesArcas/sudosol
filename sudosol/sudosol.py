@@ -320,10 +320,10 @@ class Grid:
             else:
                 cell.candidates = set(int(_) for _ in s[1:])
 
-    def output_s81(self):
+    def output_s81(self, unknown='.'):
         """return a 81 character string
         """
-        return ''.join(str(cell.value) if cell.value else '.' for cell in self.cells)
+        return ''.join(str(cell.value) if cell.value else unknown for cell in self.cells)
 
     def output_csv(self):
         """return a comma separated list of candidates, a value is considered
@@ -375,6 +375,14 @@ class Grid:
                 discarded[digit].add(peer)
 
         return discarded
+
+    def rem_value(self, cell):
+        digit = cell.value
+        cell.value = None
+        cell.candidates = set(range(1, 10)) - {c.value for c in cell.peers if c.value}
+        for c in cell.peers:
+            if c.value is None and all(c2.value != digit for c2 in c.peers):
+                c.candidates.add(digit)
 
     def solved(self):
         return all(cell.value is not None for cell in self.cells)
@@ -552,7 +560,7 @@ def colorize_candidates_color(cell, color_spec):
     """
     if not cell.candidates:
         decor = CellDecor.GIVEN if cell.given else CellDecor.VALUE
-        res = CellDecorColor[decor] + str(cell.value) + Fore.RESET
+        res = CellDecorColor[decor] + str(cell.value if cell.value else '?') + Fore.RESET
         # manual padding as colorama information fools format padding
         res += ' ' * (9 - 1)
         return res
@@ -957,9 +965,8 @@ def solve_backtrack(grid, explain):
     return 0
 
 
-def solve_dancing_links(grid, explain):
-    s = grid.output_s81()
-    s = s.replace('.', '0')
+def solve_dancing_links(grid, explain=False):
+    s = grid.output_s81(unknown='0')
     d = dlx_sudoku.DLXsudoku(s)
     for sol in d.solve():
         grid.input(d.createSolutionString(sol))
@@ -2971,7 +2978,13 @@ def describe_sue_de_coq(caption, digits, define_set, remove_dict):
 
 # Simple Sudoku
 # source: http://sudopedia.enjoysudoku.com/SSTS.html
-STRATEGY_SSTS = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
+STRATEGY_SSTS_EASY        = 'n1,h1'
+STRATEGY_SSTS_STANDARD    = 'n1,h1,n2,lc1,lc2'
+STRATEGY_SSTS_HARD        = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2'
+STRATEGY_SSTS_EXPERT      = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2'
+STRATEGY_SSTS_EXTREME     = 'n1,h1,n2,lc1,lc2,n3,n4,h2,bf2,bf3,sc1,sc2,mc2,mc1,h3,xy,h4'
+STRATEGY_SSTS = STRATEGY_SSTS_EXTREME
+
 
 # Hodoku
 # upper case techniques are not yet implemented
@@ -2988,10 +3001,24 @@ def make_list_techniques(strategy):
     ALL = ALL.replace(',dlx', '')
 
     strategy = re.sub(r'\bssts\b', STRATEGY_SSTS, strategy)
-    strategy = re.sub(r'\bhodoku_easy\b', STRATEGY_HODOKU_EASY, strategy)
-    strategy = re.sub(r'\bhodoku_medium\b', STRATEGY_HODOKU_MEDIUM, strategy)
-    strategy = re.sub(r'\bhodoku_hard\b', STRATEGY_HODOKU_HARD , strategy)
-    strategy = re.sub(r'\bhodoku_unfair\b', STRATEGY_HODOKU_UNFAIR , strategy)
+    strategy = re.sub(r'\bssts-easy\b', STRATEGY_SSTS_EASY, strategy)
+    strategy = re.sub(r'\bssts-standard\b', STRATEGY_SSTS_STANDARD, strategy)
+    strategy = re.sub(r'\bssts-hard\b', STRATEGY_SSTS_HARD, strategy)
+    strategy = re.sub(r'\bssts-expert\b', STRATEGY_SSTS_EXPERT, strategy)
+    strategy = re.sub(r'\bssts-extreme\b', STRATEGY_SSTS_EXTREME, strategy)
+
+    strategy = re.sub(r'\bhodoku-easy\b', STRATEGY_HODOKU_EASY, strategy)
+    strategy = re.sub(r'\bhodoku-medium\b', STRATEGY_HODOKU_MEDIUM, strategy)
+    strategy = re.sub(r'\bhodoku-hard\b', STRATEGY_HODOKU_HARD , strategy)
+    strategy = re.sub(r'\bhodoku-unfair\b', STRATEGY_HODOKU_UNFAIR , strategy)
+
+    strategy = re.sub(r'\bsudosol-level-1\b', STRATEGY_SSTS_EASY, strategy)
+    strategy = re.sub(r'\bsudosol-level-2\b', STRATEGY_SSTS_STANDARD, strategy)
+    strategy = re.sub(r'\bsudosol-level-3\b', STRATEGY_SSTS_HARD, strategy)
+    strategy = re.sub(r'\bsudosol-level-4\b', STRATEGY_SSTS_EXPERT, strategy)
+    strategy = re.sub(r'\bsudosol-level-5\b', STRATEGY_SSTS_EXTREME, strategy)
+    strategy = re.sub(r'\bsudosol-level-6\b', STRATEGY_SSTS_EXTREME + ',bf2,bf3,xyz', strategy)
+
     strategy = re.sub(r'\ball\b', ALL, strategy)
 
     if '-' not in strategy:
@@ -3082,6 +3109,7 @@ def solve(grid, options, techniques, explain, step=False):
     if explain and not options.step:
         print_single_history(grid)
         grid.dump()
+    return None
 
 
 # Commands
