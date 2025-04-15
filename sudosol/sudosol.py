@@ -320,10 +320,10 @@ class Grid:
             else:
                 cell.candidates = set(int(_) for _ in s[1:])
 
-    def output_s81(self, unknown='.'):
+    def output_s81(self, unknown='.', given=False):
         """return a 81 character string
         """
-        return ''.join(str(cell.value) if cell.value else unknown for cell in self.cells)
+        return ''.join(str(cell.value) if cell.value and given <= cell.given else unknown for cell in self.cells)
 
     def output_csv(self):
         """return a comma separated list of candidates, a value is considered
