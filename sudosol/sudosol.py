@@ -459,6 +459,23 @@ class Grid:
         else:
             pass
 
+    def undo_cells(self):
+        if not self.history:
+            return None
+        item = self.history[self.history_top]
+
+        if item[1] == 'discard':
+            _, _, discarded = item
+            nums = set()
+            for cells in discarded.values():
+                nums |= {cell.cellnum for cell in cells}
+            return [self.cells[num] for num in nums]
+        elif item[1] == 'value':
+            _, _, cell, _, _ = item
+            return [cell]
+        else:
+            return None
+
     def redo(self):
         if self.history_top == len(self.history) - 1:
             return
@@ -972,6 +989,17 @@ def solve_dancing_links(grid, explain=False):
         grid.input(d.createSolutionString(sol))
         return 81
     return 0
+
+
+def nb_solutions(grid, maxout=1000):
+    s = grid.output_s81(unknown='0')
+    d = dlx_sudoku.DLXsudoku(s)
+    nb = 0
+    for sol in d.solve():
+        nb += 1
+        if nb > maxout:
+            break
+    return nb
 
 
 # Singles
