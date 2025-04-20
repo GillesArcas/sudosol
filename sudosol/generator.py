@@ -28,7 +28,9 @@ def genrec(grid):
         return None
     else:
         cell = chose_cell(grid)
-        for cand in cell.candidates:    # TODO : randomize
+        candidates = list(cell.candidates)
+        random.shuffle(candidates)
+        for cand in candidates:
             discarded = grid.set_value(cell, cand)
             grid.push(('random', 'value', cell, cand, discarded))
             r = genrec(grid)
@@ -65,18 +67,20 @@ class Options:
         self.step = False
 
 
-LEVELS = (
-    sudosol.STRATEGY_SSTS_EASY,
-    sudosol.STRATEGY_SSTS_STANDARD,
-    sudosol.STRATEGY_SSTS_HARD,
-    sudosol.STRATEGY_SSTS_EXPERT,
-    sudosol.STRATEGY_SSTS_EXTREME
-)
+def unicity(grid:sudosol.Grid) -> bool:
+    s = grid.output_s81(unknown='0')
+    d = dlx_sudoku.DLXsudoku(s)
+    for index, sol in enumerate(d.solve(), 1):
+        if index >= 2:
+            return False
+    return True
 
 
-def random_sudoku_batch():
-    grid = random_full_sudoku()
+def number_of_given(grid):
+    return sum(c.value is not None for c in grid.cells)
 
+
+def remove_given(grid):
     cells = grid.cells[:]
     random.shuffle(cells)
     stack = []
@@ -84,69 +88,80 @@ def random_sudoku_batch():
         cell = cells.pop()
         stack.append((cell, cell.value))
         grid.rem_value(cell)
-        s = grid.output_s81(unknown='0')
-        d = dlx_sudoku.DLXsudoku(s)
-        if len(list(d.solve())) > 1:
+        if not unicity(grid):
             cell, digit = stack.pop()
             grid.set_value(cell, digit)
-            if sum(c.value is not None for c in grid.cells) > 35:
-                cell, digit = stack.pop()
-                grid.set_value(cell, digit)
-                if not cells:
-                    break
 
+
+def remove_given_sym(grid):
+    cells = grid.cells[:5 * 9]
+    random.shuffle(cells)
+    stack = []
+    while cells:
+        cell = cells.pop()
+        stack.append((cell, cell.value))
+        grid.rem_value(cell)
+        if cell.cellnum != 4 * 9 + 4:
+            cell = grid.cells[9 * (8 - cell.rownum) + (8 - cell.colnum)]
+            stack.append((cell, cell.value))
+            grid.rem_value(cell)
+        if not unicity(grid):
+            cell, digit = stack.pop()
+            grid.set_value(cell, digit)
+            cell, digit = stack.pop()
+            grid.set_value(cell, digit)
+
+
+def test_level(grid, level_1:None|str, level_2:str) -> None|str:
+    """    """
     s81 = grid.output_s81()
-    for techniques, level in zip(SSTS, SSTS_LEVEL):
-        sudosol.solve(grid, Options(), techniques=techniques, explain=False, step=False)
+    if level_1:
+        sudosol.solve(grid, Options(), techniques=level_1, explain=False, step=False)
         if grid.solved():
-            print(s81, '#', level)
-            break
+            return None
+    sudosol.solve(grid, Options(), techniques=level_2, explain=False, step=False)
+    if grid.solved():
+        return s81
     else:
-        print(s81, '#', 'UNSOLVED')
+        return None
+
+
+def attempt_sudoku(level_1:None|str, level_2:str, symmetric=True) -> None|str:
+    """Make one attempt to generate a puzzle solved by level_2 but not by level_1.
+    Return the grid if success, None otherwise.
+    """
+    grid = random_full_sudoku()
+    if symmetric:
+        remove_given_sym(grid)
+    else:
+        remove_given(grid)
+    return test_level(grid, level_1, level_2)
 
 
 def random_sudoku(level_1:None|str, level_2:str) -> str:
-    """Return a puzzle solved by level_2 but not by level_1. May required
-    time-out.
+    """Return a puzzle solved by level_2 but not by level_1.
     """
     while True:
-        grid = random_full_sudoku()
-
-        cells = grid.cells[:]
-        random.shuffle(cells)
-        stack = []
-        while cells:
-            cell = cells.pop()
-            stack.append((cell, cell.value))
-            grid.rem_value(cell)
-            s = grid.output_s81(unknown='0')
-            d = dlx_sudoku.DLXsudoku(s)
-            if len(list(d.solve())) > 1:
-                cell, digit = stack.pop()
-                grid.set_value(cell, digit)
-                if sum(c.value is not None for c in grid.cells) > 35:
-                    cell, digit = stack.pop()
-                    grid.set_value(cell, digit)
-                    if not cells:
-                        break
-
-        s81 = grid.output_s81()
-        if level_1:
-            sudosol.solve(grid, Options(), techniques=level_1, explain=False, step=False)
-            if grid.solved():
-                continue
-        sudosol.solve(grid, Options(), techniques=level_2, explain=False, step=False)
-        if grid.solved():
-            return s81
+        grid = attempt_sudoku(level_1, level_2)
+        if grid is not None:
+            return grid
 
 
 def main():
-    t0 = time.time()
-    for _ in range(1000):
-        random_sudoku()
-    ic(time.time() - t0)
+    T0 = time.time()
+    for _ in range (10):
+        t0 = time.time()
+        n = 0
+        while 1:
+            grid = attempt_sudoku('sudosol-level-4', 'sudosol-level-5')
+            n += 1
+            if grid:
+                break
+        t1 = time.time()
+        print('OK', int((t1 - t0) * 1000), n, sum(x != '.' for x in grid))
+    T1 = time.time()
+    print(int((T1 - T0) * 1000))
 
 
-if __name__ == 'main':
-    # cProfile.run('main()')
+if __name__ == '__main__':
     main()
