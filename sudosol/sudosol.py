@@ -3045,7 +3045,7 @@ def make_list_techniques(strategy):
     strategy = re.sub(r'\bsudosol-level-3\b', STRATEGY_SSTS_HARD, strategy)
     strategy = re.sub(r'\bsudosol-level-4\b', STRATEGY_SSTS_EXPERT, strategy)
     strategy = re.sub(r'\bsudosol-level-5\b', STRATEGY_SSTS_EXTREME, strategy)
-    strategy = re.sub(r'\bsudosol-level-6\b', STRATEGY_SSTS_EXTREME + ',bf2,bf3,xyz', strategy)
+    strategy = re.sub(r'\bsudosol-level-6\b', STRATEGY_SSTS_EXTREME + ',er,fbf2,fbf3,xyz,u1,bug1', strategy)
 
     strategy = re.sub(r'\ball\b', ALL, strategy)
 
