@@ -384,8 +384,23 @@ class Grid:
             if c.value is None and all(c2.value != digit for c2 in c.peers):
                 c.candidates.add(digit)
 
-    def solved(self):
+    def is_solved(self):
         return all(cell.value is not None for cell in self.cells)
+
+    def is_valid(self):
+        for row in self.rows:
+            if set(cell.value for cell in row) != set(range(1, 10)):
+                # print("Row %d failed" % row[0].rownum)
+                return False
+        for col in self.cols:
+            if set(cell.value for cell in col) != set(range(1, 10)):
+                # print("Col %d failed" % col[0].colnum)
+                return False
+        for box in self.boxes:
+            if set(cell.value for cell in box) != set(range(1, 10)):
+                # print("Box %d failed" % box[0].boxnum)
+                return False
+        return True
 
     def dump_values(self, given:bool):
         lines = []
@@ -667,7 +682,7 @@ def format_ss_clipboard(grid):
     if not grid.history:
         s2 = grid.dumpstr()
         lines = [s1, s2]
-    elif grid.solved():
+    elif grid.is_solved():
         s2 = grid.dump_values(given=False)
         lines = [s1, s2]
     else:
@@ -3129,7 +3144,7 @@ def solve(grid, options, techniques, explain, step=False):
     if explain:
         print(grid.output_s81())
         grid.dump()
-    while not grid.solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
+    while not grid.is_solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
         if step:
             break
         else:
