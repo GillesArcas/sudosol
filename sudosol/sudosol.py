@@ -237,6 +237,8 @@ class Grid:
             self.input_csv(string)
         elif re.match(r'([gvc][1-9]{1,9}){81}$', string):
             self.input_gvc(string)
+        elif re.match(r'(\+?[.1-9]){81}:[ 1-9]*$', string):
+            self.input_hodoku(string)
         elif string81 := grid_to_string81(string):
             self.input_s81(string81)
         elif stringcsv := grid_to_csv(string):
@@ -273,7 +275,7 @@ class Grid:
                 cell.candidates = set(int(_) for _ in candidates)
 
     def input_gvc_strings(self, given, values, candidates):
-        """
+        """input digits given as three strings.
         """
         self.reset()
         for cell, g, v, c in zip(self.cells, given, values, candidates.split(',')):
@@ -320,6 +322,18 @@ class Grid:
             else:
                 cell.candidates = set(int(_) for _ in s[1:])
 
+    def input_hodoku(self, string):
+        """input a hodoku library format string, see https://hodoku.sourceforge.net/en/libs.php
+        """
+        self.reset()
+        values, exclusions = string.split(':')
+        for cell, x in zip(self.cells, re.findall(r'\+?\d|\.', values)):
+            if x != '.':
+                self.set_value(cell, int(x[-1]), given=len(x) == 1)
+        for exclusion in exclusions.split():
+            digit, row, col = (int(_) for _ in exclusion)
+            self.cells[9 * (row - 1) + (col - 1)].discard(digit)
+
     def output_s81(self, unknown='.', given=False):
         """return a 81 character string
         """
@@ -343,6 +357,29 @@ class Grid:
             else:
                 lst.append('c' + ''.join(str(_) for _ in sorted(cell.candidates)))
         return ''.join(lst)
+
+    def output_hodoku(self):
+        """return a hodoku library format string, see https://hodoku.sourceforge.net/en/libs.php
+        """
+        grid = Grid()
+        lst = []
+        for cell, cell2 in zip(self.cells, grid.cells):
+            if cell.given:
+                lst.append(f'{cell.value}')
+                grid.set_value(cell2, cell.value)
+            elif cell.value:
+                lst.append(f'+{cell.value}')
+                grid.set_value(cell2, cell.value)
+            else:
+                lst.append('.')
+
+        lst2 = []
+        for cell, cell2 in zip(self.cells, grid.cells):
+            if cell.candidates != cell2.candidates:
+                for candidate in cell2.candidates - cell.candidates:
+                    lst2.append(f'{candidate}{cell.rownum}{cell.colnum}')
+
+        return ''.join(lst) + ':' + ' '.join(lst2)
 
     def compare_string(self, ref):
         if re.match(r'^[\d.]{81}$', ref):
@@ -450,10 +487,13 @@ class Grid:
         self.history.append(item)
         self.history_top = len(self.history) - 1
 
-    def undo(self):
+    def undo(self, strict=False):
         if not self.history:
             return
-        item = self.history[self.history_top]
+        if strict:
+            item = self.history.pop()
+        else:
+            item = self.history[self.history_top]
         self.history_top -= 1
 
         if item[1] == 'discard':
@@ -475,6 +515,8 @@ class Grid:
             pass
 
     def undo_cells(self):
+        """Return cells concerned by the latest move.
+        """
         if not self.history:
             return None
         item = self.history[self.history_top]
@@ -519,7 +561,7 @@ class Grid:
         (caption, 'discard', {cand: set_of_cells, cand: set_of_cells, ...})
         """
         dump = []
-        for _, move, *spec in self.history:
+        for _, move, *spec in self.history[:self.history_top]:
             if move == 'value':
                 cell, value, _ = spec
                 dump.append('I%02d%d' % (cell.cellnum, value))
