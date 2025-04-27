@@ -1074,21 +1074,22 @@ def solve_full_house(grid, explain):
     return 0
 
 
-def solve_single_candidate(grid, explain):
+def solve_single_candidate(grid, explain, target=None):
     # naked singles
     for cell in grid.cells:
         if len(cell.candidates) == 1:
             value = list(cell.candidates)[0]
-            discarded = grid.set_value(cell, value)
-            grid.push(('Naked single', 'value', cell, value, discarded))
-            return 10
+            if target is None or value == int(target):
+                discarded = grid.set_value(cell, value)
+                grid.push(('Naked single', 'value', cell, value, discarded))
+                return 10
     return 0
 
 
 # Single digit techniques
 
 
-def solve_hidden_candidate(grid, explain):
+def solve_hidden_candidate(grid, explain, target=None):
     # hidden singles
     for cell in grid.cells:
         if len(cell.candidates) == 1:
@@ -1096,7 +1097,7 @@ def solve_hidden_candidate(grid, explain):
         for cand in cell.candidates:
             if (cell.alone_in_row(cand) or
                 cell.alone_in_col(cand) or
-                cell.alone_in_box(cand)):
+                cell.alone_in_box(cand)) and (target is None or cand == int(target)):
                 discarded = grid.set_value(cell, cand)
                 grid.push(('Hidden single', 'value', cell, cand, discarded))
                 return 10
@@ -1106,46 +1107,50 @@ def solve_hidden_candidate(grid, explain):
 # Locked pairs and triples
 
 
-def solve_locked_pairs(grid, explain):
+def solve_locked_pairs(grid, explain, target=None):
 
     for trinum, triplet in enumerate(grid.boxrows):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                remove_set = [cell for cell in triplet if cell not in subset] + grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
-                nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
-                if nb_removed:
-                    return nb_removed
+                if target is None or subset[0].candidates == set(int(_) for _ in target):
+                    remove_set = [cell for cell in triplet if cell not in subset] + grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
+                    nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
+                    if nb_removed:
+                        return nb_removed
 
     for trinum, triplet in enumerate(grid.boxcols):
         for subset in itertools.combinations(triplet, 2):
             if len(subset[0].candidates) == 2 and subset[0].candidates == subset[1].candidates:
-                remove_set = [cell for cell in triplet if cell not in subset] + grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
-                nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
-                if nb_removed:
-                    return nb_removed
+                if target is None or subset[0].candidates == set(int(_) for _ in target):
+                    remove_set = [cell for cell in triplet if cell not in subset] + grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
+                    nb_removed = apply_locked_sets(grid, 'Locked pair', explain, subset[0].candidates, subset, remove_set)
+                    if nb_removed:
+                        return nb_removed
 
     return 0
 
 
-def solve_locked_triples(grid, explain):
+def solve_locked_triples(grid, explain, target=None):
 
     for trinum, triplet in enumerate(grid.boxrows):
         if all(len(cell.candidates) > 0 for cell in triplet):
             candidates = candidate_union(triplet)
             if len(candidates) == 3:
-                remove_set = grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
-                nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
-                if nb_removed:
-                    return nb_removed
+                if target is None or candidates == set(int(_) for _ in target):
+                    remove_set = grid.rows_less_boxrow[trinum] + grid.boxes_less_boxrow[trinum]
+                    nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
+                    if nb_removed:
+                        return nb_removed
 
     for trinum, triplet in enumerate(grid.boxcols):
         if all(len(cell.candidates) > 0 for cell in triplet):
             candidates = candidate_union(triplet)
             if len(candidates) == 3:
-                remove_set = grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
-                nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
-                if nb_removed:
-                    return nb_removed
+                if target is None or candidates == set(int(_) for _ in target):
+                    remove_set = grid.cols_less_boxcol[trinum] + grid.boxes_less_boxcol[trinum]
+                    nb_removed = apply_locked_sets(grid, 'Locked triple', explain, candidates, triplet, remove_set)
+                    if nb_removed:
+                        return nb_removed
 
     return 0
 
@@ -1176,9 +1181,11 @@ def describe_locked_set(legend, candidates, define_set, remove_dict):
 # Locked candidates
 
 
-def solve_pointing(grid, explain):
+def solve_pointing(grid, explain, target=None):
 
     for digit in ALLDIGITS:
+        if not (target is None or digit == int(target)):
+            continue
 
         for trinum, triplet in enumerate(grid.boxrows):
             if (candidate_in_cells(digit, triplet) and
@@ -1199,9 +1206,11 @@ def solve_pointing(grid, explain):
     return 0
 
 
-def solve_claiming(grid, explain):
+def solve_claiming(grid, explain, target=None):
 
     for digit in ALLDIGITS:
+        if not (target is None or digit == int(target)):
+            continue
 
         for trinum, triplet in enumerate(grid.boxrows):
             if (candidate_in_cells(digit, triplet) and
@@ -1254,26 +1263,28 @@ def describe_locked_candidates(caption, flavor, candidates, define_set, remove_d
 # Locked sets
 
 
-def solve_nacked_pairs(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, 2, 'Naked pair', explain) for x in grid.units())
+def solve_nacked_pairs(grid, explain, target=None):
+    nb_removed = (nacked_sets_n(grid, x, 2, 'Naked pair', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_nacked_triples(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, 3, 'Naked triple', explain) for x in grid.units())
+def solve_nacked_triples(grid, explain, target=None):
+    nb_removed = (nacked_sets_n(grid, x, 3, 'Naked triple', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_nacked_quads(grid, explain):
-    nb_removed = (nacked_sets_n(grid, x, 4, 'Naked quadruple', explain) for x in grid.units())
+def solve_nacked_quads(grid, explain, target=None):
+    nb_removed = (nacked_sets_n(grid, x, 4, 'Naked quadruple', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def nacked_sets_n(grid, unit, size, legend, explain):
+def nacked_sets_n(grid, unit, size, legend, explain, target=None):
     subcells = [cell for cell in unit if len(cell.candidates) > 1]
     for subset in itertools.combinations(subcells, size):
         candidates = candidate_union(subset)
         if len(candidates) == size:
+            if target and candidates != set(int(_) for _ in target):
+                continue
             cells_less_subset = [cell for cell in subcells if cell not in subset]
             nb_removed = apply_naked_set(grid, legend, explain, candidates, subset, cells_less_subset)
             if nb_removed:
@@ -3171,12 +3182,16 @@ SOLVER = {
 }
 
 
-def apply_strategy(grid, list_techniques, explain):
+def apply_strategy(grid, list_techniques, explain, target=None):
     for technique in list_techniques:
         if technique.isupper():
             continue
-        if SOLVER[technique](grid, explain):
-            return True
+        if technique in ('n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3'):
+            if SOLVER[technique](grid, explain, target):
+                return True
+        else:
+            if SOLVER[technique](grid, explain):
+                return True
     else:
         return False
 
