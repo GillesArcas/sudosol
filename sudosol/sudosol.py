@@ -19,11 +19,16 @@ import colorama
 from colorama import Fore
 from icecream import ic
 
-import dlx
 try:
+    # OK when calling from the dev directory but not when calling the
+    # installed package (executable entry point)
     import dlx_sudoku
+    import testing
 except:
+    # OK when calling the installed package (executable entry point) but not
+    # when calling from the dev directory
     from . import dlx_sudoku
+    from . import testing
 
 
 VERSION = '0.1'
@@ -1308,22 +1313,22 @@ def explain_naked_set(grid, caption, candidates, subset, remove_set, remove_dict
                 (remove_set, candidates, CellDecor.REMOVECAND)))
 
 
-def solve_hidden_pair(grid, explain):
-    nb_removed = (solve_hidden_set(grid, x, 2, 'Hidden pair', explain) for x in grid.units())
+def solve_hidden_pair(grid, explain, target=None):
+    nb_removed = (solve_hidden_set(grid, x, 2, 'Hidden pair', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_hidden_triple(grid, explain):
-    nb_removed = (solve_hidden_set(grid, x, 3, 'Hidden triple', explain) for x in grid.units())
+def solve_hidden_triple(grid, explain, target=None):
+    nb_removed = (solve_hidden_set(grid, x, 3, 'Hidden triple', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_hidden_quad(grid, explain):
-    nb_removed = (solve_hidden_set(grid, x, 4, 'Hidden quadruple', explain) for x in grid.units())
+def solve_hidden_quad(grid, explain, target=None):
+    nb_removed = (solve_hidden_set(grid, x, 4, 'Hidden quadruple', explain, target) for x in grid.units())
     return next((x for x in nb_removed if x), 0)
 
 
-def solve_hidden_set(grid, unit, size, caption, explain):
+def solve_hidden_set(grid, unit, size, caption, explain, target=None):
     cells = [cell for cell in unit if len(cell.candidates) > 1]
     for subset in itertools.combinations(cells, size):
         candidates = candidate_union(subset)
@@ -1332,6 +1337,8 @@ def solve_hidden_set(grid, unit, size, caption, explain):
         for candset in itertools.combinations(candidates, size):
             if not set(candset).intersection(candcompl):
                 if all(set(candset).intersection(cell.candidates) for cell in subset):
+                    if target and set(candset) != set(int(_) for _ in target):
+                       continue
                     nb_removed = apply_hidden_set(grid, caption, explain, candidates - set(candset), subset, subset)
                     if nb_removed:
                         return nb_removed
@@ -3186,7 +3193,7 @@ def apply_strategy(grid, list_techniques, explain, target=None):
     for technique in list_techniques:
         if technique.isupper():
             continue
-        if technique in ('n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3'):
+        if technique in ('n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4'):
             if SOLVER[technique](grid, explain, target):
                 return True
         else:
@@ -3456,6 +3463,8 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     parser.add_argument('-b', '--batch', help='test batch',
                         action='store', default=None)
+    parser.add_argument('--regression', help='regression testing',
+                        action='store_true')
     parser.add_argument('--reference', help='make file reference for comparison',
                         action='store', default=None)
     parser.add_argument('--compare', help='compare test output with file argument',
@@ -3512,6 +3521,9 @@ def main_args(options):
 
     elif options.batch:
         return testbatch(options)
+
+    elif options.regression:
+        return testing.regression_testing()
 
     else:
         return False, None
