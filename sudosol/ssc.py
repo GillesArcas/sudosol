@@ -348,8 +348,8 @@ def hodoku_hint_command(win):
     send_keys('^c')     # copy Simple Sudoku grid into clipboard
     app = Application(backend="uia").start(r'G:\Sudoku\.Applications\HoDoKu\hodoku.exe')
     time.sleep(3)
-    appcon = app.connect(title_re='HoDoKu.*', found_index=0)
-    winh = appcon.window(title_re='.*HoDoKu.*')
+    # appcon = app.connect(title_re='HoDoKu.*', found_index=0)
+    winh = app.window(title_re='.*HoDoKu.*')
     winh.set_focus()
     time.sleep(1)
     send_keys('^v')     # paste grid into HoDoKu
