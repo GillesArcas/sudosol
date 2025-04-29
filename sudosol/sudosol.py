@@ -24,7 +24,7 @@ try:
     # installed package (executable entry point)
     import dlx_sudoku
     import testing
-except:
+except ImportError:
     # OK when calling the installed package (executable entry point) but not
     # when calling from the dev directory
     from . import dlx_sudoku
@@ -3453,43 +3453,47 @@ def application_error(*args):
 def parse_command_line(argstring=None):
     usage = "usage: sudosol ..."
     parser = argparse.ArgumentParser(description=usage, usage=argparse.SUPPRESS)
-    parser.add_argument('-s', '--solve', help='solve grid in command line argument, clipboard or file',
+    agroup = parser.add_argument_group('Commands')
+    xgroup = agroup.add_mutually_exclusive_group()
+    xgroup.add_argument('-s', '--solve', help='solve grid in command line argument, clipboard or file',
                         action='store', default=None)
-    parser.add_argument('-f', '--format', help='format',
+    xgroup.add_argument('-t', '--testfile', help='test file',
                         action='store', default=None)
-    parser.add_argument('-t', '--testfile', help='test file',
+    xgroup.add_argument('-T', '--testdir', help='test directory',
                         action='store', default=None)
-    parser.add_argument('-T', '--testdir', help='test directory',
+    xgroup.add_argument('-b', '--batch', help='test batch',
                         action='store', default=None)
-    parser.add_argument('-b', '--batch', help='test batch',
-                        action='store', default=None)
-    parser.add_argument('--regression', help='regression testing',
+    xgroup.add_argument('--regression', help='regression testing',
                         action='store_true')
-    parser.add_argument('--reference', help='make file reference for comparison',
+
+    agroup = parser.add_argument_group('Parameters')
+    agroup.add_argument('--compare', help='compare test output with file argument',
                         action='store', default=None)
-    parser.add_argument('--compare', help='compare test output with file argument',
+    agroup.add_argument('-f', '--format', help='format',
                         action='store', default=None)
-    parser.add_argument('--random', help='test N random grids from file',
+    agroup.add_argument('--reference', help='make file reference for comparison',
+                        action='store', default=None)
+    agroup.add_argument('--random', help='test N random grids from file',
                         type=int,
                         action='store', default=None)
-    parser.add_argument('--first', help='test N first grids from file',
+    agroup.add_argument('--first', help='test N first grids from file',
                         type=int,
                         action='store', default=None)
-    parser.add_argument('--techniques', help='techniques',
+    agroup.add_argument('--techniques', help='techniques',
                         action='store', default='ssts')
-    parser.add_argument('--step', help='apply a single step from the given technique set',
+    agroup.add_argument('--step', help='apply a single step from the given technique set',
                         action='store_true', default=False)
-    parser.add_argument('--explain', help='explain techniques',
+    agroup.add_argument('--explain', help='explain techniques',
                         action='store_true', default=False)
-    parser.add_argument('--decorate', help='candidate decor when tracing grid',
+    agroup.add_argument('--decorate', help='candidate decor when tracing grid',
                         choices=['none', 'color', 'char'],
                         action='store', default=None)
-    parser.add_argument('--trace', help='additional traces',
+    agroup.add_argument('--trace', help='additional traces',
                         choices=['success', 'failure'],
                         action='store', default=None)
-    parser.add_argument('--output', help='file to trace on',
+    agroup.add_argument('--output', help='file to trace on',
                         action='store', default=None)
-    parser.add_argument('--progressbar', help='display progress bar when solving file',
+    agroup.add_argument('--progressbar', help='display progress bar when solving file',
                         action='store_true', default=False)
 
     if argstring is None:
