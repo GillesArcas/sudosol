@@ -3,16 +3,10 @@ import os
 import sys
 import re
 import itertools
-import glob
-import random
 import time
-import io
-import itertools
 
 from collections import defaultdict
 from enum import Enum
-from contextlib import redirect_stdout
-from tqdm import tqdm
 
 import clipboard
 import colorama
@@ -1338,7 +1332,7 @@ def solve_hidden_set(grid, unit, size, caption, explain, target=None):
             if not set(candset).intersection(candcompl):
                 if all(set(candset).intersection(cell.candidates) for cell in subset):
                     if target and set(candset) != set(int(_) for _ in target):
-                       continue
+                        continue
                     nb_removed = apply_hidden_set(grid, caption, explain, candidates - set(candset), subset, subset)
                     if nb_removed:
                         return nb_removed
@@ -3266,190 +3260,6 @@ def solvegrid(options, techniques, explain):
     return True, time.time() - t0
 
 
-def testfile(options, filename, techniques, explain):
-    grid = Grid()
-    grid.decorate = options.decorate
-    ngrids = 0
-    solved = 0
-    try:
-        with open(filename) as f:
-            grids = f.readlines()
-    except IOError:
-        application_error('unable to read', filename)
-
-    # remove empty lines and full line comments before choosing grids
-    grids = [line for line in grids if line.strip() and line[0] not in ';#']
-
-    # choose grids
-    if options.first:
-        if options.first < len(grids):
-            grids = grids[:options.first]
-    elif options.random:
-        if options.random < len(grids):
-            grids = random.sample(grids, options.random)
-    else:
-        pass
-
-    t0 = time.time()
-
-    try:
-        f = open(options.output, 'wt') if options.output else sys.stdout
-        for line in tqdm(grids, disable=not options.progressbar):
-            if '#' in line:
-                line = re.sub('#.*', '', line)
-            try:
-                input, output = line.strip().split(None, 1)
-                grid.input(input)
-                solve(grid, options, techniques, explain)
-                if grid.compare_string(output):
-                    solved += 1
-                    if options.trace == 'success':
-                        print(input, output, file=f)
-                else:
-                    if options.trace == 'failure':
-                        print(input, output, file=f)
-                ngrids += 1
-            except (ValueError, SudokuError):
-                print(f'Test file: {filename:20} Result: False Solved: {solved}/{ngrids} Error: Incorrect line format')
-                return False, 0
-    finally:
-        if options.output:
-            f.close()
-
-    timing = time.time() - t0
-    success = solved == ngrids
-    print(f'Test file: {filename:20} Result: {success} Solved: {solved}/{ngrids} Time: {timing:0.3}')
-    return success, timing
-
-
-def testdir(options, dirname, techniques, explain):
-    tested = 0
-    solved = 0
-    t0 = time.time()
-    for filename in sorted(glob.glob(f'{dirname}/*.txt')):
-        filename = filename.replace('\\', '/')
-        if not filename.startswith('.'):
-            tested += 1
-            success, timing = testfile(options, filename, techniques, explain)
-            if success:
-                solved += 1
-
-    success = solved == tested
-    timing_dir = time.time() - t0
-    print(f'Test dir : {dirname:20} Result: {success} Solved: {solved}/{tested} Time: {timing_dir:0.3}')
-    return success, timing_dir
-
-
-def testbatch(options):
-    success = True
-    timing_batch = 0
-
-    with open(options.batch) as batch:
-        for line in batch:
-            if line.strip() and line[0] not in ';#':
-                testargs = line.strip()
-                testoptions = parse_command_line(testargs)
-
-                # propagate batch options
-                if options.first:
-                    testoptions.first = options.first
-                if options.random:
-                    testoptions.random = options.random
-                if options.explain:
-                    testoptions.explain = options.explain
-                if options.decorate:
-                    testoptions.decorate = options.decorate
-
-                success, timing = main_args(testoptions)
-                if not success:
-                    break
-                timing_batch += timing
-
-    print(f'BATCH OK Time: {timing_batch:0.3}' if success else 'TEST FAILURE')
-    return success, timing_batch
-
-
-def compare_output(options):
-    compare = options.compare
-    reference = options.reference
-    options.compare = None
-    options.reference = None
-    t0 = time.time()
-
-    with io.StringIO() as buf, redirect_stdout(buf):
-        main_args(options)
-        output = buf.getvalue()
-
-    if reference:
-        with open(reference, 'wt') as f:
-            print(output, end='', file=f)
-        res = True
-
-    if compare:
-        output = output.splitlines(True)
-
-        with open(compare) as f:
-            reference = f.readlines()
-
-        # remove lines with timing
-        reference = remove_timing(reference)
-        output = remove_timing(output)
-
-        res, diff = list_compare('ref', 'res', reference, output)
-        print(f'COMPARE OK:' if res else 'COMPARE FAILURE:', compare)
-        if not res:
-            for _ in diff[0:20]:
-                print(_, end='')
-            with open('tmp.txt', 'wt') as f:
-                for line in output:
-                    print(line, file=f, end='')
-
-    return res, time.time() - t0
-
-
-def remove_timing(lines):
-    result = []
-    for line in lines:
-        if 'Time' not in line:
-            result.append(line)
-        else:
-            result.append(re.sub('Time: [^ \n]+', '', line))
-    return result
-
-
-def list_compare(tag1, tag2, list1, list2):
-
-    # make sure both lists have same length
-    maxlen = max(len(list1), len(list2))
-    list1.extend(['extra\n'] * (maxlen - len(list1)))
-    list2.extend(['extra\n'] * (maxlen - len(list2)))
-
-    diff = list()
-    res = True
-    for i, (x, y) in enumerate(zip(list1, list2)):
-        if x != y:
-            diff.append('line %s %d: %s' % (tag1, i + 1, x))
-            diff.append('line %s %d: %s' % (tag2, i + 1, y))
-            res = False
-    return res, diff
-
-
-def list_compare(tag1, tag2, list1, list2):
-    diff = list()
-    res = True
-    for i, (x, y) in enumerate(itertools.zip_longest(list1, list2, fillvalue='extra\n')):
-        if x != y:
-            diff.append('line %s %d: %s' % (tag1, i + 1, x))
-            diff.append('line %s %d: %s' % (tag2, i + 1, y))
-            res = False
-    return res, diff
-
-
-def application_error(*args):
-    print('sudosol error:', *args)
-    exit(1)
-
-
 def parse_command_line(argstring=None):
     usage = "usage: sudosol ..."
     parser = argparse.ArgumentParser(description=usage, usage=argparse.SUPPRESS)
@@ -3469,9 +3279,9 @@ def parse_command_line(argstring=None):
     agroup = parser.add_argument_group('Parameters')
     agroup.add_argument('--compare', help='compare test output with file argument',
                         action='store', default=None)
-    agroup.add_argument('-f', '--format', help='format',
-                        action='store', default=None)
     agroup.add_argument('--reference', help='make file reference for comparison',
+                        action='store', default=None)
+    agroup.add_argument('-f', '--format', help='format',
                         action='store', default=None)
     agroup.add_argument('--random', help='test N random grids from file',
                         type=int,
@@ -3512,19 +3322,21 @@ def main(argstring=None):
 
 def main_args(options):
     if options.compare or options.reference:
-        return compare_output(options)
+        # Must be done before testfile, testdir, testbatch. Result of comparison
+        # becomes result of test.
+        return testing.compare_output(options)
 
     elif options.solve:
         return solvegrid(options, options.techniques, options.explain)
 
     elif options.testfile:
-        return testfile(options, options.testfile, options.techniques, options.explain)
+        return testing.testfile(options, options.testfile, options.techniques, options.explain)
 
     elif options.testdir:
-        return testdir(options, options.testdir, options.techniques, options.explain)
+        return testing.testdir(options, options.testdir, options.techniques, options.explain)
 
     elif options.batch:
-        return testbatch(options)
+        return testing.testbatch(options)
 
     elif options.regression:
         return testing.regression_testing()
