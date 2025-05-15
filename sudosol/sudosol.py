@@ -63,6 +63,9 @@ class Cell:
         else:
             return ''.join(str(_) for _ in sorted(list(self.candidates)))
 
+    def __hash__(self):
+        return self.cellnum
+
     def strcoord(self):
         """format cell as coordinates
         """
@@ -1735,11 +1738,14 @@ def color_contradiction(same_color):
 # Multi  coloring
 
 
-def solve_multi_coloring_type_1(grid, explain):
+def solve_multi_coloring_type_1(grid, explain, target=None):
     """Consider two clusters. If a unit contains a color of each cluster, all
-    cells seing the opposite colors can be eliminated.
+    cells seeing the opposite colors can be eliminated.
     """
     for digit in ALLDIGITS:
+        if target and int(target) != digit:
+            continue
+
         clusters = make_clusters(grid, digit)
         clusters_data = []
         to_be_removed = None
@@ -1787,11 +1793,14 @@ def solve_multi_coloring_type_1(grid, explain):
     return 0
 
 
-def solve_multi_coloring_type_2(grid, explain):
+def solve_multi_coloring_type_2(grid, explain, target=None):
     """Consider two clusters. If a color of one cluster sees both colors of the
     second cluster, all candidates from first color can be eliminated.
     """
     for digit in ALLDIGITS:
+        if target and int(target) != digit:
+            continue
+
         clusters = make_clusters(grid, digit)
         clusters_data = []
         to_be_removed = None
@@ -1948,8 +1957,10 @@ def multi_peers(digit, cluster):
 # x-chains
 
 
-def solve_X_chain(grid, explain, technique='x'):
+def solve_X_chain(grid, explain, technique='x', target=None):
     for digit in ALLDIGITS:
+        if target and int(target) != digit:
+            continue
 
         cells, weak_links, strong_links = x_links(grid, digit)
         if len(strong_links) < 2:
@@ -2074,8 +2085,12 @@ def describe_x_chain(caption, digit, chain, remove_cells):
     return '%s: %d %s => %s' % (caption, digit, ' '.join(l), discarded_text(remove_cells))
 
 
-def solve_skyscraper(grid, explain):
-    return solve_X_chain(grid, explain, technique='sk')
+def solve_x_chain(grid, explain, target=None):
+    return solve_X_chain(grid, explain, technique='x', target=target)
+
+
+def solve_skyscraper(grid, explain, target=None):
+    return solve_X_chain(grid, explain, technique='sk', target=target)
 
 
 def test_skyscraper(chain):
@@ -2088,8 +2103,8 @@ def test_skyscraper(chain):
         return False
 
 
-def solve_2_string_kite(grid, explain):
-    return solve_X_chain(grid, explain, technique='2sk')
+def solve_2_string_kite(grid, explain, target=None):
+    return solve_X_chain(grid, explain, technique='2sk', target=target)
 
 
 def test_2_string_kite(chain):
@@ -2102,16 +2117,18 @@ def test_2_string_kite(chain):
         return False
 
 
-def solve_turbot_fish(grid, explain):
-    return solve_X_chain(grid, explain, technique='tf')
+def solve_turbot_fish(grid, explain, target=None):
+    return solve_X_chain(grid, explain, technique='tf', target=target)
 
 
 def test_turbot_fish(chain):
     return len(chain) == 4
 
 
-def solve_empty_rectangle(grid, explain):
+def solve_empty_rectangle(grid, explain, target=None):
     for digit in ALLDIGITS:
+        if target and int(target) != digit:
+            continue
         nb_removed = solve_empty_rectangle_rows(grid, explain, digit, grid.rows, Cell.mrownum, Cell.mcolnum)
         if nb_removed:
             return nb_removed
@@ -2190,7 +2207,7 @@ def describe_empty_rectangle(caption, digit, link, box, remove_dict):
 # xy-wings
 
 
-def solve_XY_wing(grid, explain):
+def solve_XY_wing(grid, explain, target=None):
     for cell in grid.cells:
         if cell.is_pair():
             pairpeers = (peer for peer in cell.peers if peer.is_pair())
@@ -2208,7 +2225,8 @@ def solve_XY_wing(grid, explain):
                     remove_set = cellinter(wing1.peers, wing2.peers)
                     nb_removed = apply_xy_wing(grid, 'XY-wing', explain, [cand1, cand2, digit], [cell, wing1, wing2], remove_set)
                     if nb_removed:
-                        return nb_removed
+                        if target is None or target == '%d%d%d' % tuple(sorted([cand1, cand2, digit])):
+                            return nb_removed
     return 0
 
 
@@ -3162,7 +3180,7 @@ SOLVER = {
     'er': solve_empty_rectangle,
     'xy': solve_XY_wing,
     'xyz': solve_XYZ_wing,
-    'x': solve_X_chain,
+    'x': solve_x_chain,
     'rp': solve_remote_pair,
     'xyc': solve_XY_chain,
     'bug1': solve_bug1,
@@ -3183,11 +3201,17 @@ SOLVER = {
 }
 
 
+TARGETED_TECHNIQUES = (
+    'n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4',
+    'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2'
+)
+
+
 def apply_strategy(grid, list_techniques, explain, target=None):
     for technique in list_techniques:
         if technique.isupper():
             continue
-        if technique in ('n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4'):
+        if technique in TARGETED_TECHNIQUES:
             if SOLVER[technique](grid, explain, target):
                 return True
         else:
