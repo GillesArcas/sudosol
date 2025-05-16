@@ -200,6 +200,7 @@ def discarded_to_string(discarded: str) -> bool:
         eliminations |= {f'{cand}{cell.rownum + 1}{cell.colnum + 1}' for cell in cells}
     return ' '.join(sorted(eliminations))
 
+
 def compare_discarded(eliminations: str, discarded: dict) -> bool:
     # eliminations: <cand1><col><row> <cand2><col><row> ...
     # discarded: {cand1 : cells, cand2: cells, ...}
@@ -214,28 +215,34 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
     # extra may be omitted
     if line.count(':') == 6:
         line += ':'
-    tech, candidates, values, exclusions, eliminations, placements, extra = line[1:].split(':')
+    technique, candidates, values, exclusions, eliminations, placements, extra = line[1:].split(':')
 
-    if tech == '0610-x':
-        # TODO: à voir, en particulier à cause du assert ligne2528
+    if technique == '0610-x':
+        # TODO: à voir, en particulier à cause du assert ligne 2528
         counters['ignored'] += 1
         return
 
     counters['tested'] += 1
     grid = sudosol.Grid()
     grid.input_hodoku(values + ':' + exclusions)
-    # print(grid.dumpstr())
-    tech = tech[:4]
-    # print(terminology[tech])
+
+    tech = technique[:4]
     techname, caption = technique_names[tech]
     list_techniques = sudosol.make_list_techniques(sudosol.STRATEGY_HODOKU_UNFAIR)
 
     if techname not in list_techniques:
         counters['not_implemented'] += 1
         if tech not in not_implemented:
-            not_implemented[tech] = 0
+            not_implemented[tech] = 1
         else:
             not_implemented[tech] += 1
+    elif re.match(r'060[0-6]-2', technique):
+        # Unique rectangles and hidden rectangles with missing candidates
+        counters['not_implemented'] += 1
+        if technique not in not_implemented:
+            not_implemented[technique] = 1
+        else:
+            not_implemented[technique] += 1
     else:
         if sudosol.apply_strategy(grid, [techname], explain=False, target=candidates):
             _, move, *rest = grid.history[grid.history_top]
@@ -246,16 +253,10 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
                         counters['solved'] += 1
                     else:
                         counters['partial'] += 1
-                        print(line)
-                        print(tech, techname, caption)
-                        print('Partial (1)', eliminations, ' | ', discarded_to_string(discarded))
-                        print()
+                        trace(line, tech, techname, caption, 'Partial (1)', eliminations, ' | ', discarded_to_string(discarded))
                 else:
                     counters['failed'] += 1
-                    print(line)
-                    print(tech, techname, caption)
-                    print('Failed (1)')
-                    print()
+                    trace(line, tech, techname, caption, 'Failed (1)')
             elif placements:
                 if move == 'value':
                     cell, value, discarded = rest
@@ -263,25 +264,23 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
                         counters['solved'] += 1
                     else:
                         counters['partial'] += 1
-                        print(line)
-                        print(tech, techname, caption)
-                        print('Partial (2)', placements, set([value]))
-                        print()
+                        trace(line, tech, techname, caption, 'Partial (2)', placements, set([value]))
                 else:
                     counters['failed'] += 1
-                    print(line)
-                    print(tech, techname, caption)
-                    print('Failed (2)')
-                    print()
+                    trace(line, tech, techname, caption, 'Failed (2)')
             else:
                 assert 0
 
         else:
             counters['failed'] += 1
-            print(line)
-            print(tech, techname, caption)
-            print('Failed (3)')
-            print()
+            trace(line, tech, techname, caption, 'Failed (3)')
+
+
+def trace(line, tech, techname, caption, *more):
+    print(line)
+    print(tech, techname, caption)
+    print(*more)
+    print()
 
 
 def get_technique_names():
@@ -313,7 +312,7 @@ def regression_testing():
 
     print('Not implemented')
     for tech, count in sorted(not_implemented.items()):
-        print(tech, *technique_names[tech], count)
+        print(tech, *technique_names[tech[:4]], count)
     print()
 
     for counter, value in counters.items():
