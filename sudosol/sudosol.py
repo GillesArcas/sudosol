@@ -2709,18 +2709,15 @@ def solve_uniqueness_test_3_on_unit(grid, explain, candidates, cell1, cell2, row
                         nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, row)
                         if nb_removed:
                             return nb_removed
-                        if cell3.boxnum == cell4.boxnum:
-                            nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, grid.boxes[cell3.boxnum])
-                            if nb_removed:
-                                return nb_removed
+                        nb_removed = solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, cell3.box)
+                        if nb_removed:
+                            return nb_removed
     return 0
 
 
 def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cell2, cell3, cell4, rows, target):
     # will search for subset in target
-    subcells = {cell for cell in target if len(cell.candidates) > 1}
-    subcells.discard(cell3)
-    subcells.discard(cell4)
+    subcells = {cell for cell in target if len(cell.candidates) > 1 and len(cell.candidates.intersection(candidates)) == 0}
     # the additional candidates in rectangle
     extra = cellunion(cell3.candidates, cell4.candidates) - candidates
     for length in range(2, 7):
@@ -2729,23 +2726,50 @@ def solve_uniqueness_test_3_on_unit_target(grid, explain, candidates, cell1, cel
                 setcandidates = candidate_union(subset)
                 setcandidates = setcandidates.union(extra)
                 if len(setcandidates) == length:
-                    # found a subset, completed with the extra candidates, it forms a naked subset of length length
-                    cells_less_subset = [cell for cell in subcells if cell not in subset]
+                    # found a subset, completed with the extra candidates, it
+                    # forms a naked subset of length length
                     nb_removed = apply_naked_set_u3(
-                        grid, 'Uniqueness test 3', explain, [candidates, setcandidates],
-                        [cell1, cell2, cell3, cell4], subset, cells_less_subset
+                        grid, 'Uniqueness test 3', explain, candidates, setcandidates,
+                        [cell1, cell2, cell3, cell4], subset
                     )
                     if nb_removed:
                         return nb_removed
     return 0
 
 
-def apply_naked_set_u3(grid, caption, explain, candidates, define_set, subset, remove_set):
-    defcand, extra = candidates
-    remove_dict = candidates_cells(extra, remove_set)
+def apply_naked_set_u3(grid, caption, explain, defcand, setcand, defset, subset):
+    # defcand: pair of candidates defining the rectangle
+    # setcand: candidates in the nacked set
+    # defset: cells of the rectangle (cell1 and cell2 with no extra, cell3 and
+    #         cell4 with extra candidates)
+    # subset: cells of nacked set (with cell3 and cell4)
+    cell1, cell2, cell3, cell4 = defset
+
+    # the virtual nacked set
+    nset = {cell3, cell4} | set(subset)
+
+    # find the set of cells where nacked set candidates can be removed
+    if cell3.rownum == cell4.rownum:
+        # in row
+        locked = len({_.boxrownum for _ in nset}) == 1
+        inrow = len({_.rownum for _ in nset}) == 1
+        unit = cell3.row
+    else:
+        # in col
+        locked = len({_.boxcolnum for _ in nset}) == 1
+        inrow = len({_.colnum for _ in nset}) == 1
+        unit = cell3.col
+    if locked:
+        remove_set = (set(cell3.box) | set(unit)) - nset
+    elif inrow:
+        remove_set = set(unit) - nset
+    else:
+        remove_set = set(cell3.box) - nset
+
+    remove_dict = candidates_cells(setcand, remove_set)
     if remove_dict:
         if explain:
-            explain_uniqueness_test_3(grid, caption, candidates, define_set, subset, remove_set, remove_dict)
+            explain_uniqueness_test_3(grid, caption, (defcand, setcand), defset, subset, remove_set, remove_dict)
         return apply_remove_candidates(grid, caption, remove_dict)
     return 0
 
