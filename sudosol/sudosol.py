@@ -2297,7 +2297,7 @@ def explain_xyz_wing(grid, caption, digit, define_set, remove_dict):
 # xy-chains
 
 
-def solve_XY_chain(grid, explain, remote_pair=False):
+def solve_XY_chain(grid, explain, target=None, remote_pair=False):
     all_solutions = False
     pairs, links = xy_links(grid, remote_pair)
 
@@ -2320,7 +2320,10 @@ def solve_XY_chain(grid, explain, remote_pair=False):
                         cells_to_discard = test_new_chain(grid, adjacency[i][j],
                                                           adjacency1, adjacency2, all_solutions, remote_pair)
                         if cells_to_discard:
-                            return apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
+                            _, candchain = adjacency[i][j][-1]
+                            candset = candchain[:2] if remote_pair else candchain[:1]
+                            if target is None or ''.join(str(_) for _ in sorted(candset)) == target:
+                                return apply_xy_chain(grid, caption, explain, adjacency[i][j][-1], cells_to_discard, remote_pair)
 
     if all_solutions:  # not used
         for i in range(len(pairs)):
@@ -3227,7 +3230,7 @@ SOLVER = {
 
 TARGETED_TECHNIQUES = (
     'n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4',
-    'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2'
+    'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2', 'xyc'
 )
 
 
@@ -3236,7 +3239,7 @@ def apply_strategy(grid, list_techniques, explain, target=None):
         if technique.isupper():
             continue
         if technique in TARGETED_TECHNIQUES:
-            if SOLVER[technique](grid, explain, target):
+            if SOLVER[technique](grid, explain, target=target):
                 return True
         else:
             if SOLVER[technique](grid, explain):
