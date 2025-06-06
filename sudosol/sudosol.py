@@ -2490,10 +2490,14 @@ def describe_xy_chain(caption, candset, cellchain, candchain, remove_cells):
 # W-wing
 
 
-def solve_w_wing(grid, explain):
+def solve_w_wing(grid, explain, target=None):
+    if target:
+        target = set(int(_)  for _ in target)
     pairs = bivaluedict(grid)
 
     for candidates, cells in pairs.items():
+        if target and target != candidates:
+            continue
         for wing1, wing2 in itertools.combinations(sorted(cells), 2):
             if wing1.rownum == wing2.rownum or wing1.colnum == wing2.colnum:
                 continue
@@ -3254,7 +3258,7 @@ SOLVER = {
 TARGETED_TECHNIQUES = (
     'n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4',
     'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2', 'xyc', 'fbf3', 'sbf3', 'fbf4', 'sbf4',
-    'xyz'
+    'xyz', 'w'
 )
 
 
