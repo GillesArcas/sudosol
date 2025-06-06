@@ -210,6 +210,16 @@ def compare_discarded(eliminations: str, discarded: dict) -> bool:
     return set(eliminations.split()) == eliminations2
 
 
+def not_implemented_variant(technique):
+    if re.match(r'060[0-6]-2', technique):
+        # Unique rectangles and hidden rectangles with missing candidates
+        return True
+    if re.match(r'03..1', technique):
+        # Siamese fishes
+        return True
+    return False
+
+
 def testone(technique_names, line, counters: dict, not_implemented: dict):
     counters['total'] += 1
     # extra may be omitted
@@ -236,8 +246,7 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
             not_implemented[tech] = 1
         else:
             not_implemented[tech] += 1
-    elif re.match(r'060[0-6]-2', technique):
-        # Unique rectangles and hidden rectangles with missing candidates
+    elif not_implemented_variant(technique):
         counters['not_implemented'] += 1
         if technique not in not_implemented:
             not_implemented[technique] = 1
