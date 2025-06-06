@@ -2991,10 +2991,18 @@ def subsets(cells, delta):
                 yield subset, candidates
 
 
-def solve_sue_de_coq(grid, explain):
+def solve_sue_de_coq(grid, explain, target=None):
+    """
+    Return the first working Sue de Coq pattern (or target).
+    """
+    if target:
+        target = set(int(_) for _ in target)
     for pattern in sue_de_coq_patterns(grid, explain):
         cells, cells_row, cells_box, candidates, cand_row, cand_box, extra, row_less_cells, box_less_cells = pattern
         remove_dict = remove_cells_sue_de_coq(pattern)
+        digits = set(remove_dict)
+        if target and digits != target:
+            continue
         nb_removed = sum(len(cells) for cand, cells in remove_dict.items())
         if nb_removed > 0:
             apply_sue_de_coq(grid, 'Sue de Coq', explain,
@@ -3005,6 +3013,9 @@ def solve_sue_de_coq(grid, explain):
 
 
 def solve_sue_de_coq_best(grid, explain):
+    """
+    Return the Sue de Coq removing the most candidates.
+    """
     max_removed = 0
     max_pattern = None
     for pattern in sue_de_coq_patterns(grid, explain):
@@ -3258,7 +3269,7 @@ SOLVER = {
 TARGETED_TECHNIQUES = (
     'n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4',
     'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2', 'xyc', 'fbf3', 'sbf3', 'fbf4', 'sbf4',
-    'xyz', 'w'
+    'xyz', 'w', 'sdc'
 )
 
 
