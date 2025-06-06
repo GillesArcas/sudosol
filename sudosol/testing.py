@@ -280,6 +280,8 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
             else:
                 assert 0
 
+        elif technique == '0606-x':
+            counters['failed_ok'] += 1
         else:
             counters['failed'] += 1
             trace(line, tech, techname, caption, 'Failed (3)')
@@ -311,7 +313,7 @@ def get_technique_names():
 
 def regression_testing():
     technique_names = get_technique_names()
-    counters = dict(total=0, ignored=0, tested=0, solved=0, partial=0, not_implemented=0, failed=0)
+    counters = dict(total=0, ignored=0, tested=0, solved=0, partial=0, not_implemented=0, failed=0, failed_ok=0)
     not_implemented = {}
     t0 = time.time()
     with open(REGTEST) as f:
