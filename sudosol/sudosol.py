@@ -1534,24 +1534,26 @@ def describe_finned_fish(legend, candidates, subset, fin, orientation, remove_di
         discarded_text(remove_dict))
 
 
-def solve_finned_swordfish(grid, explain):
-    return solve_finned_fish(grid, explain, 3, 'Finned swordfish', tech={'Finned'})
+def solve_finned_swordfish(grid, explain, target=None):
+    return solve_finned_fish(grid, explain, 3, 'Finned swordfish', tech={'Finned'}, target=target)
 
 
-def solve_finned_jellyfish(grid, explain):
-    return solve_finned_fish(grid, explain, 4, 'Finned jellyfish', tech={'Finned'})
+def solve_finned_jellyfish(grid, explain, target=None):
+    return solve_finned_fish(grid, explain, 4, 'Finned jellyfish', tech={'Finned'}, target=target)
 
 
-def solve_sashimi_swordfish(grid, explain):
-    return solve_finned_fish(grid, explain, 3, 'Sashimi swordfish', tech={'Sashimi'})
+def solve_sashimi_swordfish(grid, explain, target=None):
+    return solve_finned_fish(grid, explain, 3, 'Sashimi swordfish', tech={'Sashimi'}, target=target)
 
 
-def solve_sashimi_jellyfish(grid, explain):
-    return solve_finned_fish(grid, explain, 4, 'Sashimi jellyfish', tech={'Sashimi'})
+def solve_sashimi_jellyfish(grid, explain, target=None):
+    return solve_finned_fish(grid, explain, 4, 'Sashimi jellyfish', tech={'Sashimi'}, target=target)
 
 
-def solve_finned_fish(grid, explain, size, name, tech):
+def solve_finned_fish(grid, explain, size, name, tech, target):
     for digit in ALLDIGITS:
+        if not (target is None or digit == int(target)):
+            continue
         nb_removed = solve_finned_fish_rows(grid, explain, size, name, digit, grid.rows, grid.cols, Cell.mrownum, Cell.mcolnum, Cell.mboxrow, tech)
         if nb_removed:
             return nb_removed
@@ -1562,25 +1564,30 @@ def solve_finned_fish(grid, explain, size, name, tech):
 
 
 def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum, mcolnum, mboxrow, tech):
+    # list of rows with at least two cells with the given candidate
     candrows = []
     for row in rows:
         rowcells = [cell for cell in row if digit in cell.candidates]
         if len(rowcells) >= 2:
             candrows.append(rowcells)
 
+    # consider all subsets of candrows with the given size
     for defrows in itertools.combinations(candrows, size):
+
+        # set of covering columns numbers
         colsnum = {mcolnum(cell) for row in defrows for cell in row}
 
+        # consider all subsets of covering columns with the given size
         for covercols in itertools.combinations(sorted(colsnum), size):
 
-            # search for cell in defrows not in coverrows
+            # search for cell in defrows not in covercols (potential fins)
             complement = set()
             for row in defrows:
                 for cell in row:
                     if mcolnum(cell) not in covercols:
                         complement.add(cell)
 
-            # all cells in complement must be in a single box
+            # all cells in complement (potential fins) must be in a single box
             box = None
             for cell in complement:
                 if box is None:
@@ -1590,6 +1597,7 @@ def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum
                 else:
                     # at least two boxes
                     box = False
+                    break
 
             if not box:
                 continue
@@ -1605,7 +1613,9 @@ def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum
                 continue
 
             # test for sashimi
-            if 'Sashimi' not in tech and not is_genuine_fish(grid, size, digit, rows, defrows, covercols, mrownum, mcolnum):
+            if 'Sashimi' in tech or is_genuine_fish(grid, size, digit, rows, defrows, covercols, mrownum, mcolnum):
+                pass
+            else:
                 continue
 
             defcells = []
@@ -1621,6 +1631,7 @@ def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum
                     fin_set.append(cell)
                 elif not in_base and in_cover:
                     remove_set.append(cell)
+            assert sorted(fin_set) == sorted(complement)
 
             nb_removed = apply_finned_fish(grid, name, explain, [digit], [defcells] + [fin_set], remove_set)
             if nb_removed:
@@ -1629,16 +1640,24 @@ def solve_finned_fish_rows(grid, explain, size, name, digit, rows, cols, mrownum
 
 
 def is_genuine_fish(grid, size, digit, rows, fishrows, colnums, mrownum, mcolnum):
+    """
+    Base set in rows, cover set in columns.
+    At least, two candidates in each row of the fish.
+    At least, one candidate in each column of the fish.
+    fishrows: only the cells with candidate in rows
+    """
     if len(fishrows) != len(colnums):
         return False
     else:
         for row in fishrows:
+            # number of cells in base row belonging to one of cover columns
             n = sum(1 for cell in row if mcolnum(cell) in colnums)
             if n < 2:
                 return False
         for colnum in colnums:
+            # number of cells in cover column belonging to one of base rows
             n = sum(1 for row in fishrows if rows[mrownum(row[0])][colnum] in row)
-            if n < 2:
+            if n < 1: # < 2:
                 return False
         return True
 
@@ -3230,7 +3249,7 @@ SOLVER = {
 
 TARGETED_TECHNIQUES = (
     'n1', 'h1', 'lc1', 'lc2', 'n2', 'n3', 'n4', 'l2', 'l3', 'h2', 'h3', 'h4',
-    'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2', 'xyc'
+    'er', 'x', 'sk', '2sk', 'tf', 'xy', 'mc1', 'mc2', 'xyc', 'fbf3', 'sbf3', 'fbf4', 'sbf4'
 )
 
 
@@ -3248,12 +3267,13 @@ def apply_strategy(grid, list_techniques, explain, target=None):
         return False
 
 
-def solve(grid, options, techniques, explain, step=False):
+def solve(grid, options, techniques, explain, step=False, target=None):
+    # TODO: why arg step and option step?
     list_techniques = make_list_techniques(techniques)
     if explain:
         print(grid.output_s81())
         grid.dump()
-    while not grid.is_solved() and apply_strategy(grid, list_techniques, explain) and not options.step:
+    while not grid.is_solved() and apply_strategy(grid, list_techniques, explain, target) and not options.step:
         if step:
             break
         else:
@@ -3267,7 +3287,7 @@ def solve(grid, options, techniques, explain, step=False):
 # Commands
 
 
-def solvegrid(options, techniques, explain):
+def solvegrid(options, techniques, explain, target):
     """
     Solve a single grid given on the command line, in the clipboard or
     a file.
@@ -3279,6 +3299,8 @@ def solvegrid(options, techniques, explain):
     if re.match(r'[\d.]{81}', options.solve):
         sgrid = options.solve
     elif re.match(r'(\d{1,9},){80}\d{1,9}', options.solve):
+        sgrid = options.solve
+    elif re.match(r'(\+?[.1-9]){81}:[ 1-9]*$', options.solve):
         sgrid = options.solve
     elif options.solve == 'clipboard':
         sgrid = clipboard.paste()
@@ -3298,13 +3320,13 @@ def solvegrid(options, techniques, explain):
         return False, None
 
     if options.output == 'clipboard':
-        solve(grid, options, techniques, explain)
+        solve(grid, options, techniques, explain, options.step, target)
         clipboard.copy(grid.dumpstr())
     else:
         if not explain:
             print(grid.output_s81())
             grid.dump()
-        solve(grid, options, techniques, explain)
+        solve(grid, options, techniques, explain, options.step, target)
         if not explain:
             grid.dump()
 
@@ -3342,6 +3364,8 @@ def parse_command_line(argstring=None):
                         action='store', default=None)
     agroup.add_argument('--techniques', help='techniques',
                         action='store', default='ssts')
+    agroup.add_argument('--target', help='taeget',
+                        action='store', default=None)
     agroup.add_argument('--step', help='apply a single step from the given technique set',
                         action='store_true', default=False)
     agroup.add_argument('--explain', help='explain techniques',
@@ -3378,7 +3402,7 @@ def main_args(options):
         return testing.compare_output(options)
 
     elif options.solve:
-        return solvegrid(options, options.techniques, options.explain)
+        return solvegrid(options, options.techniques, options.explain, options.target)
 
     elif options.testfile:
         return testing.testfile(options, options.testfile, options.techniques, options.explain)
