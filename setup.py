@@ -34,7 +34,7 @@ if __name__ == "__main__":
         author='Gilles Arcas',
         author_email='gilles.arcas@gmail.com',
         description='Sudoku solver using human techniques\n',
-        install_requires=['colorama', 'clipboard', 'dlx'],
+        install_requires=['colorama', 'clipboard', 'dlx', 'tabulate'],
         dependency_links=['file:\\' + os.path.join(os.getcwd(), 'dlx')],
         packages=find_packages(),
         entry_points={

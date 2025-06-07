@@ -3367,7 +3367,7 @@ def parse_command_line(argstring=None):
     xgroup.add_argument('-b', '--batch', help='test batch',
                         action='store', default=None)
     xgroup.add_argument('--regression', help='regression testing',
-                        action='store_true')
+                        action='store')
 
     agroup = parser.add_argument_group('Parameters')
     agroup.add_argument('--compare', help='compare test output with file argument',
@@ -3417,7 +3417,7 @@ def main(argstring=None):
 
 def main_args(options):
     if options.compare or options.reference:
-        # Must be done before testfile, testdir, testbatch. Result of comparison
+        # Must be done before testfile, testdir, testbatch, regr. Result of comparison
         # becomes result of test.
         return testing.compare_output(options)
 
@@ -3434,7 +3434,7 @@ def main_args(options):
         return testing.testbatch(options)
 
     elif options.regression:
-        return testing.regression_testing()
+        return testing.regression_testing(options.regression)
 
     else:
         return False, None

@@ -7,7 +7,9 @@ import random
 import io
 import itertools
 from contextlib import redirect_stdout
+from collections import defaultdict
 
+from tabulate import tabulate
 from tqdm import tqdm
 from icecream import ic
 
@@ -187,9 +189,6 @@ def list_compare(tag1, tag2, list1, list2):
     return res, diff
 
 
-REGTEST = r'D:\Gilles\Dev\sudosol\tests\reglib-1.3.txt'
-
-
 def compare_placements(placements: str, cell) -> bool:
     return placements == f'{cell.value}{cell.rownum + 1}{cell.colnum + 1}'
 
@@ -220,7 +219,7 @@ def not_implemented_variant(technique):
     return False
 
 
-def testone(technique_names, line, counters: dict, not_implemented: dict):
+def testone(technique_names, line, counters: dict, implemented: dict, not_implemented: dict):
     counters['total'] += 1
     # extra may be omitted
     if line.count(':') == 6:
@@ -242,17 +241,12 @@ def testone(technique_names, line, counters: dict, not_implemented: dict):
 
     if techname not in list_techniques:
         counters['not_implemented'] += 1
-        if tech not in not_implemented:
-            not_implemented[tech] = 1
-        else:
-            not_implemented[tech] += 1
+        not_implemented[tech] += 1
     elif not_implemented_variant(technique):
         counters['not_implemented'] += 1
-        if technique not in not_implemented:
-            not_implemented[technique] = 1
-        else:
-            not_implemented[technique] += 1
+        not_implemented[technique] += 1
     else:
+        implemented[technique] += 1
         if sudosol.apply_strategy(grid, [techname], explain=False, target=candidates):
             _, move, *rest = grid.history[grid.history_top]
             if eliminations:
@@ -311,24 +305,41 @@ def get_technique_names():
     return technique_names
 
 
-def regression_testing():
+def regression_testing(regtestfile):
     technique_names = get_technique_names()
     counters = dict(total=0, ignored=0, tested=0, solved=0, partial=0, not_implemented=0, failed=0, failed_ok=0)
-    not_implemented = {}
+    implemented = defaultdict(int)
+    not_implemented = defaultdict(int)
     t0 = time.time()
-    with open(REGTEST) as f:
+    with open(regtestfile) as f:
         for line in f:
             if line.strip() and line[0] != '#':
-                testone(technique_names, line.strip(), counters, not_implemented)
+                testone(technique_names, line.strip(), counters, implemented, not_implemented)
 
-    print('Not implemented')
-    for tech, count in sorted(not_implemented.items()):
-        print(tech, *technique_names[tech[:4]], count)
+    print('Implemented techniques')
+    tabulate_data = []
+    for tech, count in sorted(implemented.items()):
+        tabulate_data.append([tech, *technique_names[tech[:4]], count])
+    print(tabulate(tabulate_data))
     print()
 
+    print('Techniques or variants not implemented')
+    tabulate_data = []
+    for tech, count in sorted(not_implemented.items()):
+        tabulate_data.append([tech, *technique_names[tech[:4]], count])
+    print(tabulate(tabulate_data))
+    print()
+
+    print('Statistics')
+    tabulate_data = []
     for counter, value in counters.items():
-        print(counter, value)
-    print('check', counters['solved'] + counters['partial'] + counters['not_implemented'] + counters['failed'])
+        tabulate_data.append([counter, value])
+    tabulate_data.append([
+        'check',
+        counters['solved'] + counters['partial'] + counters['not_implemented'] + counters['failed'] + counters['failed_ok']
+    ])
+    print(tabulate(tabulate_data))
+    print()
     t1 = time.time()
     return counters['partial'] == counters['failed'] == 0, t1 - t0
 
