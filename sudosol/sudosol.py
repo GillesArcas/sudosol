@@ -1754,7 +1754,7 @@ def color_contradiction(same_color):
     return any(x > 1 for x in rows) or any(x > 1 for x in cols) or any(x > 1 for x in boxs)
 
 
-# Multi  coloring
+# Multi coloring
 
 
 def solve_multi_coloring_type_1(grid, explain, target=None):
@@ -1783,25 +1783,21 @@ def solve_multi_coloring_type_1(grid, explain, target=None):
             _, cluster_blue1, cluster_green1, peers_cluster_blue1, peers_cluster_green1, _ = clusters_data1
             _, cluster_blue2, cluster_green2, peers_cluster_blue2, peers_cluster_green2, _ = clusters_data2
 
+            to_be_removed = []
             if any(cell in peers_cluster_blue2 for cell in cluster_blue1):
-                to_be_removed = cellinter(peers_cluster_green1, peers_cluster_green2)
-                if to_be_removed:
-                    break
+               to_be_removed.extend(cellinter(peers_cluster_green1, peers_cluster_green2))
 
             if any(cell in peers_cluster_green2 for cell in cluster_blue1):
-                to_be_removed = cellinter(peers_cluster_green1, peers_cluster_blue2)
-                if to_be_removed:
-                    break
+               to_be_removed.extend(cellinter(peers_cluster_green1, peers_cluster_blue2))
 
             if any(cell in peers_cluster_blue2 for cell in cluster_green1):
-                to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_green2)
-                if to_be_removed:
-                    break
+               to_be_removed.extend(cellinter(peers_cluster_blue1, peers_cluster_green2))
 
             if any(cell in peers_cluster_green2 for cell in cluster_green1):
-                to_be_removed = cellinter(peers_cluster_blue1, peers_cluster_blue2)
-                if to_be_removed:
-                    break
+               to_be_removed.extend(cellinter(peers_cluster_blue1, peers_cluster_blue2))
+
+            if to_be_removed:
+                break
 
         if to_be_removed:
             return apply_multicolor(grid, 'Multi color type 1', explain, digit,
