@@ -2581,7 +2581,9 @@ def solve_bug1(grid, explain):
             len(digits['box', more_than_2.boxnum, candidate]) != 2):
             extra = candidate
             break
-    assert extra
+    if extra is None:
+        # not a BUG+1
+        return 0
 
     # remove cells with extra candidate
     digits['row', more_than_2.rownum, candidate].discard(more_than_2)

@@ -226,11 +226,6 @@ def testone(technique_names, line, counters: dict, implemented: dict, not_implem
         line += ':'
     technique, candidates, values, exclusions, eliminations, placements, extra = line[1:].split(':')
 
-    if technique == '0610-x':
-        # TODO: à voir, en particulier à cause du assert ligne 2528
-        counters['ignored'] += 1
-        return
-
     counters['tested'] += 1
     grid = sudosol.Grid()
     grid.input_hodoku(values + ':' + exclusions)
@@ -274,7 +269,7 @@ def testone(technique_names, line, counters: dict, implemented: dict, not_implem
             else:
                 assert 0
 
-        elif technique == '0606-x':
+        elif technique in ('0606-x', '0610-x'):
             counters['failed_ok'] += 1
         else:
             counters['failed'] += 1
@@ -307,7 +302,7 @@ def get_technique_names():
 
 def regression_testing(regtestfile):
     technique_names = get_technique_names()
-    counters = dict(total=0, ignored=0, tested=0, solved=0, partial=0, not_implemented=0, failed=0, failed_ok=0)
+    counters = dict(total=0, tested=0, solved=0, partial=0, not_implemented=0, failed=0, failed_ok=0)
     implemented = defaultdict(int)
     not_implemented = defaultdict(int)
     t0 = time.time()
@@ -334,10 +329,7 @@ def regression_testing(regtestfile):
     tabulate_data = []
     for counter, value in counters.items():
         tabulate_data.append([counter, value])
-    tabulate_data.append([
-        'check',
-        counters['solved'] + counters['partial'] + counters['not_implemented'] + counters['failed'] + counters['failed_ok']
-    ])
+    tabulate_data.append(['check', sum(counters[_] for _ in counters if _ not in ('total', 'tested'))])
     print(tabulate(tabulate_data))
     print()
     t1 = time.time()
