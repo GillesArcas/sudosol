@@ -1,0 +1,103 @@
+Implemented techniques
+------  ----  -----------------------------------  --
+0000    fh    Full_House                           37
+0002    h1    Hidden_Single                        36
+0003    n1    Naked_Single                         35
+0100    lc1   Locked_Candidates_Type_1_(Pointing)  36
+0101    lc2   Locked_Candidates_Type_2_(Claiming)  36
+0110-1  l2    Locked_Pair                          18
+0111-1  l3    Locked_Triple                        14
+0200    n2    Naked_Pair                           27
+0201    n3    Naked_Triple                         27
+0202    n4    Naked_Quadruple                      11
+0210    h2    Hidden_Pair                          27
+0211    h3    Hidden_Triple                        27
+0212    h4    Hidden_Quadruple                     17
+0300    bf2   X-Wing                               11
+0301    bf3   Swordfish                            11
+0302    bf4   Jellyfish                            12
+0310    fbf2  Finned_X-Wing                        10
+0311    fbf3  Finned_Swordfish                     11
+0312    fbf4  Finned_Jellyfish                     10
+0320    sbf2  Sashimi_X-Wing                        9
+0321    sbf3  Sashimi_Swordfish                     9
+0322    sbf4  Sashimi_Jellyfish                     7
+0400    sk    Skyscraper                           10
+0401    2sk   2-String_Kite                        12
+0402    er    Empty_Rectangle                      11
+0402-1  er    Empty_Rectangle                       7
+0403    tf    Turbot_Fish                           9
+0500    sc1   Simple_Colors_Trap                    7
+0501    sc2   Simple_Colors_Wrap                    3
+0502    mc1   Multi_Colors_1                        3
+0503    mc2   Multi_Colors_2                        1
+0600-1  u1    Uniqueness_Test_1                     8
+0601-1  u2    Uniqueness_Test_2                    18
+0602-1  u3    Uniqueness_Test_3                    12
+0603-1  u4    Uniqueness_Test_4                    11
+0604-1  u5    Uniqueness_Test_5                     7
+0605-1  u6    Uniqueness_Test_6                    11
+0606-1  hr    Hidden_Rectangle                     12
+0606-x  hr    Hidden_Rectangle                      1
+0607-1  ar1   Avoidable_Rectangle_Type_1           10
+0608-1  ar2   Avoidable_Rectangle_Type_2           15
+0610    bug1  Bivalue_Universal_Grave_+_1          12
+0610-x  bug1  Bivalue_Universal_Grave_+_1           3
+0701    x     X-Chain                              14
+0702    xyc   XY-Chain                             23
+0703    rp    Remote_Pair                          20
+0800    xy    XY-Wing                               9
+0801    xyz   XYZ-Wing                             16
+0803    w     W-Wing                               14
+1101    sdc   Sue_de_Coq                           30
+------  ----  -----------------------------------  --
+
+Techniques or variants not implemented
+------  ----  -------------------------------  --
+03111   fbf3  Finned_Swordfish                  3
+03121   fbf4  Finned_Jellyfish                  4
+03211   sbf3  Sashimi_Swordfish                 8
+03221   sbf4  Sashimi_Jellyfish                 2
+0331    ff3   Franken_Swordfish                 3
+0332    ff4   Franken_Jellyfish                 4
+0340    fff2  Finned_Franken_X-Wing             4
+0341    fff3  Finned_Franken_Swordfish          8
+0342    fff4  Finned_Franken_Jellyfish         13
+0362    fmf4  Finned_Mutant_Jellyfish           7
+0363    fmf5  Finned_Mutant_Squirmbag           1
+0364    fmf6  Finned_Mutant_Whale               1
+0404    d2sk  Dual_2-String_Kite                9
+0405    der   Dual_Empty_Rectangle              8
+0600-2  u1    Uniqueness_Test_1                 9
+0601-2  u2    Uniqueness_Test_2                 2
+0602-2  u3    Uniqueness_Test_3                 1
+0603-2  u4    Uniqueness_Test_4                10
+0604-2  u5    Uniqueness_Test_5                 1
+0605-2  u6    Uniqueness_Test_6                 1
+0606-2  hr    Hidden_Rectangle                 10
+0706    cnl   Continuous_Nice_Loop             18
+0707    dnl   Discontinuous_Nice_Loop          27
+0708    aic   AIC                              34
+0709    gcnl  Grouped_Continuous_Nice_Loop     16
+0710    gdnl  Grouped_Discontinuous_Nice_Loop  38
+0711    gaic  Grouped_AIC                      42
+0901    axz   Almost_Locked_Set_XZ-Rule        17
+0902    axy   Almost_Locked_Set_XY-Wing        14
+0903    ach   Almost_Locked_Set_XY-Chain       15
+0904    db    Death_Blossom                    17
+1201    ts    Template_Set                      9
+1202    td    Template_Delete                   9
+------  ----  -------------------------------  --
+
+Statistics
+---------------  ----
+total            1112
+tested           1112
+solved            743
+partial             0
+not_implemented   365
+failed              0
+failed_ok           4
+check            1112
+---------------  ----
+
