@@ -1,3 +1,8 @@
+"""
+Testing module for sudosol.
+"""
+
+
 import os
 import sys
 import glob
@@ -283,9 +288,113 @@ def trace(line, tech, techname, caption, *more):
     print()
 
 
+TECHNIQUES = {
+    '0000': ('fh', 'Full_House'),
+    '0002': ('h1', 'Hidden_Single'),
+    '0003': ('n1', 'Naked_Single'),
+    '0100': ('lc1', 'Locked_Candidates_Type_1_(Pointing)'),
+    '0101': ('lc2', 'Locked_Candidates_Type_2_(Claiming)'),
+    '0110': ('l2', 'Locked_Pair'),
+    '0111': ('l3', 'Locked_Triple'),
+    '0200': ('n2', 'Naked_Pair'),
+    '0201': ('n3', 'Naked_Triple'),
+    '0202': ('n4', 'Naked_Quadruple'),
+    '0210': ('h2', 'Hidden_Pair'),
+    '0211': ('h3', 'Hidden_Triple'),
+    '0212': ('h4', 'Hidden_Quadruple'),
+    '0300': ('bf2', 'X-Wing'),
+    '0301': ('bf3', 'Swordfish'),
+    '0302': ('bf4', 'Jellyfish'),
+    '0303': ('bf5', 'Squirmbag'),
+    '0304': ('bf6', 'Whale'),
+    '0305': ('bf7', 'Leviathan'),
+    '0310': ('fbf2', 'Finned_X-Wing'),
+    '0311': ('fbf3', 'Finned_Swordfish'),
+    '0312': ('fbf4', 'Finned_Jellyfish'),
+    '0313': ('fbf5', 'Finned_Squirmbag'),
+    '0314': ('fbf6', 'Finned_Whale'),
+    '0315': ('fbf7', 'Finned_Leviathan'),
+    '0320': ('sbf2', 'Sashimi_X-Wing'),
+    '0321': ('sbf3', 'Sashimi_Swordfish'),
+    '0322': ('sbf4', 'Sashimi_Jellyfish'),
+    '0323': ('sbf5', 'Sashimi_Squirmbag'),
+    '0324': ('sbf6', 'Sashimi_Whale'),
+    '0325': ('sbf7', 'Sashimi_Leviathan'),
+    '0330': ('ff2', 'Franken_X-Wing'),
+    '0331': ('ff3', 'Franken_Swordfish'),
+    '0332': ('ff4', 'Franken_Jellyfish'),
+    '0333': ('ff5', 'Franken_Squirmbag'),
+    '0334': ('ff6', 'Franken_Whale'),
+    '0335': ('ff7', 'Franken_Leviathan'),
+    '0340': ('fff2', 'Finned_Franken_X-Wing'),
+    '0341': ('fff3', 'Finned_Franken_Swordfish'),
+    '0342': ('fff4', 'Finned_Franken_Jellyfish'),
+    '0343': ('fff5', 'Finned_Franken_Squirmbag'),
+    '0344': ('fff6', 'Finned_Franken_Whale'),
+    '0345': ('fff7', 'Finned_Franken_Leviathan'),
+    '0350': ('mf2', 'Mutant_X-Wing'),
+    '0351': ('mf3', 'Mutant_Swordfish'),
+    '0352': ('mf4', 'Mutant_Jellyfish'),
+    '0353': ('mf5', 'Mutant_Squirmbag'),
+    '0354': ('mf6', 'Mutant_Whale'),
+    '0355': ('mf7', 'Mutant_Leviathan'),
+    '0360': ('fmf2', 'Finned_Mutant_X-Wing'),
+    '0361': ('fmf3', 'Finned_Mutant_Swordfish'),
+    '0362': ('fmf4', 'Finned_Mutant_Jellyfish'),
+    '0363': ('fmf5', 'Finned_Mutant_Squirmbag'),
+    '0364': ('fmf6', 'Finned_Mutant_Whale'),
+    '0365': ('fmf7', 'Finned_Mutant_Leviathan'),
+    '0371': ('kf1', 'Kraken_Fish_Type_1'),
+    '0372': ('kf2', 'Kraken_Fish_Type_2'),
+    '0400': ('sk', 'Skyscraper'),
+    '0401': ('2sk', '2-String_Kite'),
+    '0402': ('er', 'Empty_Rectangle'),
+    '0403': ('tf', 'Turbot_Fish'),
+    '0404': ('d2sk', 'Dual_2-String_Kite'),
+    '0405': ('der', 'Dual_Empty_Rectangle'),
+    '0500': ('sc1', 'Simple_Colors_Trap'),
+    '0501': ('sc2', 'Simple_Colors_Wrap'),
+    '0502': ('mc1', 'Multi_Colors_1'),
+    '0503': ('mc2', 'Multi_Colors_2'),
+    '0600': ('u1', 'Uniqueness_Test_1'),
+    '0601': ('u2', 'Uniqueness_Test_2'),
+    '0602': ('u3', 'Uniqueness_Test_3'),
+    '0603': ('u4', 'Uniqueness_Test_4'),
+    '0604': ('u5', 'Uniqueness_Test_5'),
+    '0605': ('u6', 'Uniqueness_Test_6'),
+    '0606': ('hr', 'Hidden_Rectangle'),
+    '0607': ('ar1', 'Avoidable_Rectangle_Type_1'),
+    '0608': ('ar2', 'Avoidable_Rectangle_Type_2'),
+    '0610': ('bug1', 'Bivalue_Universal_Grave_+_1'),
+    '0701': ('x', 'X-Chain'),
+    '0702': ('xyc', 'XY-Chain'),
+    '0703': ('rp', 'Remote_Pair'),
+    '0706': ('cnl', 'Continuous_Nice_Loop'),
+    '0707': ('dnl', 'Discontinuous_Nice_Loop'),
+    '0708': ('aic', 'AIC'),
+    '0709': ('gcnl', 'Grouped_Continuous_Nice_Loop'),
+    '0710': ('gdnl', 'Grouped_Discontinuous_Nice_Loop'),
+    '0711': ('gaic', 'Grouped_AIC'),
+    '0800': ('xy', 'XY-Wing'),
+    '0801': ('xyz', 'XYZ-Wing'),
+    '0803': ('w', 'W-Wing'),
+    '0901': ('axz', 'Almost_Locked_Set_XZ-Rule'),
+    '0902': ('axy', 'Almost_Locked_Set_XY-Wing'),
+    '0903': ('ach', 'Almost_Locked_Set_XY-Chain'),
+    '0904': ('db', 'Death_Blossom'),
+    '1101': ('sdc', 'Sue_de_Coq'),
+    '1201': ('ts', 'Template_Set'),
+    '1202': ('td', 'Template_Delete'),
+    '1301': ('fcc', 'Forcing_Chain_Contradiction'),
+    '1302': ('fcv', 'Forcing_Chain_Verity'),
+    '1303': ('fnc', 'Forcing_Net_Contradiction'),
+    '1304': ('fnv', 'Forcing_Net_Verity')
+}
+
+
 def get_technique_names():
     """Get conversion data from technique IDs (4 digits) to technique names from
-    java source code. IDs equal to xxxx are ignored.
+    Hodoku java source code (file SolutionType.java). IDs equal to xxxx are ignored.
     """
     technique_names = {}
     with open(os.path.join(os.path.dirname(__file__), 'SolutionType.java')) as f:
@@ -298,6 +407,10 @@ def get_technique_names():
                 else:
                     technique_names[ID] = (name, caption)
     return technique_names
+
+
+def get_technique_names():
+    return TECHNIQUES
 
 
 def regression_testing(regtestfile):
@@ -334,7 +447,3 @@ def regression_testing(regtestfile):
     print()
     t1 = time.time()
     return counters['partial'] == counters['failed'] == 0, t1 - t0
-
-
-if __name__ == '__main__':
-    regression_testing()
