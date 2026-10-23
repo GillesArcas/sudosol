@@ -427,6 +427,9 @@ class Grid:
         return all(cell.value is not None for cell in self.cells)
 
     def is_valid(self):
+        """
+        Test validity for fully solved puzzles (no candidates).
+        """
         for row in self.rows:
             if set(cell.value for cell in row) != set(range(1, 10)):
                 # print("Row %d failed" % row[0].rownum)
@@ -752,7 +755,8 @@ def grid_to_string81(string: str) -> str:
         return ''
     else:
         chars = ''.join(sorted(set(string)))
-        if sum(_ not in '123456789' for _ in chars) == 1:
+        # 1 if there is a single extra char (joker), 0 if the grid is full
+        if sum(_ not in '123456789' for _ in chars) in (0, 1):
             return string
         else:
             return ''
